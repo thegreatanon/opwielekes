@@ -1,0 +1,3 @@
+# Alle verkeer naar deze url naar api.php leiden
+RewriteEngine On
+RewriteRule ^(.*)$ api.php

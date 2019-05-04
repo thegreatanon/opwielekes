@@ -1,0 +1,67 @@
+
+.text-white {
+	color: white !important;
+}
+
+/* GENERAL */
+.hidden {
+    visibility: hidden !important;
+}
+body {
+  padding-top: 40px;
+  padding-bottom: 40px;
+  /*background-color: #eee;*/
+}
+.toast {
+    opacity: 1 !important;
+}
+
+.bikebtns {
+	float:right;
+	margin: 5px 0px 10px 10px;
+}
+
+.inlineh4 {
+	display: inline-block;
+	margin: 5px 0px 25px 0px;
+	padding; 0px;
+}
+
+.filterbikes{
+	font-weight: bold;
+	margin-left: 10px;
+	margin-right: 10px;
+	float: right;
+}
+
+.filtermembers{
+	font-weight: bold;
+	margin-left: 10px;
+	margin-right: 10px;
+	float: right;
+}
+
+.actbtn {
+	float: right;
+	margin-left: 10px;
+	margin-top: 10px;
+}
+
+.actbtns {
+	float: right;
+	margin-right: 20px;
+}
+
+.plabel {
+     font-weight: normal !important;
+}
+
+
+
+
+
+
+
+
+
+
