@@ -7,8 +7,19 @@ $(document).ready(function () {
 
 function compileHandlebarTemplates() {
 	template_kidsrow = Handlebars.compile($('#kidsrow').html());
+	template_kidsactionrow = Handlebars.compile($('#kidsactionrow').html());
 }
 
+/* organise tabs */
+function viewTab(section, amount) {
+	if (amount == 'all') {
+		document.getElementById('tab' + section + 'One').style.display = 'none';
+		document.getElementById('tab' + section + 'All').style.display = 'block';
+	} else {
+		document.getElementById('tab' + section + 'All').style.display = 'none';
+		document.getElementById('tab' + section + 'One').style.display = 'block';
+	}
+}
 
 /* ROUTING */ 
 routie({
@@ -23,6 +34,12 @@ routie({
     },
 	'members': function () {
         setPageActive('members');
+    },
+	'finances': function () {
+        setPageActive('finances');
+    },
+	'stats': function () {
+        setPageActive('stats');
     },
     'logout': function () {
         setPageActive('logout');

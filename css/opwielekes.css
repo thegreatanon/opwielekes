@@ -3,6 +3,10 @@
 	color: white !important;
 }
 
+.text-black {
+	color: black !important;
+}
+
 /* GENERAL */
 .hidden {
     visibility: hidden !important;
@@ -56,10 +60,13 @@ body {
      font-weight: normal !important;
 }
 
+#action_kids_table td {
+   text-align: center; 
+}
 
-
-
-
+#action_kids_table th {
+   text-align: center; 
+}
 
 
 

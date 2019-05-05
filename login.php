@@ -21,8 +21,8 @@
         <h2 class="form-signin-heading">Op wielekes login</h2>
         <input type="password" name="password" class="form-control" placeholder="Password" required autofocus />
         <select name="environment" class="form-control" title="Environment">
-            <option value="ledeberg" selected>Ledeberg</option>
-			<option value="moscou">Moscou</option>
+            <!--<option value="ledeberg" selected>Ledeberg</option>
+			<option value="moscou">Moscou</option>-->
             <option value="demo">Demo</option>
         </select>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Aanmelden</button>

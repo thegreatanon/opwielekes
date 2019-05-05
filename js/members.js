@@ -88,6 +88,12 @@ $(document).ready(function () {
 function loadMembers() {
 	loadParents();
 	loadKids();
+	$.ajax({
+        url: 'api/members/all',
+        success: function (members) {
+			setActionMembers(members);
+		}
+    });
 }
 
 function loadParents() {
@@ -113,6 +119,7 @@ function loadKids() {
 function newMember() {
 	emptyMemberForm();
 	addNewKidRow();
+	viewTab('Members','one');
 }
 
 function setMemberForm(rowdata) {
@@ -127,7 +134,7 @@ function setMemberForm(rowdata) {
 	$('#parent_phone').val(rowdata.Phone);
 	$('#parent_date').val(rowdata.InitDate);
 	setKidForm(rowdata.ID);
-	//viewTab('Bike','one');
+	viewTab('Members','one');
 }
 
 function setKidForm(parentID) {
@@ -154,7 +161,12 @@ function emptyMemberForm() {
 	$('#parent_date').val(myGetDate());
 	// kids
 	$('#kids_table_tbody').empty();
-	//viewTab('Bike','one');
+
+}
+
+function cancelMember() {
+	emptyMemberForm();
+	viewTab('Members','all');
 }
 
 function saveMember() {
@@ -174,7 +186,8 @@ function saveMember() {
 			'BirthDate': $this.find(".kids_birthdate_input")[0].value,
 			'Caution': "0",
 			'ExpiryDate': "0000-00-00",
-			'Active': "0"
+			'Active': "0",
+			'BikeID': "0"
 		});			
     });	
 	var parentdata = {
@@ -204,6 +217,7 @@ function saveMember() {
 		success: function () {
 			toastr.success(succesmsg);
 			loadMembers();
+			viewTab('Members','all');
 		},
 		error: function (data) {
 			console.error(data);

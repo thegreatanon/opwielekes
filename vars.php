@@ -1,7 +1,7 @@
 <?php
 // variables for PDO
-$pdohost = '127.0.0.1';
-$pdouser = 'root';
-$pdopass = '';
-$pdodbname = 'opwielekes';
+$pdohost = 'localhost';
+$pdouser = 'maartyl236_admin';
+$pdopass = 'dronepictures';
+$pdodbname = 'maartyl236_opwielekes';
 ?>

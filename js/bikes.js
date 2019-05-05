@@ -91,6 +91,8 @@ function loadBikes() {
 			bikestable.clear();
 			bikestable.rows.add(bikes);
 			bikestable.draw();
+			setActionBikes(bikes);
+			db_bikes = bikes;
 		}
     });
 }
@@ -98,49 +100,56 @@ function loadBikes() {
 function newBike() {
 	emptyBikeForm() ;
 	setNewBikeNr();
+	viewTab('Bikes','one');
 }
 
 function setBikeForm(rowdata) {
 	$('#bike_id').val(rowdata.ID);
 	$('#bike_nr').val(parseInt(rowdata.Number));
 	$('#bike_name').val(rowdata.Name);
-	$('#bike_status').val(rowdata.Status);
+	document.getElementById('bike_status').innerHTML = rowdata.Status;
 	$('#bike_frame').val(rowdata.Frame);
 	$('#bike_wheel').val(rowdata.Wheel);
 	$('#bike_date').val(rowdata.InitDate);
-	//viewTab('Bike','one');
+	viewTab('Bikes','one');
 }
 
 function emptyBikeForm() {
 	$('#bike_id').val(0);
 	$('#bike_nr').val(0);
 	$('#bike_name').val('');
-	$('#bike_status').val('');
+	document.getElementById('bike_status').innerHTML = 'Beschikbaar';
 	$('#bike_frame').val('');
 	$('#bike_wheel').val('');
 	$('#bike_date').val(myGetDate());
-	//viewTab('Bike','one');
 }
 
 function setNewBikeNr() {
 	// compute max bike and add 1
-	$('#bike_nr').val(parseInt(100));
+	highestnr = db_bikes.reduce((max, bike) => bike.Number > max ? bike.Number : max, db_bikes[0].Number);
+	console.log('highest bike nr is ' + highestnr);
+	$('#bike_nr').val(parseInt(highestnr)+parseInt(1));
 }
 
-
+function cancelBike() {
+	emptyBikeForm();
+	viewTab('Bikes','all');
+}
 
 function saveBike() {
 	var bikeid = $('#bike_id').val();
 	if (bikeid==0){
 		var succesmsg = 'Fiets aangemaakt';
+		bstatus = "Beschikbaar";
 	} else {
 		var succesmsg = 'Fiets aangepast';
+		bstatus = $('#bike_status').val()
 	}
 	console.log({
 			'ID': bikeid,
 			'Number': $('#bike_nr').val(),
 			'Name': $('#bike_name').val(),
-			'Status': $('#bike_status').val(),
+			'Status': bstatus,
 			'Frame': $('#bike_frame').val(),
 			'Wheel': $('#bike_wheel').val(),
 			'Source': 'Donatie lid',
@@ -164,6 +173,7 @@ function saveBike() {
 		success: function () {
 			toastr.success(succesmsg);
 			loadBikes();
+			viewTab('Bike','all');
 		},
 		error: function (data) {
 			console.error(data);

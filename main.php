@@ -51,13 +51,15 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav" id="main-nav">
-                    <li class="active"><a href="#transactions">Uitleningen</a></li>
+                    <li class="active"><a href="#transactions">Ontleningen</a></li>
                     <li><a href="#bikes">Fietsen</a></li>
                     <li><a href="#members">Leden</a></li>
+					<!--<li><a href="#finances">Financiën</a></li>
+					<li><a href="#stats">Statistieken</a></li>-->
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
 					<?php if (isset($_SESSION["login"])) {
-						echo '<p class="navbar-text text-white">' . ucfirst($_SESSION["login"]) . '</p>';
+						echo '<p class="navbar-text text-black">' . ucfirst($_SESSION["login"]) . '</p>';
 					 } ?>
                     <li><a href="logout.php">Afmelden</a></li>
                 </ul>
@@ -67,58 +69,107 @@
 
     <section id="content_transactions" class="content_section">
 		<h4 class="inlineh4">Flow</h4> 
-		
 		<div class="container-fluid" width="100%">
-			<form id="form action" class="form-horizontal">
-			
-				<div class="form-group">
-					<label for="action" class="col-md-2 control-label">Actie</label>
-					<div class="input-group col-md-4">
-						<select style="width : 100%;" class="form-control" id="finklant" name="finklant"></select>
-					</div>
-				</div>	
+		
+			<div class="col-sm-12">
+		
+				<form id="form_action" class="form-horizontal">
 				
-				<div class="form-group">
-					<label for="finklant" class="col-md-2 control-label">Ouder</label>
-					<div class="input-group col-md-4">
-						<select style="width : 100%;" class="form-control" id="finklant" name="finklant"></select>
+							
+					<div class="form-group">
+						<label for="action_member" class="col-sm-1 control-label">Lid</label>
+						<div class="col-sm-5">
+							<select style="width : 100%;" class="form-control" id="action_member" name="action_member"></select>
+						</div>				
 					</div>
-				</div>	
-				
-				<div class="form-group">
-					<label for="finklant" class="col-md-2 control-label">Kind</label>
-					<div class="input-group col-md-4">
-						<select style="width : 100%;" class="form-control" id="finklant" name="finklant"></select>
-					</div>
-				</div>	
-			
-				<div class="form-group">
-					<label for="finklant" class="col-md-2 control-label">Fiets </label>
-					<div class="input-group col-md-4">
-						<select style="width : 100%;" class="form-control" id="finklant" name="finklant"></select>
-					</div>
-				</div>	
-				
-				<div class="form-group">				
-					<label for="findatepicker" class="col-md-2 control-label">Datum</label>
-					<div class='input-group col-md-4' id='findatepicker'>			
-							<input type='text' class="form-control" id="datum" name="datum" />
-							<span class="input-group-addon">
-								<span class="glyphicon glyphicon-calendar"></span>
-							</span>
-					</div>
-				</div>
+
+					<div class="form-group" disable>
+						<label class="col-sm-1 control-label lb-sm">Actie</label>
+						<div class="col-sm-2">
+							<select style="width : 100%;" class="form-control" id="action_type" name="action_type">
+								<!--<option></option>
+								<option value="start">Start</option>
+								<option value="trade">Ruil</option>
+								<option value="end">Eind</option>
+								<option value="donate">Donatie</option>-->
+							</select>
+						</div>
+						
 					
-				<div class="form-group">
-				<label for="finbuttons" class="col-md-2 control-label"></label>
-					<div class="input-group col-md-4" id="finbuttons">
-						<input type="hidden" id="finklantid" name="finklantid">
-						<input type="hidden" id="giftid" name="giftid">
-						<button type="button" onclick="cancelFin()" class="btn btn-default actbtns">Wissen</button>
-						<button type="button" onclick="saveFin()" class="btn btn-primary actbtns">Opslaan</button>
+						<label for="actiondatepicker" class="col-sm-1 control-label"></label>
+						<div class='input-group col-sm-2' id='actiondatepicker'>			
+								<input type='text' class="form-control input-sm" id="action_date" name="action_date" />
+								<span class="input-group-addon">
+									<span class="glyphicon glyphicon-calendar"></span>
+								</span>
+						</div>
+					</div>	
+					
+					<div class="form-group">
+					
+						<label class="col-sm-1 control-label lb-sm">Fiets</label>
+						<div id="action_allbikes" hidden>
+							<div class="col-sm-3">
+								<select style="width : 100%;" class="form-control input-sm" id="action_bike_all" name="action_bike_all"></select>
+							</div>
+						</div>
+						
+						<div id="action_availablebikes" hidden>
+							<div class="col-sm-3">
+								<select style="width : 100%;" class="form-control" id="action_bike_out" name="action_bike_out"></select>
+							</div>
+						</div>
+						
+						<div id="action_tradebikes" hidden>
+							<label class="col-sm-2 control-label ">Huidige fiets</label>
+
+						</div>
+						
+						<div id="action_returnbikes" hidden>
+							<p class="col-sm-3 form-control-static" id="action_returnbike"></p>	
+						</div>
+						
+						<div class="actbtns">
+							<input type="hidden" id="action_bikeinid" name="bikeinid" value="0">
+							<button type="button" onclick="cancelTransaction()" class="btn btn-default actbtn">Annuleren</button>
+							<button type="button" id="saveActionBtn" onclick="saveTransaction()" class="btn btn-primary actbtn" disabled>Opslaan</button>
+						</div>
+					</div>	
+					
+					<hr class="formhr">
+					
+					<div class="form-row">
+						<div class="form-group action_memberdiv form-control-static" hidden>
+							<label class="col-sm-1 control-label lb-sm">Ouder</label>
+							<p class="col-sm-3 form-control-static" id="action_parentname"></p>
+							<p class="col-sm-3 form-control-static" id="action_parentsince">Lid sinds 2015-09-04</p>
+							<p class="col-sm-3 form-control-static" id="action_parentdonations" hidden>Fietsdonaties: 0</p>
+							<!-- hidden temp -->	
+						</div>	
+						<div class="form-group action_memberdiv" hidden>
+							<label class="col-sm-1 control-label lb-sm">Overzicht</label>
+							<div class="col-sm-10">
+								<table class="table table-condensed" id="action_kids_table">
+									<thead>
+										<tr>
+											<th>Kind</th>
+											<th>Leeftijd</th>
+											<th>Actief</th>
+											<th>Fiets</th>
+											<th>Waarborg</th>
+											<th>Lid tot</th>
+										</tr>					
+									</thead>
+									<tbody id="action_kids_table_tbody">
+									</tbody>
+								</table>
+								<label class="col-sm-1 control-label plabel"></label>
+							</div>
+						</div>
 					</div>
-				</div>
-			</form>
+	
+				</form>
+			</div>
 		</div>	
 
     </section>
@@ -155,7 +206,7 @@
 			</table>	
 		</div>
 		
-		<div id="tabBikesOne" class="tabContent">
+		<div id="tabBikesOne" style="display: none;" class="tabContent">
 	
 			<h4 class="inlineh4">Detail Fiets</h4>
 			
@@ -174,7 +225,7 @@
 										<input type="text" class="form-control input-sm" id="bike_name" name="bike_name" placeholder="naam">
 									</div>
 									<label for="orderhistnote" class="col-md-2 control-label">Status</label>
-									<label class="col-sm-2 control-label plabel" id="bike_status">0.00 </label>
+									<p class="col-sm-2 form-control-static" id="bike_status"> </p>
 								</div>	
 							
 							
@@ -201,8 +252,8 @@
 										</div>
 									</div>
 								
-									<div class="col-sm-6">
-										<input type="text" class="form-control input-sm" id="bike_donator" name="bike_donator" placeholder="lid">
+									<div class="col-sm-6" hidden>
+										<input type="text" class="form-control input-sm" id="bike_donator" name="bike_donator" placeholder="lid" >
 									</div>
 								</div>	
 							
@@ -212,7 +263,7 @@
 									</div>
 									<div class="input-group col-sm-6" id="actbtns">
 										<input type="hidden" id="bike_id" name="bike_id" value="0">
-										<button type="button" onclick="cancelBike()" class="btn btn-default actbtn">Wissen</button>
+										<button type="button" onclick="cancelBike()" class="btn btn-default actbtn">Annuleren</button>
 										<button type="button" onclick="saveBike()" class="btn btn-primary actbtn">Opslaan</button>
 									</div>
 								</div>
@@ -223,7 +274,7 @@
 				
 					
 					
-					<div class="col-sm-4">
+					<div class="col-sm-4">	
 						<label class="col-sm-2 control-label lb-sm">Historiek</label>
 						<table id="table_orderstatushistory" class="table compact" width="100%">
 						</table>
@@ -252,7 +303,7 @@
 						<th>Kind 1</th>
 						<th>Kind 2</th>
 						<th>Kind 3</th>
-						<th>Status</th>
+						<th>Actief</th>
 						<th></th>
 					</tr>
 				</thead>
@@ -260,17 +311,17 @@
 					<tr>
 						<th>Voornaam</th>
 						<th>Achternaam</th>
-						<th>Kind 1</th>
-						<th>Kind 2</th>
-						<th>Kind 3</th>
-						<th>Status</th>
+						<th>Straat</th>
+						<th>Straatnr</th>
+						<th>Postcode</th>
+						<th>Actief</th>
 						<th></th>
 					</tr>
 				</tfoot>
 			</table>	
 		</div>
 		
-		<div id="tabMembersOne" class="tabContent">
+		<div id="tabMembersOne" style="display: none;" class="tabContent">
 	
 			<h4 class="inlineh4">Detail gebruiker</h4>
 			<div class="container-fluid" width="100%">
@@ -300,7 +351,7 @@
 							</div>
 							<label class="col-sm-1 control-label">Tel</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control input-sm" id="parent_phone" name="parent_phone" placeholder="">
+								<input type="text" class="form-control input-sm" id="parent_phone" name="parent_phone" placeholder="Tel">
 							</div>
 						</div>
 						
@@ -362,7 +413,7 @@
 							</div>
 							<div class="input-group col-sm-6" id="actbtns">
 								<input type="hidden" id="parent_id" name="parent_id" value="0">
-								<button type="button" onclick="cancelMember()" class="btn btn-default actbtn">Wissen</button>
+								<button type="button" onclick="cancelMember()" class="btn btn-default actbtn">Annuleren</button>
 								<button type="button" onclick="saveMember()" class="btn btn-primary actbtn">Opslaan</button>
 							</div>
 						</div>
@@ -371,9 +422,11 @@
 				</div>
 				
 				<div class="col-sm-2">
+					<!--
 					<label class="col-sm-2 control-label lb-sm">Historiek</label>
 					<table id="table_orderstatushistory" class="table compact" width="100%">
 					</table>
+					-->
 				</div>
 			</div>
 	
@@ -382,8 +435,22 @@
 		
     </section>
 
+    <section id="content_finances" class="content_section">
+		<h4 class="inlineh4">Financiën</h4> 
+		
+		<div class="container-fluid" width="100%">
+		</div>	
 
+    </section>
  
+ 
+     <section id="content_stats" class="content_section">
+		<h4 class="inlineh4">Statistieken</h4> 
+		
+		<div class="container-fluid" width="100%">
+		</div>	
+
+    </section>
 </div>
 
 
@@ -401,12 +468,27 @@
             <input type="text" class="form-control kids_birthdate_input" value="{{birthdate}}">
         </td>
         <td class="col-sm-1">
+			<!--
             <button type="button" class="btn btn-default kids_deleterow">
                 <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
             </button>
+			-->
         </td>
     </tr>
 </script>
+
+<!-- Row in action info table -->
+<script id="kidsactionrow" type="text/x-handlebars-template">
+    <tr data-id="{{ID}}">
+		<td>{{fullname}}</td>
+		<td></td>
+		<td>{{active}}</td>
+		<td>{{bikeid}}</td>
+		<td>{{caution}}</td>
+		<td>{{expirydate}}</td>
+    </tr>
+</script>
+
 
 <!-- js libs -->
 <script src="js/jquery.js"></script>
@@ -424,7 +506,7 @@
 <script src="js/main.js"></script>
 <script src="js/members.js"></script>
 <script src="js/bikes.js"></script>
-
+<script src="js/transactions.js"></script>
 
 </body>
 </html>
