@@ -14,8 +14,9 @@
 	<link href="libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
 	<link href="libs/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
 	<link href="libs/select2/4.0.3/dist/css/select2.css" rel="stylesheet"/>
-	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.16/r-2.2.1/rg-1.0.2/datatables.min.css"/>
-
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.18/af-2.3.3/b-1.5.6/r-2.2.2/rg-1.1.0/rr-1.2.4/sl-1.3.0/datatables.min.css"/>
+	<link href="libs/daterangepicker/2.1.25/daterangepicker.css" rel="stylesheet"/>
+	<link href="libs/quill/1.3.6/quill.snow.css" rel="stylesheet">
 	
     <link href="css/opwielekes.css" rel="stylesheet"/>
     <style type='text/css'>
@@ -54,8 +55,15 @@
                     <li class="active"><a href="#transactions">Ontleningen</a></li>
                     <li><a href="#bikes">Fietsen</a></li>
                     <li><a href="#members">Leden</a></li>
-					<!--<li><a href="#finances">Financiën</a></li>
-					<li><a href="#stats">Statistieken</a></li>-->
+					<li><a href="#finances">Financiën</a></li>
+					<li><a href="#stats">Statistieken</a></li>
+					<li class="dropdown">
+						<a href="#settings" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Instellingen <span class="caret"></span></a>
+						  <ul class="dropdown-menu">
+							<li><a href="#settings_prices">Prijzen</a></li>
+							<li><a href="#settings_emails">Emails</a></li>
+						  </ul>
+					</li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
 					<?php if (isset($_SESSION["login"])) {
@@ -73,7 +81,7 @@
 		
 			<div class="col-sm-12">
 		
-				<form id="form_action" class="form-horizontal">
+				<form id="action_form" class="form-horizontal">
 				
 							
 					<div class="form-group">
@@ -85,7 +93,7 @@
 
 					<div class="form-group" disable>
 						<label class="col-sm-1 control-label lb-sm">Actie</label>
-						<div class="col-sm-2">
+						<div class="col-sm-3">
 							<select style="width : 100%;" class="form-control" id="action_type" name="action_type">
 								<!--<option></option>
 								<option value="start">Start</option>
@@ -96,7 +104,7 @@
 						</div>
 						
 					
-						<label for="actiondatepicker" class="col-sm-1 control-label"></label>
+						<label for="actiondatepicker" class="col-sm-1 control-label lb-sm">Datum</label>
 						<div class='input-group col-sm-2' id='actiondatepicker'>			
 								<input type='text' class="form-control input-sm" id="action_date" name="action_date" />
 								<span class="input-group-addon">
@@ -107,33 +115,64 @@
 					
 					<div class="form-group">
 					
-						<label class="col-sm-1 control-label lb-sm">Fiets</label>
+						<label class="col-sm-1 control-label lb-sm">Fiets IN</label>
 						<div id="action_allbikes" hidden>
 							<div class="col-sm-3">
 								<select style="width : 100%;" class="form-control input-sm" id="action_bike_all" name="action_bike_all"></select>
 							</div>
 						</div>
+						<div id="action_currentbike" hidden>
+							<p class="col-sm-3 form-control-static" id="action_currentbiketext"></p>	
+						</div>
+						<div id="action_bikein_space">
+							<p class="col-sm-3 form-control-static"></p>	
+						</div>
+						<label class="col-sm-1 control-label ">Fiets UIT</label>
 						
 						<div id="action_availablebikes" hidden>
 							<div class="col-sm-3">
 								<select style="width : 100%;" class="form-control" id="action_bike_out" name="action_bike_out"></select>
 							</div>
 						</div>
-						
-						<div id="action_tradebikes" hidden>
-							<label class="col-sm-2 control-label ">Huidige fiets</label>
 
-						</div>
 						
-						<div id="action_returnbikes" hidden>
-							<p class="col-sm-3 form-control-static" id="action_returnbike"></p>	
-						</div>
 						
+					</div>
+
+
+					
+					<div class="form-group">
+					
+						<label class="col-sm-1 control-label lb-sm">Waarborg</label>
+						<div class='col-sm-2' id="action_cautioninfo">
+							<p class="form-control-static" id="action_cautioninfotext"></p>	
+						</div>
+						<div class='col-sm-2' id="action_cautioninput" hidden>
+							<input class="form-control input-sm" type="number" step="0.01" min="0" value="0" id="amount_caution">
+						</div>
+						<label class="col-sm-2 control-label lb-sm">Lidmaatschap</label>
+						<div class='col-sm-2' id="action_membershipinfo">
+							<p class="form-control-static" id="action_membershipinfotext"></p>	
+						</div>
+						<div class='col-sm-2' id="action_membershipinput" hidden>
+							<input class="form-control input-sm" type="number" min="0" step="0.01" value="0" id="amount_membership">
+						</div>	
+
 						<div class="actbtns">
 							<input type="hidden" id="action_bikeinid" name="bikeinid" value="0">
 							<button type="button" onclick="cancelTransaction()" class="btn btn-default actbtn">Annuleren</button>
-							<button type="button" id="saveActionBtn" onclick="saveTransaction()" class="btn btn-primary actbtn" disabled>Opslaan</button>
+							<button type="submit" id="saveActionBtn" class="btn btn-primary actbtn" disabled>Opslaan</button>
 						</div>
+						
+					</div>	
+					
+					<div class="form-group" id="action_emaildiv" hidden>
+					
+						<label class="col-sm-1 control-label lb-sm">Email</label>
+						<div class="col-sm-8">	
+								<div id="actionemail">
+								</div>
+							</div>
 					</div>	
 					
 					<hr class="formhr">
@@ -141,9 +180,13 @@
 					<div class="form-row">
 						<div class="form-group action_memberdiv form-control-static" hidden>
 							<label class="col-sm-1 control-label lb-sm">Ouder</label>
-							<p class="col-sm-3 form-control-static" id="action_parentname"></p>
-							<p class="col-sm-3 form-control-static" id="action_parentsince">Lid sinds 2015-09-04</p>
-							<p class="col-sm-3 form-control-static" id="action_parentdonations" hidden>Fietsdonaties: 0</p>
+							<p class="col-sm-2 form-control-static" id="action_parentname"></p>
+							<label class="col-sm-2 control-label lb-sm">Lid sinds</label>
+							<p class="col-sm-1 form-control-static" id="action_parentsince"></p>
+							<label class="col-sm-2 control-label lb-sm">Actieve kids</label>
+							<p class="col-sm-1 form-control-static" id="action_parentactivekids">0</p>
+							<label class="col-sm-1 control-label lb-sm">Waarborg</label>
+							<p class="col-sm-1 form-control-static" id="action_parentcaution">0</p>
 							<!-- hidden temp -->	
 						</div>	
 						<div class="form-group action_memberdiv" hidden>
@@ -156,7 +199,6 @@
 											<th>Leeftijd</th>
 											<th>Actief</th>
 											<th>Fiets</th>
-											<th>Waarborg</th>
 											<th>Lid tot</th>
 										</tr>					
 									</thead>
@@ -300,10 +342,11 @@
 					<tr>
 						<th>Voornaam</th>
 						<th>Achternaam</th>
-						<th>Kind 1</th>
-						<th>Kind 2</th>
-						<th>Kind 3</th>
-						<th>Actief</th>
+						<th>Straat</th>
+						<th>Kinderen</th>
+						<th>Actieve kinderen</th>
+						<th>Waarborg</th>
+						<th>Donaties</th>
 						<th></th>
 					</tr>
 				</thead>
@@ -312,9 +355,10 @@
 						<th>Voornaam</th>
 						<th>Achternaam</th>
 						<th>Straat</th>
-						<th>Straatnr</th>
-						<th>Postcode</th>
-						<th>Actief</th>
+						<th>Kinderen</th>
+						<th>Actieve kinderen</th>
+						<th>Waarborg</th>
+						<th>Donaties</th>
 						<th></th>
 					</tr>
 				</tfoot>
@@ -436,16 +480,114 @@
     </section>
 
     <section id="content_finances" class="content_section">
-		<h4 class="inlineh4">Financiën</h4> 
+		<h4 class="inlineh4">Financiële transacties</h4> 
+		
+		<div class="container-fluid" width="100%">
+		
+			<table id="finance_table" class="table table-striped" width="100%">
+				<thead>
+					<tr>
+						<th>Datum</th>
+						<th>Ouder</th>
+						<th>Kind</th>
+						<th>Waarborg</th>
+						<th>Lidmaatschap</th>
+						<th>Totaal (EUR)</th>
+						<th></th>
+						<th></th>
+						<th></th>
+					</tr>
+				</thead>
+				<tfoot>
+					<tr>
+						<th>Datum</th>
+						<th>Ouder</th>
+						<th>Kind</th>
+						<th>Waarborg</th>
+						<th>Lidmaatschap</th>
+						<th>Totaal (EUR)</th>
+						<th></th>
+						<th></th>
+						<th></th>
+					</tr>
+				</tfoot>
+			</table>	
+		
+
+			<button type="button" onclick="checkExpiryDates()" class="btn btn-primary" style="display: none;">Controleer lidmaatschap</button>
+			
+			<table id="expiry_table" class="table table-striped" width="100%" style="display: none;">
+				<thead>
+					<tr>
+						<th>Ouder</th>
+						<th>Kind</th>
+						<th>Kind nr</th>
+						<th>Fiets</th>
+						<th>Waarborg</th>
+						<th>Vervaldag</th>
+						<th>Tegoed (EUR)</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tfoot>
+					<tr>
+						<th>Ouder</th>
+						<th>Kind</th>
+						<th>Kind nr</th>
+						<th>Fiets</th>
+						<th>Waarborg</th>
+						<th>Vervaldag</th>
+						<th>Tegoed (EUR)</th>
+						<th></th>
+					</tr>
+				</tfoot>
+			</table>
+		
+		</div>
+    </section>
+ 
+     <section id="content_stats" class="content_section">
+		<h4 class="inlineh4">Statistieken</h4> 
 		
 		<div class="container-fluid" width="100%">
 		</div>	
 
     </section>
- 
- 
-     <section id="content_stats" class="content_section">
-		<h4 class="inlineh4">Statistieken</h4> 
+	
+	<section id="content_settings_prices" class="content_section">
+		<h4 class="inlineh4">Instellingen: Prijzen</h4> 
+		
+		<div class="container-fluid" width="100%">
+			<form id="settings_prices_form">
+
+				<label><input type="checkbox" class="aanspreekcheck" id="tavp1" name="tavp1" value="tavp1" disabled> Activeer verlaagd tarief</label>
+									
+				<table id="settings_prices_table" class="table" >
+					<thead>
+					<tr>
+						<th>Tarief</th>
+						<th>Type</th>
+						<th>Kind 1</th>
+						<th>Kind 2</th>
+						<th>Kind 3</th>
+						<th>Kind 4 en meer</th>
+					</tr>
+					</thead>
+					<tbody id="settings_prices_table_tbody">
+					</tbody>
+				</table>
+				
+				<div class="input-group col-sm-6" id="actbtns">
+					<button type="button" onclick="cancelPrices()" class="btn btn-default actbtn">Annuleren</button>
+					<button type="submit" onclick="savePrices()" class="btn btn-primary actbtn">Opslaan</button>
+				</div>
+			</form>
+		</div>	
+
+    </section>
+	
+	<section id="content_settings_emails" class="content_section">
+		<h4 class="inlineh4">Instellingen: Emails</h4> 
 		
 		<div class="container-fluid" width="100%">
 		</div>	
@@ -483,8 +625,7 @@
 		<td>{{fullname}}</td>
 		<td></td>
 		<td>{{active}}</td>
-		<td>{{bikeid}}</td>
-		<td>{{caution}}</td>
+		<td>{{bikenr}}</td>
 		<td>{{expirydate}}</td>
     </tr>
 </script>
@@ -499,13 +640,16 @@
 <script src="libs/handlebars/4.0.5/handlebars.js"></script>
 <script src="libs/datetimepicker/bootstrap-datetimepicker.min.js"></script>
 <script src="libs/routie/0.3.2/routie.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/r-2.2.1/rg-1.0.2/datatables.min.js"></script>
+<script src="libs/daterangepicker/2.1.25/daterangepicker.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.18/af-2.3.3/b-1.5.6/r-2.2.2/rg-1.1.0/rr-1.2.4/sl-1.3.0/datatables.min.js"></script>
+<script src="libs/quill/1.3.6/quill.min.js"></script>
 
 <!-- own js -->
 <script src="js/globalvars.js"></script>
 <script src="js/main.js"></script>
 <script src="js/members.js"></script>
 <script src="js/bikes.js"></script>
+<script src="js/finances.js"></script>
 <script src="js/transactions.js"></script>
 
 </body>

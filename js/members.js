@@ -15,9 +15,10 @@ $(document).ready(function () {
 			{data: 'Name', name: 'Number'},
 			{data: 'Surname', name: 'Name'},
 			{data: 'Street', name: 'Street'},
-            {data: 'StreetNumber', name: 'StreetNumber'},
-			{data: 'Postal', name: 'Postal'},
-			{data: 'Active', name: 'Active'},
+            {data: 'NrKids', name: 'NrKids'},
+			{data: 'ActiveKids', name: 'ActiveKids'},
+			{data: 'CautionAmount', name: 'CautionAmount'},
+			{data: 'Donations', name: 'Donations'},
 			{
                 data: {
 					ID: 'ID',
@@ -47,8 +48,8 @@ $(document).ready(function () {
 		function( settings, data ) {
 			/* for orders */
 			if (settings.nTable.id == 'members_table') {
-				var state = data[5];
-				if (state == 1) {
+				var state = data[4];
+				if (state >= 1) {
 					if ($('#membersfilteractive').is(':checked')){
 						return true;
 					} else
@@ -86,23 +87,29 @@ $(document).ready(function () {
 
 
 function loadMembers() {
-	loadParents();
 	loadKids();
 	$.ajax({
         url: 'api/members/all',
         success: function (members) {
-			setActionMembers(members);
+			console.log('members:');
+			console.log(members);
+			loadParents(members);
+			//setActionMembers(members);
 		}
     });
 }
 
-function loadParents() {
+function loadParents(members) {
     $.ajax({
         url: 'api/parents',
         success: function (parents) {
+			//console.log('parents:');
+			//console.log(parents);
 			memberstable.clear();
 			memberstable.rows.add(parents);
-			memberstable.draw();
+			memberstable.columns.adjust().draw();
+			db_parents = parents;
+			setActionMembers(members);
 		}
     });
 }
@@ -112,6 +119,8 @@ function loadKids() {
         url: 'api/kids',
         success: function (kids) {
 			db_kids = kids;
+			//console.log('kids:');
+			//console.log(kids);
 		}
     });
 }
@@ -201,7 +210,7 @@ function saveMember() {
 			'Email': $('#parent_email').val(),
 			'Phone': $('#parent_phone').val(),
 			'InitDate': $('#parent_date').val(),
-			'Active': "0"
+			'CautionAmount': "0"
 		};
 	console.log(kidsdata);
 	console.log(parentdata);

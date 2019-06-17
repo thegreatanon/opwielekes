@@ -90,7 +90,7 @@ function loadBikes() {
         success: function (bikes) {
 			bikestable.clear();
 			bikestable.rows.add(bikes);
-			bikestable.draw();
+			bikestable.columns.adjust().draw();
 			setActionBikes(bikes);
 			db_bikes = bikes;
 		}
@@ -118,7 +118,7 @@ function emptyBikeForm() {
 	$('#bike_id').val(0);
 	$('#bike_nr').val(0);
 	$('#bike_name').val('');
-	document.getElementById('bike_status').innerHTML = 'Beschikbaar';
+	document.getElementById('bike_status').innerHTML = "Beschikbaar";
 	$('#bike_frame').val('');
 	$('#bike_wheel').val('');
 	$('#bike_date').val(myGetDate());
@@ -143,7 +143,7 @@ function saveBike() {
 		bstatus = "Beschikbaar";
 	} else {
 		var succesmsg = 'Fiets aangepast';
-		bstatus = $('#bike_status').val()
+		bstatus = document.getElementById('bike_status').innerHTML;
 	}
 	console.log({
 			'ID': bikeid,
@@ -163,7 +163,7 @@ function saveBike() {
 			'ID': bikeid,
 			'Number': $('#bike_nr').val(),
 			'Name': $('#bike_name').val(),
-			'Status': $('#bike_status').val(),
+			'Status':  bstatus,
 			'Frame': $('#bike_frame').val(),
 			'Wheel': $('#bike_wheel').val(),
 			'Source': 'Donatie lid',
@@ -173,7 +173,7 @@ function saveBike() {
 		success: function () {
 			toastr.success(succesmsg);
 			loadBikes();
-			viewTab('Bike','all');
+			viewTab('Bikes','all');
 		},
 		error: function (data) {
 			console.error(data);

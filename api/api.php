@@ -11,7 +11,9 @@ require_once(__DIR__ . "/Slim/Slim.php");
 require_once(__DIR__ . "/pdoconnect.php");
 
 require_once(__DIR__ . "/Services/BikesService.php");
+require_once(__DIR__ . "/Services/FinancesService.php");
 require_once(__DIR__ . "/Services/MembersService.php");
+require_once(__DIR__ . "/Services/SettingsService.php");
 require_once(__DIR__ . "/Services/TransactionsService.php");
 require_once(__DIR__ . "/Services/TableService.php");
 require_once(__DIR__ . "/Services/TableEnum.php");
@@ -100,12 +102,10 @@ $app->group('/bikes', function() use ($app) {
 
 $app->group('/parents', function() use ($app) {
 
-    $app->get('/', function() use ($app) {
-		global $DBH;
-        $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::PARENTS)  . " ORDER BY Name");
-        echo json_encode($STH->fetchAll());
+	$app->get('/', function() use ($app) {
+      echo json_encode(MembersService::getParents());
     });
-	
+
 	$app->post('/', function() use ($app) {
         global $DBH;
 		try {
@@ -140,6 +140,11 @@ $app->group('/kids', function() use ($app) {
         echo json_encode($STH->fetchAll());
     });
 
+	/* DOES NOT WORK
+	$app->get('/', function() use ($app) {
+		echo json_encode(MembersService::getKids());
+    });
+	*/
 });
 
 $app->group('/members', function() use ($app) {
@@ -229,20 +234,31 @@ $app->group('/transactions', function() use ($app) {
 			if ($newt["status"] == -1) {
 				throw new Exception($newt["error"]);
 			}	
-			
-			if ($GLOBALS["data"]->updateParent != 0) {
-				$ups = MembersService::updateParentStatus($GLOBALS["data"]->parentStatus);
-				if ($ups["status"] == -1) {
-					throw new Exception($ups["error"]);
-				}	
-			}
 
 			if ($GLOBALS["data"]->updateKid != 0) {
 				$uks = MembersService::updateKidStatus($GLOBALS["data"]->kidStatus);
 				if ($uks["status"] == -1) {
 					throw new Exception($uks["error"]);
 				}
-			}				
+			}	
+
+			/*
+			if ($GLOBALS["data"]->updateKidFin != 0) {
+				$ukf = MembersService::updateKidFinances($GLOBALS["data"]->kidFinances);
+				if ($ukf["status"] == -1) {
+					throw new Exception($ukf["error"]);
+				}
+			}	
+			*/
+
+			if ($GLOBALS["data"]->updateFin != 0) {
+				foreach ($GLOBALS["data"]->finTransactions as $item) {
+					$newf = FinancesService::newTransaction($item);
+					if ($newf["status"] == -1) {
+						throw new Exception($newf["error"]);
+					}
+				}					
+			}
 			
 			if ($GLOBALS["data"]->updateBike != 0) {
 				foreach ($GLOBALS["data"]->bikeStatus as $item) {
@@ -268,10 +284,74 @@ $app->group('/transactions', function() use ($app) {
 });
 
 
-/*
+$app->group('/finances', function() use ($app) {
+
+	$app->get('/', function() use ($app) {
+      echo json_encode(FinancesService::getTransactions());
+    });
+	
+	$app->post('/', function() use ($app) {
+        global $DBH;
+		try {
+			$DBH->beginTransaction();
+			foreach ($GLOBALS["data"]->finTransactions as $item) {
+				$newf = FinancesService::newTransaction($item);
+				if ($newf["status"] == -1) {
+					throw new Exception($newf["error"]);
+				}	
+			}
+			$DBH->commit();
+		} catch (Exception $e) {
+			$DBH->rollBack();
+			$GLOBALS["error"] = $e->getMessage();
+			$app->error();
+		}
+		echo json_encode(null);			
+    });
+	
+	$app->post('/receive/:id', function($id) use ($app) {
+        generateResponse(FinancesService::receiveTransaction($id));
+    });
+	
+	$app->post('/delete/:id', function($id) use ($app) {
+        generateResponse(FinancesService::deleteTransaction($id));
+    });
+	
+});
 
 $app->group('/settings', function() use ($app) {
-
+	
+	$app->get('/actions', function() use ($app) {
+		global $DBH;
+        $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::ACTIONS));
+        echo json_encode($STH->fetchAll());
+    });
+	
+	$app->get('/prices', function() use ($app) {
+		global $DBH;
+        $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::PRICES));
+        echo json_encode($STH->fetchAll());
+    });
+	
+	$app->post('/prices', function() use ($app) {
+        global $DBH;
+		try {
+			$DBH->beginTransaction();
+			foreach ($GLOBALS["data"]->updateData as $item) {
+				$updp = SettingsService::updatePrices($item);
+				if ($updp["status"] == -1) {
+					throw new Exception($updp["error"]);
+				}	
+			}
+			$DBH->commit();
+		} catch (Exception $e) {
+			$DBH->rollBack();
+			$GLOBALS["error"] = $e->getMessage();
+			$app->error();
+		}
+		echo json_encode(null);		
+    });
+	
     $app->get('/emails', function() use ($app) {
 		global $DBH;
         $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::EMAILS));
@@ -302,13 +382,9 @@ $app->group('/settings', function() use ($app) {
 		echo json_encode(null);			
     });
 	
-	$app->get('/doctypes', function() use ($app) {
-		global $DBH;
-        $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::DOCUMENTEN));
-        echo json_encode($STH->fetchAll());
-    });
 });		
 	
+/*
 
 $app->group('/prefs', function() use ($app) {
 

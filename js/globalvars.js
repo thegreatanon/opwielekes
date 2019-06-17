@@ -1,5 +1,7 @@
 // tables
 var bikestable;
+var expirytable;
+var financetable;
 var memberstable;
 
 // handlebars
@@ -7,8 +9,11 @@ var template_kidsrow;
 var template_kidsactionrow;
 
 // sql data
-var db_kids;
+var db_actions;
 var db_bikes;
+var db_kids;
+var db_parents;
+var db_prices;
 
 // selectboxes
 var actiontype;
@@ -16,6 +21,9 @@ var actionmember;
 var actionbikeout;
 var actionbikeall;
 
+// finance variables
+var cautionBalance;
+var membershipBalance;
 
 /* organise tabs */
 function viewTab(section, amount) {
@@ -28,3 +36,12 @@ function viewTab(section, amount) {
 		document.getElementById('tab' + section + 'One').style.display = 'block';
 	}
 }
+
+var quillToolbarOptions = [
+	[{ size: [ 'small', false, 'large', 'huge' ]}],
+	['bold', 'italic', 'underline'],        // toggled buttons
+	[{ 'list': 'ordered'}, { 'list': 'bullet' }],
+	[ 'link', 'image' ],
+	[{ 'indent': '-1'}, { 'indent': '+1' }],   
+	['clean']                   // remove formatting button
+];
