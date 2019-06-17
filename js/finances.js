@@ -80,7 +80,7 @@ $(document).ready(function () {
             }
         ],
 		rowGroup: {
-			dataSrc: 'Received'
+			dataSrc: 'ReceivedFull'
 		},
 		"search": {
 			"regex": true,
@@ -179,6 +179,13 @@ function loadFinances() {
     $.ajax({
         url: 'api/finances',
         success: function (finances) {
+			jQuery.each(finances, function(index, item) {
+				if (item.Received=="1") {
+					item["ReceivedFull"] = "Voltooid";
+				} else {
+					item["ReceivedFull"] = "Open";
+				}
+			});
 			console.log(finances)
 			financetable.clear();
 			financetable.rows.add(finances);
@@ -213,21 +220,53 @@ function checkExpiryDates() {
 }
 
 function processPayment(row) {
-	// set payment to received
+	// add caution payment to current caution value
+	var updateCaution = "0";
+	var cautionData = [];
+	if (row.Caution != "0") {
+		updateCaution = "1";
+		var parentID = row.ParentID;
+		var p = db_parents.find(x => x.ID === parentID.toString());
+		var newAmount = parseFloat(p.CautionAmount) + parseFloat(row.Caution);
+		cautionData = {
+			'ID': parentID,
+			'CautionAmount': newAmount
+		};
+	}
+	// if membership paid, extend expiry date
+	var updateMembership = "0";
+	var membershipData = [];
+	if (parseFloat(row.Membership) > 0) {
+		updateMembership = "1";
+		var kidID = row.KidID;
+		var k = db_kids.find(x => x.ID === kidID.toString());
+		var expirydate = k.ExpiryDate;
+		expirydate = extendExpiryDate(expirydate);
+		membershipData = {
+			'ID': kidID,
+			'ExpiryDate': expirydate,
+		};
+	}
+	// POST IT
 	$.ajax({
 		type: 'POST',
-		url: 'api/finances/receive/' + row.ID,
+		url: 'api/members/payments',
+		data: JSON.stringify({
+			'updateCaution': updateCaution,
+			'cautionData': cautionData,
+			'updateMembership': updateMembership,
+			'membershipData': membershipData,
+			'finTransID': row.ID
+		}),
+		contentType: "application/json",
 		success: function () {
+			loadMembers();
 			loadFinances();
 		},
 		error: function () {
 			console.error();
 		}
-	});
-	// add caution payment to current caution value
-	
-	// if membership paid, extend expiry date
-	
+	});	
 	
 }
 

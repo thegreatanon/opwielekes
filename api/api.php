@@ -129,7 +129,7 @@ $app->group('/parents', function() use ($app) {
 		}
 		echo json_encode(null);			
     });
-		
+			
 });
 
 $app->group('/kids', function() use ($app) {
@@ -214,7 +214,37 @@ $app->group('/members', function() use ($app) {
 		echo json_encode(null);			
     });
 	
-
+	$app->post('/payments', function() use ($app) {
+        global $DBH;
+		try {
+			$DBH->beginTransaction();
+			
+			$pr = FinancesService::receiveTransaction($GLOBALS["data"]->finTransID);
+			if ($pr["status"] == -1) {
+				throw new Exception($pr["error"]);
+			}
+			
+			if ($GLOBALS["data"]->updateCaution != 0) {
+				$upc = MembersService::updateParentCaution($GLOBALS["data"]->cautionData);
+				if ($upc["status"] == -1) {
+					throw new Exception($upc["error"]);
+				}
+			}	
+			
+			if ($GLOBALS["data"]->updateMembership != 0) {
+				$upm = MembersService::updateKidExpiryDate($GLOBALS["data"]->membershipData);
+				if ($upm["status"] == -1) {
+					throw new Exception($upm["error"]);
+				}
+			}	
+			$DBH->commit();
+		} catch (Exception $e) {
+			$DBH->rollBack();
+			$GLOBALS["error"] = $e->getMessage();
+			$app->error();
+		}
+		echo json_encode(null);			
+    });
 });
 
 
@@ -316,6 +346,7 @@ $app->group('/finances', function() use ($app) {
 	$app->post('/delete/:id', function($id) use ($app) {
         generateResponse(FinancesService::deleteTransaction($id));
     });
+	
 	
 });
 

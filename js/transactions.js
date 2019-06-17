@@ -170,7 +170,7 @@ function setActionMemberInfo(selection, kidID) {
 
 function resetActionMemberInfo(selection, kidID) {
 	// BIKE
-	document.getElementById('action_currentbiketext').innerHTML = '';
+	//document.getElementById('action_currentbiketext').innerHTML = '';
 	// PARENTS
 	document.getElementById('action_parentname').innerHTML = '';
 	document.getElementById('action_parentsince').innerHTML = '';
@@ -236,7 +236,7 @@ function setActionInfo() {
 	if (actionoption.data('emailsend')=="1") {
 		$("#action_emaildiv").show();
 	} else {
-		$("#action_emaildivt").hide();
+		$("#action_emaildiv").hide();
 	}
 	// CAUTION
 	memberoption = actionmember.find('option:selected');
@@ -396,10 +396,7 @@ function saveTransaction() {
 		var expirydate = memberoption.data('expirydate');
 		if (updateKid == "1") {
 			if (actionoption.data('donationreceived')=="1") {
-				console.log('donation received');
-				console.log(expirydate);
-				expirydate = moment(expirydate).add(1, 'year').format('YYYY-MM-DD');
-				console.log(expirydate);
+				expirydate = extendExpiryDate(expirydate);
 			}
 			kidStatus = {
 				'ID': kidID,

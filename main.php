@@ -166,13 +166,36 @@
 						
 					</div>	
 					
-					<div class="form-group" id="action_emaildiv" hidden>
-					
-						<label class="col-sm-1 control-label lb-sm">Email</label>
-						<div class="col-sm-8">	
-								<div id="actionemail">
-								</div>
+					<div id="action_emaildiv" hidden>
+						<div class="form-group">
+							<label class="col-sm-1 control-label lb-sm">Email</label>
+											
+							
+							<label class="col-sm-1 control-label lb-sm">Onderwerp</label>
+							<div class='col-sm-3' id="action_subjectinput">
+								<input class="form-control input-sm" type="text" value="" id="action_emailsubject">
 							</div>
+							
+							<label class="col-sm-1 control-label lb-sm">Adres</label>
+							<div class='col-sm-2' id="action_addressinput">
+								<input class="form-control input-sm" type="text" value="" id="action_emailaddress">
+							</div>
+							
+							<div class='col-sm-2' >
+								<label class="checkbox-label">
+									<input type="checkbox" class="form-control input-sm" id="action_sendemail" name="action_sendemail" value="send" checked> Verstuur
+								</label>
+							</div>
+							
+						</div>	
+						<div class="form-group">
+							<label class="col-sm-1 control-label lb-sm"></label>
+							<div class="col-sm-8">	
+									<div id="actionemail">
+									</div>
+								</div>
+							
+						</div>	
 					</div>	
 					
 					<hr class="formhr">
@@ -181,8 +204,8 @@
 						<div class="form-group action_memberdiv form-control-static" hidden>
 							<label class="col-sm-1 control-label lb-sm">Ouder</label>
 							<p class="col-sm-2 form-control-static" id="action_parentname"></p>
-							<label class="col-sm-2 control-label lb-sm">Lid sinds</label>
-							<p class="col-sm-1 form-control-static" id="action_parentsince"></p>
+							<label class="col-sm-1 control-label lb-sm">Lid sinds</label>
+							<p class="col-sm-2 form-control-static" id="action_parentsince"></p>
 							<label class="col-sm-2 control-label lb-sm">Actieve kids</label>
 							<p class="col-sm-1 form-control-static" id="action_parentactivekids">0</p>
 							<label class="col-sm-1 control-label lb-sm">Waarborg</label>

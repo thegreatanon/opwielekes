@@ -170,3 +170,11 @@ function isEmptyString(mystring) {
 function myGetDate() {
     return moment().format('YYYY-MM-DD');
 }
+
+function extendExpiryDate(expirydate) {
+	if (!moment(expirydate, 'YYYY-MM-DD', true).isValid()) {
+		expirydate = myGetDate();
+	}
+    return moment(expirydate).add(1, 'year').format('YYYY-MM-DD');
+}
+

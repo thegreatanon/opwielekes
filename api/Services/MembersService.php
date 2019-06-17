@@ -33,24 +33,21 @@ class MembersService
 		
     }
 	
-	// OUT OF USE
-	public static function updateParentStatus($data) {
-		
+	public static function updateParentCaution($data) {	
 		global $DBH;
-        if (isset($data->ID) && isset($data->Active)) {
+        if (isset($data->ID) && isset($data->CautionAmount)) {
 			try {
-                $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::PARENTS) . " SET Active = :Active WHERE ID = :ID");
+                $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::PARENTS) . " SET CautionAmount = :CautionAmount WHERE ID = :ID");
 				$STH->bindParam(':ID', $data->ID);
-				$STH->bindParam(':Active', $data->Active);
+				$STH->bindParam(':CautionAmount', $data->CautionAmount);
                 $STH->execute();
             } catch (Exception $e) {
-               return ["status" => -1, "error" => "Er is iets fout gelopen in update ouder status..."];
+               return ["status" => -1, "error" => "Er is iets fout gelopen in update ouder waarborg..."];
             }
         } else {
-           return ["status" => -1, "error" => "Onvoldoende parameters in update ouder status..."];
+           return ["status" => -1, "error" => "Onvoldoende parameters in update ouder waarborg..."];
         
         }
-		
     }
 
 	public static function newParent($data) {
@@ -139,21 +136,20 @@ class MembersService
         }
 	}
 	
-	// NOT USED
-	public static function updateKidNr($data) {
+	public static function updateKidExpiryDate($data) {
 		
 		global $DBH;
-        if (isset($data->ID) && isset($data->KidNr) ) {
+        if (isset($data->ID) && isset($data->ExpiryDate) ) {
 			try {
-                $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::KIDS) . " SET KidNr = :KidNr WHERE ID = :ID");
+                $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::KIDS) . " SET ExpiryDate = :ExpiryDate WHERE ID = :ID");
 				$STH->bindParam(':ID', $data->ID);
-				$STH->bindParam(':KidNr', $data->KidNr);
+				$STH->bindParam(':ExpiryDate', $data->ExpiryDate);
                 $STH->execute();
             } catch (Exception $e) {
-               return ["status" => -1, "error" => "Er is iets fout gelopen in update kind nummer..."];
+               return ["status" => -1, "error" => "Er is iets fout gelopen in update kind vervaldag..."];
             }
         } else {
-           return ["status" => -1, "error" => "Onvoldoende parameters in update kind nummer..."];
+           return ["status" => -1, "error" => "Onvoldoende parameters in update kind vervaldag..."];
         }
 	}
 	public static function updateKidFinances($data) {
@@ -206,7 +202,7 @@ class MembersService
 		return $STH->fetchAll();
     }
 	*/
-	
+	/*
 	// DOES NOT WORK, MISSING FIELDS FOR KIDS WITH USED PARENTID
 	public static function getJoinedMembers2() {
         global $DBH;
@@ -219,6 +215,7 @@ class MembersService
 		return $STH->fetchAll();
 
     }
+	*/
 	
 	public static function getJoinedMembers() {
         global $DBH;
