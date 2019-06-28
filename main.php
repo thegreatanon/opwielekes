@@ -11,6 +11,7 @@
     <!-- lib css files -->
 	<link href="libs/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 	<link href="libs/toastr/2.1.3/toastr.min.css" rel="stylesheet"/>
+	
 	<link href="libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
 	<link href="libs/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
 	<link href="libs/select2/4.0.3/dist/css/select2.css" rel="stylesheet"/>
@@ -91,7 +92,7 @@
 						</div>				
 					</div>
 
-					<div class="form-group" disable>
+					<div class="form-group">
 						<label class="col-sm-1 control-label lb-sm">Actie</label>
 						<div class="col-sm-3">
 							<select style="width : 100%;" class="form-control" id="action_type" name="action_type">
@@ -105,12 +106,25 @@
 						
 					
 						<label for="actiondatepicker" class="col-sm-1 control-label lb-sm">Datum</label>
-						<div class='input-group col-sm-2' id='actiondatepicker'>			
+						<div class='input-group col-sm-3' id='actiondatepicker'>			
 								<input type='text' class="form-control input-sm" id="action_date" name="action_date" />
 								<span class="input-group-addon">
 									<span class="glyphicon glyphicon-calendar"></span>
+									
 								</span>
+								
+								<div class='col-sm-1' id='dateUnlocked'>
+									<a class="btn btn-default btn-sm" onclick="lockDate()">
+										<i class="fa fa-unlock" aria-hidden="true"></i>
+									</a>
+								</div>	
+								<div class='col-sm-1' id='dateLocked' hidden>
+									<a class="btn btn-default btn-sm" onclick="unlockDate()">
+										<i class="fa fa-lock" aria-hidden="true"></i>
+									</a>
+								</div>									
 						</div>
+						
 					</div>	
 					
 					<div class="form-group">
@@ -148,14 +162,14 @@
 							<p class="form-control-static" id="action_cautioninfotext"></p>	
 						</div>
 						<div class='col-sm-2' id="action_cautioninput" hidden>
-							<input class="form-control input-sm" type="number" step="0.01" min="0" value="0" id="amount_caution">
+							<input class="form-control input-sm" type="number" step="0.01" value="0" id="amount_caution">
 						</div>
 						<label class="col-sm-2 control-label lb-sm">Lidmaatschap</label>
 						<div class='col-sm-2' id="action_membershipinfo">
 							<p class="form-control-static" id="action_membershipinfotext"></p>	
 						</div>
 						<div class='col-sm-2' id="action_membershipinput" hidden>
-							<input class="form-control input-sm" type="number" min="0" step="0.01" value="0" id="amount_membership">
+							<input class="form-control input-sm" type="number" step="0.01" value="0" id="amount_membership">
 						</div>	
 
 						<div class="actbtns">
@@ -172,13 +186,13 @@
 											
 							
 							<label class="col-sm-1 control-label lb-sm">Onderwerp</label>
-							<div class='col-sm-3' id="action_subjectinput">
-								<input class="form-control input-sm" type="text" value="" id="action_emailsubject">
+							<div class='col-sm-3'>
+								<input class="form-control input-sm" type="text" id="action_emailsubject" name="action_emailsubject" >
 							</div>
 							
 							<label class="col-sm-1 control-label lb-sm">Adres</label>
-							<div class='col-sm-2' id="action_addressinput">
-								<input class="form-control input-sm" type="text" value="" id="action_emailaddress">
+							<div class='col-sm-2'>
+								<input class="form-control input-sm" type="text" id="action_emailaddress" name="action_emailaddress">
 							</div>
 							
 							<div class='col-sm-2' >
@@ -610,9 +624,78 @@
     </section>
 	
 	<section id="content_settings_emails" class="content_section">
-		<h4 class="inlineh4">Instellingen: Emails</h4> 
+		<h4 class="inlineh4">Email Templates</h4> 
 		
 		<div class="container-fluid" width="100%">
+			<form id="settings_email_form" class="form-horizontal">
+
+				
+				<div class="form-group">					
+					<label class="col-sm-2 control-label lb-sm">Template</label>
+					<div class="col-sm-3">
+						<select style="width : 100%;" class="form-control" id="settings_email_name" name="settings_email_name">
+						</select>
+					</div>				
+				</div>	
+				
+				<div class="form-group">					
+					<label class="col-sm-2 control-label lb-sm">CC</label>
+					<div class='col-sm-3'>
+						<input class="form-control input-sm" type="text" value="" id="settings_email_cc" name="settings_email_cc">
+					</div>				
+				</div>	
+						
+				<div class="form-group">					
+					<label class="col-sm-2 control-label lb-sm">Onderwerp</label>
+					<div class='col-sm-5'>
+						<input class="form-control input-sm" type="text" id="settings_email_subject" name="settings_email_subject">
+					</div>				
+				</div>	
+				
+				<div class="form-group">
+					<label class="col-sm-2 control-label lb-sm">Email</label>
+					<div class="col-sm-8">	
+							<div id="settings_email_message">
+							</div>
+						</div>
+				</div>	
+			</form>	
+		</div>	
+			<hr class="formhr">
+			
+		<h4 class="inlineh4">Emails koppelen aan flow</h4> 
+		
+		<div class="container-fluid" width="100%">		
+			<form id="settings_action_form" class="form-horizontal">			
+				<div class="form-group">
+					<label class="col-sm-2 control-label lb-sm">Actie</label>
+					<div class="col-sm-3">
+						<select style="width : 100%;" class="form-control" id="settings_email_action" name="settings_email_type">
+						</select>
+					</div>
+				</div>	
+				
+				<div class="form-group">
+					<label class="col-sm-2 control-label lb-sm"></label>
+					<div class='col-sm-8' >
+						<input class="styled" type="checkbox" id="settings_email_send" name="settings_email_actionsend" value="settings_email_send">
+                        <label for="settings_email_send">
+                            Template versturen bij deze actie
+                        </label>
+					</div>
+				</div>	
+				
+				<div class="form-group">
+					<label class="col-sm-2 control-label lb-sm">Template</label>
+					<div class="col-sm-3">
+						<select style="width : 100%;" class="form-control" id="settings_email_actionname" name="settings_email_type">
+						</select>
+					</div>
+				</div>	
+				
+			</form>	
+			
+	
 		</div>	
 
     </section>
@@ -674,6 +757,7 @@
 <script src="js/bikes.js"></script>
 <script src="js/finances.js"></script>
 <script src="js/transactions.js"></script>
+<script src="js/settings.js"></script>
 
 </body>
 </html>

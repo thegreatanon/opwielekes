@@ -37,7 +37,7 @@ $(document).ready(function () {
 		setActionInfo();
 	}).on('select2:unselect', function() {
 		resetActionInfo();
-	});;
+	});
 	
 	actionmember = $('#action_member').select2({
 		placeholder: "Kies",
@@ -79,6 +79,7 @@ $(document).ready(function () {
 		background: 'white'
 	});
 
+
 });
 
 function setActionBikes(bikes) {
@@ -105,7 +106,7 @@ function setActionMembers(members) {
 	for (var i = 0, len = members.length; i < len; i++) {
 		var m = members[i];
 		var p = db_parents.find(x => x.ID === m.ParentID.toString());
-		var htmlOption = '<option value="' + m.KidID + '" data-parentid="' + m.ParentID +'" data-parentname="' + m.ParentName + ' ' + m.ParentSurname + '" data-parentdate="' + m.ParentInitDate + '" data-parentnrkids="' + p.NrKids + '" data-parentactivekids="' + p.ActiveKids + '" data-parentdonations="' + p.Donations + '" data-parentcautionamount="' + m.ParentCautionAmount + '" data-kidactive="' + m.KidActive + '" data-cautionamount="' + m.KidCautionAmount + '" data-expirydate="' + m.KidExpiryDate + '" data-bikeid="' + m.KidBikeID + '" data-kidnr="' + m.KidNr + '">' + m.KidName + ' ' + m.KidSurname + ' - ' +  m.ParentName + ' ' + m.ParentSurname  + '</option>';
+		var htmlOption = '<option value="' + m.KidID + '" data-parentid="' + m.ParentID +'" data-parentname="' + m.ParentName + ' ' + m.ParentSurname + '" data-parentdate="' + m.ParentInitDate + '" data-parentnrkids="' + p.NrKids + '" data-parentactivekids="' + p.ActiveKids + '" data-parentdonations="' + p.Donations + '" data-parentcautionamount="' + m.ParentCautionAmount + '" data-kidactive="' + m.KidActive + '" data-cautionamount="' + m.KidCautionAmount + '" data-expirydate="' + m.KidExpiryDate + '" data-bikeid="' + m.KidBikeID + '" data-kidnr="' + m.KidNr + '" data-email="' + p.Email + '">' + m.KidName + ' ' + m.KidSurname + ' - ' +  m.ParentName + ' ' + m.ParentSurname  + '</option>';
 		actionmember.append(htmlOption);
 	}
 	actionmember.trigger('change');
@@ -132,9 +133,11 @@ function setActionMemberInfo(selection, kidID) {
 	// BIKE
 	bikeID = selection.data('bikeid');
 	if (bikeID == 0) {
+		console.log('resetting currentbike in memberinfo');
 		document.getElementById('action_currentbiketext').innerHTML = '';
 	} else {
 		bike = db_bikes.find(x => x.ID === bikeID.toString());
+		console.log('setting current bike to ' + bike.Number);
 		document.getElementById('action_currentbiketext').innerHTML = bike.Number + " - " + bike.Name;
 	}
 	// PARENT
@@ -143,6 +146,7 @@ function setActionMemberInfo(selection, kidID) {
 	document.getElementById('action_parentsince').innerHTML = selection.data('parentdate');
 	document.getElementById('action_parentcaution').innerHTML = selection.data('parentcautionamount');
 	document.getElementById('action_parentactivekids').innerHTML = selection.data('parentactivekids');
+	$('#action_emailaddress').val(selection.data('email'));
 	// KIDS 
 	var kids = db_kids.filter(x => x.ParentID === parentID);
 	$('#action_kids_table_tbody').empty();
@@ -170,12 +174,13 @@ function setActionMemberInfo(selection, kidID) {
 
 function resetActionMemberInfo(selection, kidID) {
 	// BIKE
-	//document.getElementById('action_currentbiketext').innerHTML = '';
+	document.getElementById('action_currentbiketext').innerHTML = '';
 	// PARENTS
 	document.getElementById('action_parentname').innerHTML = '';
 	document.getElementById('action_parentsince').innerHTML = '';
 	document.getElementById('action_parentcaution').innerHTML = '';
 	document.getElementById('action_parentactivekids').innerHTML = '';
+	$('#action_emailaddress').val('');
 	// KIDS 
 	$('#action_kids_table_tbody').empty();
 	// FINANCES
@@ -199,6 +204,7 @@ function setActionInfo() {
 		$("#action_allbikes").show();
 		$("#action_bikein_space").hide();
 	} else if (actionoption.data('requirebikein')=="1"){
+		console.log('showing current bike');
 		$("#action_currentbike").show();
 		$("#action_allbikes").hide();
 		$("#action_bikein_space").hide();
@@ -234,7 +240,12 @@ function setActionInfo() {
 	}
 	// EMAIL
 	if (actionoption.data('emailsend')=="1") {
+		emailID = actionoption.data('emailid');
+		var e = db_emails.find(x => x.ID === emailID.toString());
+		$('#action_emailsubject').val(e.Subject);
+		actionquill.root.innerHTML = e.Text;
 		$("#action_emaildiv").show();
+
 	} else {
 		$("#action_emaildiv").hide();
 	}
@@ -307,7 +318,6 @@ function computeCaution(activeKids) {
 
 function resetActionInfo() {
 	// BIKES
-	document.getElementById('action_currentbiketext').innerHTML = '';
 	$("#action_currentbike").hide();
 	$("#action_allbikes").hide();
 	$("#action_bikein_space").show();
@@ -321,7 +331,7 @@ function resetActionInfo() {
 	$("#action_membershipinfo").show();
 	$("#saveActionBtn").prop("disabled", true);
 	// EMAIL
-	$("#action_emaildivt").hide();
+	$("#action_emaildiv").hide();
 	// CAUTION
 	document.getElementById('action_cautioninfotext').innerHTML = "";
 	cautionBalance = 0;
@@ -334,12 +344,29 @@ function setSaveDisabled(disable) {
 	$("#saveActionBtn").prop("disabled", disable);
 }
 
+
+function lockDate() {
+	$("#dateUnlocked").hide();
+	$("#dateLocked").show();
+	$("#action_date").prop("disabled", true);
+	actionDateIsLocked = 1;
+}
+
+function unlockDate() {
+	$("#dateUnlocked").show();
+	$("#dateLocked").hide();
+	$("#action_date").prop("disabled", false);
+	actionDateIsLocked = 0;
+}
+
 function resetTransaction() {
 	resetActionTypes();
 	resetActionMemberInfo();
 	resetActionInfo();
 	visibilityActionMemberInfo(false)
-	$('#action_date').val(myGetDate());
+	if (actionDateIsLocked == "0") {
+		$('#action_date').val(myGetDate());
+	}
 }
 
 function cancelTransaction() {

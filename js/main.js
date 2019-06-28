@@ -1,99 +1,18 @@
 $(document).ready(function () {
-
-	loadSettings();
 	
+	loadActions();
+		
 	compileHandlebarTemplates();
 });
-
-/* SETTINGS */
-
-function loadSettings() {
-    loadActions();
-	loadPrices();
-}
 
 function loadActions() {
     $.ajax({
         url: 'api/settings/actions',
         success: function (actions) {
 			db_actions = actions;
+			setSettingsEmailTypes(actions);
 		}
     });
-}
-
-function loadPrices() {
-    $.ajax({
-        url: 'api/settings/prices',
-        success: function (prices) {
-			setPriceTable(prices);
-			db_prices = prices;
-		}
-    });
-}
-
-function setPriceTable(prices) {
-	$('#settings_prices_table_tbody').empty();
-	var myhtml = '';
-	$.each(prices, function (index, item) {
-		myhtml = getPriceRowHTML(item);
-		$('#settings_prices_table_tbody').append(myhtml);
-	});
-}
-
-function cancelPrices() {
-	setPriceTable(db_prices)
-}
-
-function savePrices() {
-	if (document.getElementById("settings_prices_form").checkValidity()) {
-		var updatePriceData = [];
-		$('#settings_prices_table_tbody').find('tr').each(function () {
-			row = $(this);
-			updatePriceData.push({
-				'ID': parseFloat(row.data('priceid')),
-				'Kid1': row.find('.price_kid1 input')[0].value,
-				'Kid2': row.find('.price_kid2 input')[0].value,
-				'Kid3': row.find('.price_kid3 input')[0].value,
-				'Kid4': row.find('.price_kid4 input')[0].value
-			});	
-		});
-
-		// check if prices are if (!$.isNumeric(price)){ ??
-		$.ajax({
-			type: 'POST',
-			url: 'api/settings/prices',
-			dataType: 'json',
-			data: JSON.stringify({
-				'updateData': updatePriceData
-			}),
-			success: function (result) {
-				toastr.success('Prijzen opgeslagen');
-				loadPrices();
-			},
-			error: function() {
-				toastr.error('Prijzen niet opgeslagen','Er liep iets fout');
-			}
-		});
-	}
-}
-
-function getPriceRowHTML(item) {
-	var myhtml = '<tr data-priceid="' + item.ID + '" style="height:100% ">';
-	myhtml += '<td>' + item.Rate + '</td>';
-	myhtml += '<td>' + item.Type + '</td>';
-	if (item.Rate != "Normaal") {
-		myhtml += '<td class="price_kid1"><input type="number" value="' + item.Kid1 + '" step=".01" min="0" disabled></td>';
-		myhtml += '<td class="price_kid2"><input type="number" value="' + item.Kid2 + '" step=".01" min="0"  disabled></td>';
-		myhtml += '<td class="price_kid3"><input type="number" value="' + item.Kid3 + '" step=".01" min="0" disabled></td>';
-		myhtml += '<td class="price_kid4"><input type="number" value="' + item.Kid4 + '" step=".01" min="0" disabled></td>';
-	} else {
-		myhtml += '<td class="price_kid1"><input type="number" value="' + item.Kid1 + '" step=".01" min="0"></td>';
-		myhtml += '<td class="price_kid2"><input type="number" value="' + item.Kid2 + '" step=".01" min="0"></td>';
-		myhtml += '<td class="price_kid3"><input type="number" value="' + item.Kid3 + '" step=".01" min="0"></td>';
-		myhtml += '<td class="price_kid4"><input type="number" value="' + item.Kid4 + '" step=".01" min="0"></td>';
-	}
-	myhtml += '</tr>';
-	return myhtml;
 }
 
 /* HANDLEBARS */

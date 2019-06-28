@@ -11,6 +11,7 @@ var template_kidsactionrow;
 // sql data
 var db_actions;
 var db_bikes;
+var db_emails;
 var db_kids;
 var db_parents;
 var db_prices;
@@ -24,6 +25,10 @@ var actionbikeall;
 // finance variables
 var cautionBalance;
 var membershipBalance;
+
+var actionDateIsLocked = 0;
+
+
 
 /* organise tabs */
 function viewTab(section, amount) {
