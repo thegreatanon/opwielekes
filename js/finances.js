@@ -1,102 +1,83 @@
 $(document).ready(function () {
-	
+
 	// INIT FINANCE TABLE
-	financetable = $('#finance_table').DataTable({
-        paging: true,
+	financestable = $('#finances_table').DataTable({
+		paging: true,
 		pageLength: 25,
-		"order": [[ 6, "asc" ],[ 0, "desc" ]],
+		"order": [[ 0, "desc" ]],
 		"lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
 		dom: 'l<"financerangediv">frtip',
 		rowId: 'finID',
 		autoWidth: true,
-        columns: [
+    columns: [
 			{data: 'TransactionDate'},
-            { 
+      {
 				data: {
-                    ParentName: 'ParentName',
-                    ParentSurname: 'ParentSurname'
-                },
-                render: function (data, type) {
-					return data.ParentName + " " + data.ParentSurname; 
-                }
+            ParentName: 'ParentName',
+            ParentSurname: 'ParentSurname'
+        },
+        render: function (data, type) {
+						//if (type === 'display'){
+	           		return '<a href="#members" class="memberlink">' + data.ParentName + ' ' +  data.ParentSurname + '</a>';
+//	          } else {
+								//return data.ParentName + " " + data.ParentSurname;
+						//}
+        }
 			},
-            {
+      {
 				data: {
-                    KidName: 'KidName',
-                    KidSurname: 'KidSurname'
-                },
-                render: function (data, type) {
-					
-					return data.KidName + " " + data.KidSurname; 
-                }
+            KidName: 'KidName',
+            KidSurname: 'KidSurname'
+        },
+        render: function (data, type) {
+					return data.KidName + " " + data.KidSurname;
+        }
 			},
-            {data: 'Caution'},
-            {data: 'Membership'},
+      {data: 'Caution'},
+      {data: 'Membership'},
 			{data: 'Amount'},
+			{data: 'ReceivedFull'},
 			{
-				data: 'Received',
-				visible: false,
-				render: function (data, type) {
-					if (data.Received == "0") {
-						return "Openstaand";
-					} else {
-						return "Afgerond";
-					}
-                }
-			},
-			{
-                data: {
+        data: {
 					ID: 'ID',
 					Received : 'Received',
 					Amount: 'Amount'
-                },
-                render: function (data, type) {
+        },
+				width: '80px',
+        render: function (data, type) {
 					if (data.Received == "0") {
-						if (parseFloat(data.Amount)<0) {
-							return '<button type="button" class="btn btn-default finPaid">Gestort</button>';
-						} else {
-							return '<button type="button" class="btn btn-default finPaid">Ontvangen</button>';
-						}
+						btnok = '<button type="button" class="btn btn-default editFin"><span class="glyphicon glyphicon-ok" style="color:gray" aria-hidden="true"></span></button>';
+						btndel = '<button type="button" class="btn btn-default delete_openfin"><span class="glyphicon glyphicon-remove" style="color:red" aria-hidden="true"></span></button>';
+						return btnok + btndel;
 					} else {
-						return "";
+						return '<button type="button" class="btn btn-default editFin"><span class="glyphicon glyphicon-ok" style="color:green" aria-hidden="true"></span></button>';
 					}
-                },
+        },
 				sortable: false
-            },
-			{
-                data: {
-					ID: 'ID',
-					Received : 'Received'
-                },
-                name: 'Delete',
-                orderable: false,
-                render: function (data, type) {
-					if (data.Received == "0") {
-						return '<button type="button" class="btn btn-default delete_openfin"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>';
-					} else {
-						return "";
-					}
-                }
-            }
-        ],
-		rowGroup: {
-			dataSrc: 'ReceivedFull'
-		},
+      }
+    ],
 		"search": {
 			"regex": true,
 			"smart":false
 		}
-    });
-	
+	});
+
+
+	$(document).on('click', '.memberlink', function () {
+		rowdata= financestable.row( $(this).closest('tr') ).data();
+		setMemberFormByID(rowdata.ParentID);
+	});
+
+
 	// finace data range picker
 	$("div.financerangediv").html('<label for="financerange" class="control-label" style="padding: 2px 5px;">Range:</label><div id="financerange" class="pull-right" style="background: #fff; cursor: pointer; padding: 2px 10px; border: 1px solid #ccc;"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i>&nbsp;<span></span> <b class="caret"></b></div>');
-	
+
 	// function that gets called when finance data range changes
 	function finrangechanged(start, end) {
 		$('#financerange').find('span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-		financetable.columns.adjust().draw();
+		financestable.columns.adjust().draw();
 	}
-	
+
 	// initiliase finance data range picker
 	var initstart = moment().subtract(29, 'days');
 	var initend = moment();
@@ -116,12 +97,12 @@ $(document).ready(function () {
         }
 	}, finrangechanged);
 	finrangechanged(initstart, initend);
-	
-		/* Custom filtering function for datatablesr items-table with lowstockcheckbox */
+
+	// Custom filtering function for datatablesr items-table with lowstockcheckbox
 	$.fn.dataTable.ext.search.push(
 		function( settings, data ) {
-			/* for finance-table with datepicker */
-			if (settings.nTable.id == 'finance_table') {
+			// for finance-table with datepicker
+			if (settings.nTable.id == '') {
 				var datetime = moment(data[0]).format('YYYY-MM-DD');
                 var financeRange = $('#financerange');
 				var startdate = financeRange.data('daterangepicker').startDate.format('YYYY-MM-DD');
@@ -131,6 +112,8 @@ $(document).ready(function () {
 			return true;
 		}
 	);
+
+
 	// TABLE WITH EXPIRED MEMBERSHIPS
 	/*
 	expirytable = $('#expiry_table').DataTable({
@@ -141,7 +124,7 @@ $(document).ready(function () {
 		rowId: 'ID',
 		autoWidth: true,
 		select: {
-            style: 'multi'	
+            style: 'multi'
         },
         columns: [
 			{data: 'ParentID'},
@@ -157,18 +140,58 @@ $(document).ready(function () {
 			"regex": true,
 			"smart":false
 		}
-    });	
-	*/
-	
-	$(document).on('click', '.finPaid', function () {
-		rowdata = financetable.row( $(this).closest('tr') ).data();
-        processPayment(rowdata);
     });
-	
+	*/
+
+
+	$('#findatepicker').datetimepicker({
+		//locale: 'nl',
+		defaultDate: new Date(),
+		format: 'YYYY-MM-DD'
+	});
+
+	$('#fin_status').select2({
+		tags: false
+	});
+
+	$(document).on('click', '.editFin', function () {
+		rowdata= financestable.row( $(this).closest('tr') ).data();
+		console.log('row: ' + rowdata.ID)
+		$('#fin_date').val(rowdata.TransactionDate);
+		$('#fin_id').val(rowdata.ID);
+		$('#fin_status').val(rowdata.Received).trigger('change');;
+		$('#editFinanceModal').modal('show');
+        //processPayment(rowdata);
+  });
+
 	$(document).on('click', '.delete_openfin', function () {
-		rowdata = financetable.row( $(this).closest('tr') ).data();
+		rowdata = financestable.row( $(this).closest('tr') ).data();
         deletePayment(rowdata);
     });
+
+	$("#submitEditFinance").click(function () {
+      $("#editFinanceForm").submit();
+  });
+
+	$("#editFinanceForm").submit(function (e) {
+			$.ajax({
+					type: 'POST',
+					url: 'api/finances/update/' + $('#fin_id').val(),
+					data: JSON.stringify({
+							'TransactionDate': $('#fin_date').val(),
+							'Received': parseInt($('#fin_status').val())
+					}),
+					contentType: "application/json",
+					success: function () {
+							$('#editFinanceModal').modal('hide');
+							loadFinances();
+					},
+					error: function (data) {
+							console.error(data);
+					}
+			});
+			e.preventDefault();
+	});
 
 	loadFinances();
 
@@ -179,18 +202,17 @@ function loadFinances() {
     $.ajax({
         url: 'api/finances',
         success: function (finances) {
-			jQuery.each(finances, function(index, item) {
-				if (item.Received=="1") {
-					item["ReceivedFull"] = "Voltooid";
-				} else {
-					item["ReceivedFull"] = "Open";
+					jQuery.each(finances, function(index, item) {
+						if (item.Received=="1") {
+							item["ReceivedFull"] = "Voldaan";
+						} else {
+							item["ReceivedFull"] = "In afwachting";
+						}
+					});
+					financestable.clear();
+					financestable.rows.add(finances);
+					financestable.columns.adjust().draw();
 				}
-			});
-			console.log(finances)
-			financetable.clear();
-			financetable.rows.add(finances);
-			financetable.columns.adjust().draw();
-		}
     });
 }
 
@@ -266,19 +288,21 @@ function processPayment(row) {
 		error: function () {
 			console.error();
 		}
-	});	
-	
+	});
+
 }
 
 function deletePayment(row) {
-	$.ajax({
-		type: 'POST',
-		url: 'api/finances/delete/' + row.ID,
-		success: function () {
-			loadFinances();
-		},
-		error: function () {
-			console.error();
-		}
-	});
+	if (confirm("Ben je zeker dat je deze financiële transactie wil verwijderen?")) {
+		$.ajax({
+			type: 'POST',
+			url: 'api/finances/delete/' + row.ID,
+			success: function () {
+				loadFinances();
+			},
+			error: function () {
+				console.error();
+			}
+		});
+	}
 }

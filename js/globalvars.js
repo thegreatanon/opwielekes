@@ -1,8 +1,9 @@
 // tables
 var bikestable;
 var expirytable;
-var financetable;
+var financestable;
 var memberstable;
+var transactionstable;
 
 // handlebars
 var template_kidsrow;
@@ -28,7 +29,8 @@ var membershipBalance;
 
 var actionDateIsLocked = 0;
 
-
+// email variables
+var newEmailTemplate;
 
 /* organise tabs */
 function viewTab(section, amount) {
@@ -47,6 +49,6 @@ var quillToolbarOptions = [
 	['bold', 'italic', 'underline'],        // toggled buttons
 	[{ 'list': 'ordered'}, { 'list': 'bullet' }],
 	[ 'link', 'image' ],
-	[{ 'indent': '-1'}, { 'indent': '+1' }],   
+	[{ 'indent': '-1'}, { 'indent': '+1' }],
 	['clean']                   // remove formatting button
 ];

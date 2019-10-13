@@ -5,7 +5,7 @@ $(document).ready(function () {
 		defaultDate: new Date(),
 		format: 'YYYY-MM-DD'
 	});
-		
+
 	actionbikeall = $('#action_bike_all').select2({
 		placeholder: "Kies",
 		allowClear: true,
@@ -16,7 +16,7 @@ $(document).ready(function () {
 	}).on('select2:unselect', function() {
 		setSaveDisabled(true);
 	});
-	
+
 	actionbikeout = $('#action_bike_out').select2({
 		placeholder: "Kies",
 		allowClear: true,
@@ -27,7 +27,7 @@ $(document).ready(function () {
 	}).on('select2:unselect', function() {
 		setSaveDisabled(true);
 	});
-	
+
 	actiontype = $('#action_type').select2({
 		placeholder: "Kies",
 		allowClear: true,
@@ -38,7 +38,7 @@ $(document).ready(function () {
 	}).on('select2:unselect', function() {
 		resetActionInfo();
 	});
-	
+
 	actionmember = $('#action_member').select2({
 		placeholder: "Kies",
 		allowClear: true,
@@ -57,11 +57,11 @@ $(document).ready(function () {
 		resetActionInfo();
 		resetActionTypes();
 	});
-	
+
 	$('#action_cautioninput').on('change', 'input', function (e) {
         setSaveDisabled(false);
 	});
-	
+
 	$('#action_membershipinput').on('change', 'input', function (e) {
         setSaveDisabled(false);
 	});
@@ -70,7 +70,49 @@ $(document).ready(function () {
 		e.preventDefault();
 		saveTransaction();
 	})
-	
+
+	transactionstable = $('#transactions_table').DataTable({
+  	paging: true,
+		pageLength: 25,
+		//"order": [[ 6, "asc" ],[ 0, "desc" ]],
+		"lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+		//dom: 'lfrtip',
+		//rowId: 'transID',
+		autoWidth: true,
+  	columns: [
+					{data: 'Date'},
+		      {
+						data: {
+								ParentID: 'ParentID',
+								ParentName: 'ParentName',
+                ParentSurname: 'ParentSurname'
+            },
+	          render: function (data, type) {
+							//return data.ParentName + " " + data.ParentSurname;
+							return data.ParentID;
+	          }
+					},
+		      {
+						data: {
+								KidID: 'KidID',
+                KidName: 'KidName',
+                KidSurname: 'KidSurname'
+            },
+            render: function (data, type) {
+								//return data.KidName + " " + data.KidSurname;
+								return data.KidID;
+            }
+					},
+		      {data: 'ActionID'},
+          {data: 'BikeInID'},
+					{data: 'BikeOutID'}
+    ],
+		"search": {
+			"regex": true,
+			"smart":false
+		}
+  });
+
 	actionquill = new Quill('#actionemail', {
 		modules: {
 			toolbar: quillToolbarOptions
@@ -79,6 +121,7 @@ $(document).ready(function () {
 		background: 'white'
 	});
 
+	loadTransactionHistory();
 
 });
 
@@ -93,7 +136,7 @@ function setActionBikes(bikes) {
 		if (bikes[i].Status == "Beschikbaar") {
 			var bOption = new Option( bikes[i].Number + " - " + bikes[i].Name, bikes[i].ID, false, false);
 			actionbikeout.append(bOption);
-		} 
+		}
 	}
 	actionbikeout.trigger('change');
 	actionbikeall.trigger('change');
@@ -133,11 +176,11 @@ function setActionMemberInfo(selection, kidID) {
 	// BIKE
 	bikeID = selection.data('bikeid');
 	if (bikeID == 0) {
-		console.log('resetting currentbike in memberinfo');
+		//console.log('resetting currentbike in memberinfo');
 		document.getElementById('action_currentbiketext').innerHTML = '';
 	} else {
 		bike = db_bikes.find(x => x.ID === bikeID.toString());
-		console.log('setting current bike to ' + bike.Number);
+		//console.log('setting current bike to ' + bike.Number);
 		document.getElementById('action_currentbiketext').innerHTML = bike.Number + " - " + bike.Name;
 	}
 	// PARENT
@@ -147,7 +190,7 @@ function setActionMemberInfo(selection, kidID) {
 	document.getElementById('action_parentcaution').innerHTML = selection.data('parentcautionamount');
 	document.getElementById('action_parentactivekids').innerHTML = selection.data('parentactivekids');
 	$('#action_emailaddress').val(selection.data('email'));
-	// KIDS 
+	// KIDS
 	var kids = db_kids.filter(x => x.ParentID === parentID);
 	$('#action_kids_table_tbody').empty();
 	for (var i = 0, len = kids.length; i < len; i++) {
@@ -160,15 +203,15 @@ function setActionMemberInfo(selection, kidID) {
 		}
 		$('#action_kids_table_tbody').append(template_kidsactionrow({ID: kids[i].ID, fullname: kids[i].Name + ' ' + kids[i].Surname, kidnr: kids[i].KidNr, expirydate: kids[i].ExpiryDate, active: kids[i].Active, bikenr: bikenr }));
 	}
-	// FINANCES	
-	
+	// FINANCES
+
 	/*
 	if (selection.data('cautionpresent')=="1") {
 		document.getElementById('action_cautioninfotext').innerHTML = 'OK';
 	} else {
 		document.getElementById('action_cautioninfotext').innerHTML = 'Te ontvangen';
 	}
-	
+
 	*/
 }
 
@@ -181,13 +224,13 @@ function resetActionMemberInfo(selection, kidID) {
 	document.getElementById('action_parentcaution').innerHTML = '';
 	document.getElementById('action_parentactivekids').innerHTML = '';
 	$('#action_emailaddress').val('');
-	// KIDS 
+	// KIDS
 	$('#action_kids_table_tbody').empty();
 	// FINANCES
 	document.getElementById('action_cautioninfotext').innerHTML = '';
 	document.getElementById('action_membershipinfotext').innerHTML = '';
-}	
-	
+}
+
 function visibilityActionMemberInfo(visible) {
 	if (visible) {
 		$(".action_memberdiv").show();
@@ -204,7 +247,7 @@ function setActionInfo() {
 		$("#action_allbikes").show();
 		$("#action_bikein_space").hide();
 	} else if (actionoption.data('requirebikein')=="1"){
-		console.log('showing current bike');
+		//console.log('showing current bike');
 		$("#action_currentbike").show();
 		$("#action_allbikes").hide();
 		$("#action_bikein_space").hide();
@@ -235,9 +278,9 @@ function setActionInfo() {
 	}
 	if (actionoption.data('enablesave')=="1") {
 		setSaveDisabled(false);
-	} else {
+	} /*else {
 		setSaveDisabled(true);
-	}
+	}*/
 	// EMAIL
 	if (actionoption.data('emailsend')=="1") {
 		emailID = actionoption.data('emailid');
@@ -256,9 +299,9 @@ function setActionInfo() {
 	if (cautionBalance==0) {
 		cautionstring = "OK";
 	} else if (cautionBalance<0) {
-		cautionstring = (-1*cautionBalance) + " terug te storten";	
+		cautionstring = (-1*cautionBalance) + " terug te storten";
 	} else {
-		cautionstring = (cautionBalance) + " te betalen";	
+		cautionstring = (cautionBalance) + " te betalen";
 	}
 	document.getElementById('action_cautioninfotext').innerHTML = cautionstring;
 	// MEMBERSHIP
@@ -275,15 +318,18 @@ function checkMembership(actionoption, memberoption) {
 	var expirydate = memberoption.data('expirydate');
 	console.log('valid: ' + moment(expirydate).isValid());
 	var balance = 0;
-	if (!moment(expirydate).isValid() || moment(expirydate).isBefore(today)) {
-		if (memberoption.data('kidnr') == "0") {
-			currentKidNr = parseInt(memberoption.data('parentactivekids')) + 1;
-		} else {
-			currentKidNr = memberoption.data('kidnr');
+	// temporarily use updatekidfn as variable for membership needed
+	if (actionoption.data('updatekidfin')=="1") {
+		if (!moment(expirydate).isValid() || moment(expirydate).isBefore(today)) {
+			if (memberoption.data('kidnr') == "0") {
+				currentKidNr = parseInt(memberoption.data('parentactivekids')) + 1;
+			} else {
+				currentKidNr = memberoption.data('kidnr');
+			}
+			prices = db_prices[0];
+			balance = parseFloat(prices['Kid'+currentKidNr]);
 		}
-		prices = db_prices[0];
-		balance = parseFloat(prices['Kid'+currentKidNr]);
-	}		
+	}
 	console.log('membershipbalance: ' + balance);
 	return balance;
 }
@@ -298,11 +344,11 @@ function checkCaution(actionoption, memberoption) {
 	if (actionoption.data('returncaution')=="1"){
 		activeKids = activeKids-1;
 	}
-	console.log('activekids: ' + activeKids);
+	//console.log('activekids: ' + activeKids);
 	//activeKids = activeKids - nrDonations;
 	desiredCautionAmount = computeCaution(activeKids);
 	var balance = desiredCautionAmount - cautionAmount;
-	console.log('cautionbalance: ' + balance);
+	//console.log('cautionbalance: ' + balance);
 	return balance;
 }
 
@@ -395,7 +441,7 @@ function saveTransaction() {
 				'ID': bikeInID,
 				'Status': 'Beschikbaar'
 			});
-		} else { 
+		} else {
 			bikeInID = "0";
 		}
 		if (actionoption.data('requirebikeall')=="1"){
@@ -408,8 +454,8 @@ function saveTransaction() {
 				'ID': bikeOutID,
 				'Status': 'Ontleend'
 			});
-		} 
-		// KID STATUS	
+		}
+		// KID STATUS
 		kidStatus = [];
 		kidActive = actionoption.data('resultkidactive');
 		updateKid = actionoption.data('updatekid');
@@ -422,56 +468,18 @@ function saveTransaction() {
 		}
 		var expirydate = memberoption.data('expirydate');
 		if (updateKid == "1") {
-			if (actionoption.data('donationreceived')=="1") {
+			if (actionoption.data('donationreceived')=="1" || (membershipBalance!=0)) {
 				expirydate = extendExpiryDate(expirydate);
 			}
 			kidStatus = {
 				'ID': kidID,
 				'Active': kidActive,
 				'KidNr': kidNr,
-				'ExpiryDate': expirydate, 
+				'ExpiryDate': expirydate,
 				'BikeID': bikeOutID
 			};
 		}
-		
-		var cautionval = "0";
-		var membershipval = "0";
-		// FINANCE STATUS 
-		/*
-		kidFinances = [];
-		updateKidFin = actionoption.data('updatekidfin');
-		var cautionval = "0";
-		var cautionpresent = memberoption.data('cautionpresent');
-		var cautionamount = memberoption.data('cautionamount');
-		var membershipval = "0";
-		
-		if (updateKidFin == "1") {
-			// caution
-			if (actionoption.data('requirecaution')=="1") {
-				cautionval = $('#amount_caution').val();
-				if (cautionval > "0") {
-					cautionpresent = "1";
-				}
-				
-			}
-			// a donation was made, set CautionPresent to 1
-			
-			// membership expiry
-			if (actionoption.data('requiremembership')=="1") {
-				membershipval = $('#amount_membership').val();
-				if (membershipval > "0") {
-					expirydate = moment().add(1, 'year');
-				}
-			}
-			
-			kidFinances = {
-				'ID': kidID,
-				'CautionPresent': cautionpresent,
-				'CautionAmount': cautionval,
-				'ExpiryDate': expirydate
-			};
-		}
-		*/
+
 		// FINANCES
 		finTransactions = [];
 		updateFin = "0";
@@ -488,39 +496,33 @@ function saveTransaction() {
 				'Membership': membershipBalance,
 				'Caution': cautionBalance,
 				'Received': "0"
-			}); 
+			});
 		}
+
 		// Caution
-		/*
-		returnCaution = actionoption.data('returncaution');
-		var cautionamount = parseFloat(memberoption.data('cautionamount'));
-		if (returnCaution == "1" && cautionamount>0) {
-			var credit = -1*cautionamount;
-			updateFin = "1";
-			finTransactions.push({
-				'TransactionDate': "0000-00-00",
-				'ParentID': parentID,
-				'KidID': kidID,
-				'Amount': credit,
-				'Membership': "0",
-				'Caution': credit,
-				'Received': "0"
-			}); 
-		}			
-		*/
+		var updateCaution = "0";
+		var cautionData = [];
+		if (cautionBalance!=0) {
+			updateCaution = "1";
+			var cautionAmount = memberoption.data('parentcautionamount');
+			cautionData = {
+				'ID': parentID,
+				'CautionAmount': parseFloat(cautionAmount) + parseFloat(cautionBalance)
+			};
+		}
 		// LOAN
 		transactionData = {
 			'KidID': kidID,
 			'ParentID': parentID,
-			'Action': actionoption.text(),
+			'ActionID': actionoption.val(),
 			'BikeInID': bikeInID,
 			'BikeOutID': bikeOutID,
-			'Caution': cautionval,
-			'Membership': membershipval,
+			'Caution': "0",
+			'Membership': "0",
 			'Date': aDate
 		};
 		validInput = verifyActionInput(actionoption, kidID, bikeOutID, bikeInID, aDate);
-		
+
 		console.log('API data: ' + JSON.stringify({
 					'transactionData': transactionData,
 					'updateKid': updateKid,
@@ -528,7 +530,9 @@ function saveTransaction() {
 					'updateBike': updateBike,
 					'bikeStatus': bikeStatus,
 					'updateFin': updateFin,
-					'finTransactions': finTransactions
+					'finTransactions': finTransactions,
+					'updateCaution': updateCaution,
+					'cautionData': cautionData
 				}));
 		if (!validInput){
 			toastr.error('Vul alle velden in', 'Niet opgeslagen');
@@ -543,7 +547,9 @@ function saveTransaction() {
 					'updateBike': updateBike,
 					'bikeStatus': bikeStatus,
 					'updateFin': updateFin,
-					'finTransactions': finTransactions
+					'finTransactions': finTransactions,
+					'updateCaution': updateCaution,
+					'cautionData': cautionData
 				}),
 				contentType: "application/json",
 				success: function () {
@@ -552,6 +558,7 @@ function saveTransaction() {
 					loadMembers();
 					resetTransaction();
 					loadFinances();
+					loadTransactionHistory();
 				},
 				error: function (data) {
 					toastr.error('Er is een fout opgetreden', 'Niet opgeslagen');
@@ -560,6 +567,18 @@ function saveTransaction() {
 			});
 		}
 	}
+}
+
+
+function loadTransactionHistory() {
+	$.ajax({
+			url: 'api/transactions',
+			success: function (transactionhistory) {
+				transactionstable.clear();
+				transactionstable.rows.add(transactionhistory);
+				transactionstable.columns.adjust().draw();
+			}
+	});
 }
 
 function isParentActive(parentID, kidID, kidActive){
@@ -577,7 +596,7 @@ function isParentActive(parentID, kidID, kidActive){
 	}
 	return parentActive;
 }
-	
+
 
 function verifyActionInput(actionoption, kidID, bikeOutID, bikeInID, aDate) {
 	validInput = true;
@@ -591,7 +610,7 @@ function verifyActionInput(actionoption, kidID, bikeOutID, bikeInID, aDate) {
 		(actionoption.data('requirebikeall')=="1"  && bikeInID < 1 ) ||
 		(actionoption.data('requirebikein')=="0" && actionoption.data('requirebikeall')=="0" && bikeInID!=0)) {
 			validInput = false;
-	} 
+	}
 	if ((actionoption.data('requirebikeout')=="1" && bikeOutID < 1) ||
 		(actionoption.data('requirebikeout')=="0" && bikeOutID !=0)) {
 			validInput = false;

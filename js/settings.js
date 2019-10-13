@@ -1,7 +1,5 @@
 $(document).ready(function () {
 
-	loadSettings();
-
 	settingsemailtype = $('#settings_email_type').select2({
 		placeholder: "Kies",
 		allowClear: true,
@@ -12,18 +10,34 @@ $(document).ready(function () {
 	}).on('select2:unselect', function() {
 		resetSettingsEmailInfo();
 	});
-	
+
 	settingsemailname = $('#settings_email_name').select2({
-		placeholder: "Kies",
+		placeholder: "Kies of typ een naam voor een nieuwe template ",
 		allowClear: true,
-		tags: false,
-		dropdownAutoWidth: true
-	}).on('select2:select', function() {
+		tags: true,
+		dropdownAutoWidth: true,
+		createTag: function (params) {
+    	return {
+	      id: params.term,
+	      text: params.term,
+	      newOption: true
+	    }
+  	},
+		templateResult: function (data) {
+			//console.log(data)
+	    var $result = $("<span></span>");
+	    $result.text(data.text);
+	    if (data.newOption) {
+	      $result.append(" <em>(new)</em>");
+	    }
+	    return $result;
+  	}
+	}).on('select2:select', function(e) {
 		setSettingsEmail();
 	}).on('select2:unselect', function() {
-		resetSettingsEmail();
+		resetSettingsEmail(false);
 	});
-	
+
 	settingsemailquill = new Quill('#settings_email_message', {
 		modules: {
 			toolbar: quillToolbarOptions
@@ -31,6 +45,8 @@ $(document).ready(function () {
 		theme: 'snow',
 		background: 'white'
 	});
+
+	loadSettings();
 });
 
 
@@ -38,7 +54,7 @@ $(document).ready(function () {
 
 function loadSettings() {
 	loadPrices();
-	loadEmails();
+	loadEmails(0);
 }
 
 // PRICES
@@ -77,7 +93,7 @@ function savePrices() {
 				'Kid2': row.find('.price_kid2 input')[0].value,
 				'Kid3': row.find('.price_kid3 input')[0].value,
 				'Kid4': row.find('.price_kid4 input')[0].value
-			});	
+			});
 		});
 
 		// check if prices are if (!$.isNumeric(price)){ ??
@@ -120,13 +136,13 @@ function getPriceRowHTML(item) {
 
 // EMAILS
 
-function loadEmails() {
+function loadEmails(lastid) {
     $.ajax({
         url: 'api/settings/emails',
         success: function (emails) {
 			//setPriceTable(prices);
 			db_emails = emails;
-			setSettingsEmailNames(emails);
+			setSettingsEmailNames(emails, lastid);
 		}
     });
 }
@@ -141,7 +157,7 @@ function setSettingsEmailTypes(actions){
 	});
 }
 
-function setSettingsEmailNames(emails){
+function setSettingsEmailNames(emails,lastid){
 	settingsemailname.empty();
 	var newOption = new Option('', '', false, false);
 	settingsemailname.append(newOption);
@@ -149,6 +165,10 @@ function setSettingsEmailNames(emails){
 		var htmlOption = '<option value="' + item.ID + '" data-name="' + item.Name + '" data-subject="' + item.Subject + '" data-text="' + item.Text + '" data-cc="' + item.CC+ '">' + item.Name  + '</option>';
 		settingsemailname.append(htmlOption);
 	});
+	newEmailTemplate = false;
+	if (lastid != 0) {
+		settingsemailname.val(lastid).trigger('change');
+	}
 }
 
 function setSettingsEmailInfo(){
@@ -156,22 +176,96 @@ function setSettingsEmailInfo(){
 	emailSend = settingsemailtype.data('emailsend');
 	emailID = settingsemailtype.data('emailid');
 	var e = db_emails.find(x => x.ID === emailID.toString());
-	
+
 }
 
 function resetSettingsEmailInfo(){
-	
+
 }
 
 function setSettingsEmail(){
-	emailoption = settingsemailname.find('option:selected');
-	$('#settings_email_cc').val(emailoption.data('cc'));
-	$('#settings_email_subject').val(emailoption.data('subject'));
-	settingsemailquill.root.innerHTML = emailoption.data('text');
+	emailoption = settingsemailname.find(':selected');
+	if (emailoption.data('select2-tag')==null) {
+		$('#settings_email_cc').val(emailoption.data('cc'));
+		$('#settings_email_subject').val(emailoption.data('subject'));
+		settingsemailquill.root.innerHTML = emailoption.data('text');
+		newEmailTemplate = false;
+	} else {
+		resetSettingsEmailFields(true)
+	}
 }
 
-function resetSettingsEmail(){
+function resetSettingsEmail(isNewEmail){
+	resetSettingsEmailFields(isNewEmail)
+	settingsemailname.val('').change();
+}
+
+function resetSettingsEmailFields(isNewEmail){
 	$('#settings_email_cc').val("");
 	$('#settings_email_subject').val("");
 	settingsemailquill.setContents([]);
+	newEmailTemplate = isNewEmail;
+}
+
+function deleteEmail(){
+	emailoption = settingsemailname.find(':selected');
+	if (confirm("Ben je zeker dat je deze email template wil verwijderen?")) {
+		if (emailoption.data('select2-tag')==null) {
+			$.ajax({
+				type: 'POST',
+				url: 'api/settings/deleteemail/' + emailoption.val(),
+				success: function () {
+					loadEmails(0);
+					resetSettingsEmailFields(false);
+					toastr.success('Emailtemplate verwijderd.');
+				},
+				error: function () {
+					console.error();
+				}
+			});
+		} else {
+			resetSettingsEmail(false)
+		}
+	}
+}
+
+function cancelEmail(){
+	resetSettingsEmail(false);
+}
+
+function saveEmail(){
+	emailoption = settingsemailname.find(':selected');
+	if (emailoption.val() == "") {
+		//console.log('empty email template');
+		toastr.error('Geen template geselecteerd.')
+		return;
+	}
+	if (emailoption.data('select2-tag')==true) {
+		//console.log('saving new email template');
+		emailid = 0;
+		emailname = emailoption.text();
+	} else {
+		//console.log('updating existing email template');
+		emailid = emailoption.val();
+		emailname = emailoption.text();
+	}
+  $.ajax({
+		type: 'POST',
+		url: 'api/settings/email',
+		data: JSON.stringify({
+			'ID': emailid,
+			'Name': emailname,
+			'Subject': $('#settings_email_subject').val(),
+			'Text':  settingsemailquill.root.innerHTML,
+			'CC': $('#settings_email_cc').val()
+		}),
+		contentType: "application/json",
+		success: function (lastid) {
+			toastr.success('Emailtemplate opgeslagen.');
+			loadEmails(lastid);
+		},
+		error: function (data) {
+			console.error(data);
+		}
+	});
 }

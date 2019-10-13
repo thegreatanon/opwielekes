@@ -13,15 +13,12 @@ class TableService {
             throw new Exception("table does not exist");
         }
 
-        if (isset($_SESSION["login"]) && $_SESSION["login"] == "demo") {
-            return 'dem_' . $tableName;
-        } else if (isset($_SESSION["login"]) && $_SESSION["login"] == "ledeberg") {
-            return 'led_' . $tableName;
-        } else if (isset($_SESSION["login"]) && $_SESSION["login"] == "moscou") {
-            return 'mos_' . $tableName;
+        if (isset($_SESSION["login"]) && isset($_SESSION["dbcode"])) {
+            return $_SESSION["dbcode"] . '_' . $tableName;
         } else {
             return $tableName;
         }
+
     }
 
 }

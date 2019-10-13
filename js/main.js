@@ -1,7 +1,7 @@
 $(document).ready(function () {
-	
+
 	loadActions();
-		
+
 	compileHandlebarTemplates();
 });
 
@@ -33,7 +33,7 @@ function viewTab(section, amount) {
 	}
 }
 
-/* ROUTING */ 
+/* ROUTING */
 routie({
     '': function () {
         setPageActive('transactions');
@@ -47,8 +47,12 @@ routie({
 	'members': function () {
         setPageActive('members');
     },
+	'transactionhistory': function () {
+	        setPageActive('transactionhistory');
+	    },
 	'finances': function () {
         setPageActive('finances');
+				//financestable.columns.adjust().draw();
     },
 	'stats': function () {
         setPageActive('stats');
@@ -64,9 +68,9 @@ routie({
     }
 });
 
-/* Bij het navigeren naar een andere pagina, pas de navigatiebalk aan en zet de pagina op actief 
+/* Bij het navigeren naar een andere pagina, pas de navigatiebalk aan en zet de pagina op actief
 	Als een pagina actief is wordt enkel die getoond, dit staat in de header van main.php */
-	
+
 function setPageActive(page) {
     var main_nav = $('#main-nav');
     main_nav.find('li.active').removeClass('active');
@@ -96,4 +100,3 @@ function extendExpiryDate(expirydate) {
 	}
     return moment(expirydate).add(1, 'year').format('YYYY-MM-DD');
 }
-

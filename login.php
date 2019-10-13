@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+
+
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -20,10 +22,14 @@
       <form class="form-signin" method="POST" action="">
         <h2 class="form-signin-heading">Op wielekes login</h2>
         <input type="password" name="password" class="form-control" placeholder="Password" required autofocus />
-        <select name="environment" class="form-control" title="Environment">
-            <!--<option value="ledeberg" selected>Ledeberg</option>
-			<option value="moscou">Moscou</option>-->
-            <option value="demo">Demo</option>
+        <select name="environmentID" class="form-control" title="EnvironmentID">
+          <?php
+            $accounts = $_SESSION['accounts'];
+						foreach ($accounts as $account) {
+							echo '<option value="' . $account['AccountID'] .  '">' . $account['AccountName'] . '</option>';
+						}
+					?>
+
         </select>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Aanmelden</button>
         <?php

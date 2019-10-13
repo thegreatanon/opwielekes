@@ -5,9 +5,9 @@ require_once(__DIR__ . "/TableEnum.php");
 
 class MembersService
 {
-	
+
 	public static function updateParentData($data) {
-		
+
 		global $DBH;
         if (isset($data->ID) && isset($data->Name) && isset($data->Surname) && isset($data->Street) && isset($data->StreetNumber) && isset($data->Postal) && isset($data->Town) && isset($data->Email) && isset($data->Phone) && isset($data->InitDate)) {
 			try {
@@ -28,12 +28,12 @@ class MembersService
             }
         } else {
            return ["status" => -1, "error" => "Onvoldoende parameters in update ouder data..."];
-        
+
         }
-		
+
     }
-	
-	public static function updateParentCaution($data) {	
+
+	public static function updateParentCaution($data) {
 		global $DBH;
         if (isset($data->ID) && isset($data->CautionAmount)) {
 			try {
@@ -46,7 +46,7 @@ class MembersService
             }
         } else {
            return ["status" => -1, "error" => "Onvoldoende parameters in update ouder waarborg..."];
-        
+
         }
     }
 
@@ -65,7 +65,7 @@ class MembersService
 				$STH->bindParam(':Phone', $data->Phone);
 				$STH->bindParam(':InitDate', $data->InitDate);
 				$STH->bindParam(':CautionAmount', $data->CautionAmount);
-                $STH->execute();
+        $STH->execute();
 				$last_id = $DBH->lastInsertId();
 				return ["status" => 0, "lastid" => $last_id];
             } catch (Exception $e) {
@@ -73,10 +73,10 @@ class MembersService
             }
         } else {
            return ["status" => -1, "error" => "Onvoldoende parameters in nieuwe ouder..."];
-        
+
         }
 	}
-	
+
 	public static function deleteParent($id) {
         global $DBH;
         try {
@@ -88,23 +88,22 @@ class MembersService
             return ["status" => -1, "error" => $e];
         }
     }
-	
+
 	public static function newKid($data,$parentID) {
 		global $DBH;
         if (isset($parentID) && isset($data->Name) && isset($data->Surname) &&  isset($data->BirthDate) && isset($data->Caution) && isset($data->ExpiryDate) && isset($data->Active) && isset($data->BikeID) && isset($data->KidNr)) {
             try {
-                $STH = $DBH->prepare("INSERT INTO " . TableService::getTable(TableEnum::KIDS) . " (ParentID, Name, Surname, BirthDate, CautionPresent, CautionAmount, ExpiryDate, Active, BikeID) VALUES (:ParentID, :Name, :Surname, :BirthDate, :Caution, :ExpiryDate, :Active, :BikeID)");
+                $STH = $DBH->prepare("INSERT INTO " . TableService::getTable(TableEnum::KIDS) . " (ParentID, Name, Surname, BirthDate, Caution, ExpiryDate, Active, BikeID, KidNr) VALUES (:ParentID, :Name, :Surname, :BirthDate, :Caution, :ExpiryDate, :Active, :BikeID, :KidNr)");
 				$STH->bindParam(':ParentID', $parentID);
 				$STH->bindParam(':Name', $data->Name);
 				$STH->bindParam(':Surname', $data->Surname);
 				$STH->bindParam(':BirthDate', $data->BirthDate);
-				$STH->bindParam(':CautionPresent', $data->CautionPresent);
-				$STH->bindParam(':CautionAmount', $data->CautionAmount);
+				$STH->bindParam(':Caution', $data->Caution);
 				$STH->bindParam(':ExpiryDate', $data->ExpiryDate);
 				$STH->bindParam(':Active', $data->Active);
 				$STH->bindParam(':BikeID', $data->BikeID);
 				$STH->bindParam(':KidNr', $data->KidNr);
-                $STH->execute();
+        $STH->execute();
 				$last_id = $DBH->lastInsertId();
 				return ["status" => 0, "lastid" => $last_id];
             } catch (Exception $e) {
@@ -112,12 +111,12 @@ class MembersService
             }
         } else {
            return ["status" => -1, "error" => "Onvoldoende parameters in nieuw kind..."];
-        
+
         }
 	}
-	
+
 	public static function updateKidStatus($data) {
-		
+
 		global $DBH;
         if (isset($data->ID) && isset($data->Active) && isset($data->BikeID) && isset($data->KidNr) && isset($data->ExpiryDate)) {
 			try {
@@ -135,9 +134,9 @@ class MembersService
            return ["status" => -1, "error" => "Onvoldoende parameters in update kind status..."];
         }
 	}
-	
+
 	public static function updateKidExpiryDate($data) {
-		
+
 		global $DBH;
         if (isset($data->ID) && isset($data->ExpiryDate) ) {
 			try {
@@ -153,7 +152,7 @@ class MembersService
         }
 	}
 	public static function updateKidFinances($data) {
-		
+
 		global $DBH;
         if (isset($data->ID) && isset($data->CautionPresent) && isset($data->CautionAmount) && isset($data->ExpiryDate)) {
 			try {
@@ -170,9 +169,9 @@ class MembersService
            return ["status" => -1, "error" => "Onvoldoende parameters in update kind finances..."];
         }
 	}
-	
+
 	public static function updateKidData($data) {
-		
+
 		global $DBH;
         if (isset($data->ID) && isset($data->Name) && isset($data->Surname) &&  isset($data->BirthDate)) {
 			try {
@@ -189,14 +188,14 @@ class MembersService
            return ["status" => -1, "error" => "Onvoldoende parameters in update kind..."];
         }
 	}
-	
+
 	/* DOES NOT WORK CAUSE BIKEID CAN BE 0 */
 	/*
 	public static function getKids() {
         global $DBH;
-		$STH = $DBH->prepare("SELECT k.ID, k.Name, k.Surname, k.BirthDate, k.Caution, k.ExpiryDate, k.Active, k.BikeID, b.Number BikeNumber, b.Name BikeName 
-			FROM " . TableService::getTable(TableEnum::KIDS) . " k 
-			LEFT JOIN " . TableService::getTable(TableEnum::BIKES) . " b 
+		$STH = $DBH->prepare("SELECT k.ID, k.Name, k.Surname, k.BirthDate, k.Caution, k.ExpiryDate, k.Active, k.BikeID, b.Number BikeNumber, b.Name BikeName
+			FROM " . TableService::getTable(TableEnum::KIDS) . " k
+			LEFT JOIN " . TableService::getTable(TableEnum::BIKES) . " b
 			ON k.BikeID = b.ID");
 		$STH->execute();
 		return $STH->fetchAll();
@@ -206,22 +205,22 @@ class MembersService
 	// DOES NOT WORK, MISSING FIELDS FOR KIDS WITH USED PARENTID
 	public static function getJoinedMembers2() {
         global $DBH;
-		$STH = $DBH->prepare("SELECT k.ID KidID, k.Name KidName, k.Surname KidSurname, k.BirthDate KidBirthDate, k.CautionPresent KidCautionPresent, k.CautionAmount KidCautionAmount, k.ExpiryDate KidExpiryDate, k.Active KidActive, k.BikeID KidBikeID, k.KidNr KidNr, p.ID ParentID, p.Name ParentName, p.Surname ParentSurname, p.InitDate ParentInitDate, p.CautionAmount ParentCautionAmount, COUNT(k.ParentID) ParentNrKids, SUM(CASE WHEN k.Active THEN 1 ELSE 0 END) ParentActiveKids, (SELECT SUM(CASE WHEN t.Action = 'Donatie' THEN 1 ELSE 0 END) FROM " . TableService::getTable(TableEnum::TRANSACTIONS) . " t WHERE t.ParentID = p.ID GROUP BY t.ParentID) ParentDonations 
-			FROM " . TableService::getTable(TableEnum::KIDS) . " k 
-			LEFT JOIN " . TableService::getTable(TableEnum::PARENTS) . " p 
-			ON k.ParentID = p.ID 
+		$STH = $DBH->prepare("SELECT k.ID KidID, k.Name KidName, k.Surname KidSurname, k.BirthDate KidBirthDate, k.CautionPresent KidCautionPresent, k.CautionAmount KidCautionAmount, k.ExpiryDate KidExpiryDate, k.Active KidActive, k.BikeID KidBikeID, k.KidNr KidNr, p.ID ParentID, p.Name ParentName, p.Surname ParentSurname, p.InitDate ParentInitDate, p.CautionAmount ParentCautionAmount, COUNT(k.ParentID) ParentNrKids, SUM(CASE WHEN k.Active THEN 1 ELSE 0 END) ParentActiveKids, (SELECT SUM(CASE WHEN t.Action = 'Donatie' THEN 1 ELSE 0 END) FROM " . TableService::getTable(TableEnum::TRANSACTIONS) . " t WHERE t.ParentID = p.ID GROUP BY t.ParentID) ParentDonations
+			FROM " . TableService::getTable(TableEnum::KIDS) . " k
+			LEFT JOIN " . TableService::getTable(TableEnum::PARENTS) . " p
+			ON k.ParentID = p.ID
 			GROUP BY ParentID");
 		$STH->execute();
 		return $STH->fetchAll();
 
     }
 	*/
-	
+
 	public static function getJoinedMembers() {
         global $DBH;
-		$STH = $DBH->prepare("SELECT k.ID KidID, k.Name KidName, k.Surname KidSurname, k.BirthDate KidBirthDate, k.ExpiryDate KidExpiryDate, k.Active KidActive, k.BikeID KidBikeID, k.KidNr KidNr, p.ID ParentID, p.Name ParentName, p.Surname ParentSurname, p.InitDate ParentInitDate, p.CautionAmount ParentCautionAmount 
-			FROM " . TableService::getTable(TableEnum::KIDS) . " k 
-			LEFT JOIN " . TableService::getTable(TableEnum::PARENTS) . " p 
+		$STH = $DBH->prepare("SELECT k.ID KidID, k.Name KidName, k.Surname KidSurname, k.BirthDate KidBirthDate, k.ExpiryDate KidExpiryDate, k.Active KidActive, k.BikeID KidBikeID, k.KidNr KidNr, p.ID ParentID, p.Name ParentName, p.Surname ParentSurname, p.InitDate ParentInitDate, p.CautionAmount ParentCautionAmount
+			FROM " . TableService::getTable(TableEnum::KIDS) . " k
+			LEFT JOIN " . TableService::getTable(TableEnum::PARENTS) . " p
 			ON k.ParentID = p.ID");
 		$STH->execute();
 		return $STH->fetchAll();
@@ -230,17 +229,16 @@ class MembersService
 
 	public static function getParents() {
         global $DBH;
-		$STH = $DBH->prepare("SELECT p.ID, p.Name, p.Surname, p.Street, p.StreetNumber, p.Postal, p.Town, p.Email, p.Phone, p.InitDate, p.CautionAmount, COUNT(k.ParentID) NrKids, SUM(CASE WHEN k.Active THEN 1 ELSE 0 END) ActiveKids, (SELECT SUM(CASE WHEN t.Action = 'Donatie' THEN 1 ELSE 0 END) FROM " . TableService::getTable(TableEnum::TRANSACTIONS) . " t WHERE t.ParentID = p.ID GROUP BY t.ParentID) Donations 
-			FROM " . TableService::getTable(TableEnum::PARENTS) . " p 
-			LEFT JOIN " . TableService::getTable(TableEnum::KIDS) . " k 
-			ON p.ID = k.ParentID 
+		$STH = $DBH->prepare("SELECT p.ID, p.Name, p.Surname, p.Street, p.StreetNumber, p.Postal, p.Town, p.Email, p.Phone, p.InitDate, p.CautionAmount, COUNT(k.ParentID) NrKids, SUM(CASE WHEN k.Active THEN 1 ELSE 0 END) ActiveKids, (SELECT SUM(CASE WHEN t.ActionID = '4' THEN 1 ELSE 0 END) FROM " . TableService::getTable(TableEnum::TRANSACTIONS) . " t WHERE t.ParentID = p.ID GROUP BY t.ParentID) Donations
+			FROM " . TableService::getTable(TableEnum::PARENTS) . " p
+			LEFT JOIN " . TableService::getTable(TableEnum::KIDS) . " k
+			ON p.ID = k.ParentID
 			GROUP BY ID
 			ORDER BY Name");
 		$STH->execute();
 		return $STH->fetchAll();
 
-    }	
-	
-	
-}
+    }
 
+
+}

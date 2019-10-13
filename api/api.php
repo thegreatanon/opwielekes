@@ -62,7 +62,7 @@ $app->get('/', function() use($app) {
 	$app->response->setStatus(401);
 	$GLOBALS["error"] = "Hello world.";
 	$app->error();
-}); 
+});
 
 
 
@@ -73,7 +73,7 @@ $app->group('/bikes', function() use ($app) {
         $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::BIKES)  . " ORDER BY Number");
         echo json_encode($STH->fetchAll());
     });
-	
+
 	$app->post('/', function() use ($app) {
         global $DBH;
 		try {
@@ -82,12 +82,12 @@ $app->group('/bikes', function() use ($app) {
 				$newi = BikesService::newBike($GLOBALS["data"]);
 				if ($newi["status"] == -1) {
 					throw new Exception($newi["error"]);
-				}	
+				}
 			} else {
 				$updi = BikesService::updateBIke($GLOBALS["data"]);
 				if ($updi["status"] == -1) {
 					throw new Exception($updi["error"]);
-				}	
+				}
 			}
 			$DBH->commit();
 		} catch (Exception $e) {
@@ -95,9 +95,9 @@ $app->group('/bikes', function() use ($app) {
 			$GLOBALS["error"] = $e->getMessage();
 			$app->error();
 		}
-		echo json_encode(null);			
+		echo json_encode(null);
     });
-	
+
 });
 
 $app->group('/parents', function() use ($app) {
@@ -114,12 +114,12 @@ $app->group('/parents', function() use ($app) {
 				$newk = MembersService::newParent($GLOBALS["data"]);
 				if ($newk["status"] == -1) {
 					throw new Exception($newk["error"]);
-				}	
+				}
 			} else {
 				$updk = MembersService::updateParentData($GLOBALS["data"]);
 				if ($updk["status"] == -1) {
 					throw new Exception($updk["error"]);
-				}	
+				}
 			}
 			$DBH->commit();
 		} catch (Exception $e) {
@@ -127,9 +127,9 @@ $app->group('/parents', function() use ($app) {
 			$GLOBALS["error"] = $e->getMessage();
 			$app->error();
 		}
-		echo json_encode(null);			
+		echo json_encode(null);
     });
-			
+
 });
 
 $app->group('/kids', function() use ($app) {
@@ -157,11 +157,11 @@ $app->group('/members', function() use ($app) {
 		$parents = $STHP->fetchAll();
         echo json_encode(["status" => 0, "kids" => $kids, "parents" => $parents]);
     });
-	
+
 	$app->get('/all', function() use ($app) {
       echo json_encode(MembersService::getJoinedMembers());
     });
-	
+
 	$app->post('/', function() use ($app) {
         global $DBH;
 		try {
@@ -170,30 +170,30 @@ $app->group('/members', function() use ($app) {
 				$newp = MembersService::newParent($GLOBALS["data"]->parentdata);
 				if ($newp["status"] == -1) {
 					throw new Exception($newp["error"]);
-				}	
+				}
 				$parentid = $newp["lastid"];
 			} else {
 				$updp = MembersService::updateParentData($GLOBALS["data"]->parentdata);
 				if ($updp["status"] == -1) {
 					throw new Exception($updp["error"]);
-				}	
+				}
 				$parentid = $GLOBALS["data"]->parentID;
 			}
-			
+
 			foreach ($GLOBALS["data"]->kidsdata as $kid) {
 				if ($kid->ID == 0) {
 					$newk = MembersService::newKid($kid,$parentid);
 					if ($newk["status"] == -1) {
 						throw new Exception($newk["error"]);
-					}	
+					}
 				} else {
 					$updk = MembersService::updateKidData($kid,$parentid);
 					if ($updk["status"] == -1) {
 						throw new Exception($updk["error"]);
-					}	
+					}
 				}
 			}
-			
+
 
 			// delete any removed lines
 			/*
@@ -201,49 +201,49 @@ $app->group('/members', function() use ($app) {
 				$remol = OrdersService::deleteOrderLine($orderitemnr);
 				if ($remol["status"] == -1) {
 					throw new Exception($remol["error"]);
-				}	
+				}
 			}
 			*/
-			
+
 			$DBH->commit();
 		} catch (Exception $e) {
 			$DBH->rollBack();
 			$GLOBALS["error"] = $e->getMessage();
 			$app->error();
 		}
-		echo json_encode(null);			
+		echo json_encode(null);
     });
-	
+
 	$app->post('/payments', function() use ($app) {
         global $DBH;
 		try {
 			$DBH->beginTransaction();
-			
+
 			$pr = FinancesService::receiveTransaction($GLOBALS["data"]->finTransID);
 			if ($pr["status"] == -1) {
 				throw new Exception($pr["error"]);
 			}
-			
+
 			if ($GLOBALS["data"]->updateCaution != 0) {
 				$upc = MembersService::updateParentCaution($GLOBALS["data"]->cautionData);
 				if ($upc["status"] == -1) {
 					throw new Exception($upc["error"]);
 				}
-			}	
-			
+			}
+
 			if ($GLOBALS["data"]->updateMembership != 0) {
 				$upm = MembersService::updateKidExpiryDate($GLOBALS["data"]->membershipData);
 				if ($upm["status"] == -1) {
 					throw new Exception($upm["error"]);
 				}
-			}	
+			}
 			$DBH->commit();
 		} catch (Exception $e) {
 			$DBH->rollBack();
 			$GLOBALS["error"] = $e->getMessage();
 			$app->error();
 		}
-		echo json_encode(null);			
+		echo json_encode(null);
     });
 });
 
@@ -255,7 +255,7 @@ $app->group('/transactions', function() use ($app) {
         $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::TRANSACTIONS)  . " ORDER BY Date");
         echo json_encode($STH->fetchAll());
     });
-	
+
 	$app->post('/', function() use ($app) {
         global $DBH;
 		try {
@@ -263,23 +263,21 @@ $app->group('/transactions', function() use ($app) {
 			$newt = TransactionsService::newTransaction($GLOBALS["data"]->transactionData);
 			if ($newt["status"] == -1) {
 				throw new Exception($newt["error"]);
-			}	
+			}
 
 			if ($GLOBALS["data"]->updateKid != 0) {
 				$uks = MembersService::updateKidStatus($GLOBALS["data"]->kidStatus);
 				if ($uks["status"] == -1) {
 					throw new Exception($uks["error"]);
 				}
-			}	
+			}
 
-			/*
-			if ($GLOBALS["data"]->updateKidFin != 0) {
-				$ukf = MembersService::updateKidFinances($GLOBALS["data"]->kidFinances);
-				if ($ukf["status"] == -1) {
-					throw new Exception($ukf["error"]);
+      if ($GLOBALS["data"]->updateCaution != 0) {
+				$upc = MembersService::updateParentCaution($GLOBALS["data"]->cautionData);
+				if ($upc["status"] == -1) {
+					throw new Exception($upc["error"]);
 				}
-			}	
-			*/
+			}
 
 			if ($GLOBALS["data"]->updateFin != 0) {
 				foreach ($GLOBALS["data"]->finTransactions as $item) {
@@ -287,9 +285,9 @@ $app->group('/transactions', function() use ($app) {
 					if ($newf["status"] == -1) {
 						throw new Exception($newf["error"]);
 					}
-				}					
+				}
 			}
-			
+
 			if ($GLOBALS["data"]->updateBike != 0) {
 				foreach ($GLOBALS["data"]->bikeStatus as $item) {
 					if ($item->ID != 0) {
@@ -301,16 +299,16 @@ $app->group('/transactions', function() use ($app) {
 				}
 			}
 
-			
+
 			$DBH->commit();
 		} catch (Exception $e) {
 			$DBH->rollBack();
 			$GLOBALS["error"] = $e->getMessage();
 			$app->error();
 		}
-		echo json_encode(null);			
+		echo json_encode(null);
     });
-	
+
 });
 
 
@@ -319,7 +317,7 @@ $app->group('/finances', function() use ($app) {
 	$app->get('/', function() use ($app) {
       echo json_encode(FinancesService::getTransactions());
     });
-	
+
 	$app->post('/', function() use ($app) {
         global $DBH;
 		try {
@@ -328,7 +326,7 @@ $app->group('/finances', function() use ($app) {
 				$newf = FinancesService::newTransaction($item);
 				if ($newf["status"] == -1) {
 					throw new Exception($newf["error"]);
-				}	
+				}
 			}
 			$DBH->commit();
 		} catch (Exception $e) {
@@ -336,34 +334,38 @@ $app->group('/finances', function() use ($app) {
 			$GLOBALS["error"] = $e->getMessage();
 			$app->error();
 		}
-		echo json_encode(null);			
+		echo json_encode(null);
     });
-	
+
+  $app->post('/update/:id', function($id) use ($app) {
+          generateResponse(FinancesService::updateTransaction($id, $GLOBALS["data"]));
+  });
+
 	$app->post('/receive/:id', function($id) use ($app) {
         generateResponse(FinancesService::receiveTransaction($id));
     });
-	
+
 	$app->post('/delete/:id', function($id) use ($app) {
         generateResponse(FinancesService::deleteTransaction($id));
     });
-	
-	
+
+
 });
 
 $app->group('/settings', function() use ($app) {
-	
+
 	$app->get('/actions', function() use ($app) {
 		global $DBH;
         $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::ACTIONS));
         echo json_encode($STH->fetchAll());
     });
-	
+
 	$app->get('/prices', function() use ($app) {
 		global $DBH;
         $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::PRICES));
         echo json_encode($STH->fetchAll());
     });
-	
+
 	$app->post('/prices', function() use ($app) {
         global $DBH;
 		try {
@@ -372,7 +374,7 @@ $app->group('/settings', function() use ($app) {
 				$updp = SettingsService::updatePrices($item);
 				if ($updp["status"] == -1) {
 					throw new Exception($updp["error"]);
-				}	
+				}
 			}
 			$DBH->commit();
 		} catch (Exception $e) {
@@ -380,41 +382,47 @@ $app->group('/settings', function() use ($app) {
 			$GLOBALS["error"] = $e->getMessage();
 			$app->error();
 		}
-		echo json_encode(null);		
+		echo json_encode(null);
     });
-	
+
     $app->get('/emails', function() use ($app) {
 		global $DBH;
         $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::EMAILS));
         echo json_encode($STH->fetchAll());
     });
-	
-	$app->post('/email', function() use ($app) {
+
+	   $app->post('/email', function() use ($app) {
         global $DBH;
-		try {
-			$DBH->beginTransaction();
-			if ($GLOBALS["data"]->emailid == 0) {
-				$newe = SettingsService::newEmail($GLOBALS["data"]);
-				if ($newe["status"] == -1) {
-					throw new Exception($newe["error"]);
-				} 
-			} else {
-				$upde = SettingsService::updateEmail($GLOBALS["data"]);
-				if ($upde["status"] == -1) {
-					throw new Exception($upde["error"]);
-				}	
-			}
-			$DBH->commit();
-		} catch (Exception $e) {
-			$DBH->rollBack();
-			$GLOBALS["error"] = $e->getMessage();
-			$app->error();
-		}
-		echo json_encode(null);			
-    });
-	
-});		
-	
+    		try {
+      			$DBH->beginTransaction();
+      			if ($GLOBALS["data"]->ID == 0) {
+      				$newe = SettingsService::newEmail($GLOBALS["data"]);
+      				if ($newe["status"] == -1) {
+      					throw new Exception($newe["error"]);
+      				}
+              $emailid = $newe["lastid"];
+      			} else {
+      				$upde = SettingsService::updateEmail($GLOBALS["data"]);
+      				if ($upde["status"] == -1) {
+      					throw new Exception($upde["error"]);
+      				}
+              $emailid = $GLOBALS["data"]->ID;
+      			}
+    			  $DBH->commit();
+      		} catch (Exception $e) {
+      			$DBH->rollBack();
+      			$GLOBALS["error"] = $e->getMessage();
+      			$app->error();
+      		}
+    		    echo json_encode($emailid);
+      });
+
+      $app->post('/deleteemail/:id', function($id) use ($app) {
+            generateResponse(SettingsService::deleteEmail($id));
+      });
+
+});
+
 /*
 
 $app->group('/prefs', function() use ($app) {
@@ -424,17 +432,17 @@ $app->group('/prefs', function() use ($app) {
         $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::PREFERENCES)  . " WHERE prefID = 1");
         echo json_encode($STH->fetchAll());
     });
-	
+
 	$app->get('/vars', function() use ($app) {
 		global $DBH;
         $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::VARIABLES));
         echo json_encode($STH->fetchAll());
     });
-	
+
 	$app->post('/', function() use ($app) {
         generateResponse(PreferencesService::updateColumns($GLOBALS["data"]));
     });
-});	
+});
 */
 
 function generateResponse($response) {

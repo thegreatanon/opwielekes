@@ -9,17 +9,17 @@ class FinancesService
 	public static function getTransactions() {
         global $DBH;
 		$STH = $DBH->prepare("SELECT f.ID, f.TransactionDate, f.ParentID, f.KidID, f.Amount, f.Membership, f.Caution, f.Received, p.Name ParentName, p.Surname ParentSurname, k.Name KidName, k.Surname KidSurname
-			FROM " . TableService::getTable(TableEnum::FINANCES) . " f 
-			LEFT JOIN " . TableService::getTable(TableEnum::PARENTS) . " p 
-			ON f.ParentID = p.ID 
-			LEFT JOIN " . TableService::getTable(TableEnum::KIDS) . " k 
+			FROM " . TableService::getTable(TableEnum::FINANCES) . " f
+			LEFT JOIN " . TableService::getTable(TableEnum::PARENTS) . " p
+			ON f.ParentID = p.ID
+			LEFT JOIN " . TableService::getTable(TableEnum::KIDS) . " k
 			ON f.KidID = k.ID
-			ORDER BY f.Received");
+			ORDER BY f.TransactionDate");
 		$STH->execute();
 		return $STH->fetchAll();
 
     }
-	
+
 	public static function newTransaction($data) {
 		global $DBH;
         if (isset($data->TransactionDate) && isset($data->ParentID) && isset($data->KidID) && isset($data->Amount) && isset($data->Membership) && isset($data->Caution) && isset($data->Received)) {
@@ -38,25 +38,43 @@ class FinancesService
             }
         } else {
            return ["status" => -1, "error" => "Onvoldoende parameters in nieuwe financiele transactie..."];
-        
+
         }
 	}
-	
+
+	public static function updateTransaction($id, $data) {
+			global $DBH;
+			if (isset($data->TransactionDate) && isset($data->Received) && isset($id)) {
+					try {
+							$STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::FINANCES) . " SET TransactionDate = :TransactionDate, Received = :Received WHERE ID=:ID");
+							$STH->bindParam(':TransactionDate', $data->TransactionDate);
+							$STH->bindParam(':Received', $data->Received);
+							$STH->bindParam(':ID', $id);
+							$STH->execute();
+							return ["status" => 0];
+					} catch (Exception $e) {
+							return ["status" => -1, "error" => "Er is iets fout gelopen in update financiele transactie..."];
+					}
+			} else {
+					return ["status" => -1, "error" => "Onvoldoende parameters in update financiele transactie..."];
+			}
+	}
+
 	public static function receiveTransaction($id) {
-		global $DBH;
-        if (isset($id)) {
-			try {
-                $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::FINANCES) . " SET received = 1 WHERE ID = :ID");
-				$STH->bindParam(':ID', $id);
-                $STH->execute();
-            } catch (Exception $e) {
-               return ["status" => -1, "error" => "Er is iets fout gelopen in transaction received..."];
-            }
-        } else {
-           return ["status" => -1, "error" => "Onvoldoende parameters in transaction received..."];
-        }
-    }
-	
+			global $DBH;
+	    if (isset($id)) {
+					try {
+		        $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::FINANCES) . " SET received = 1 WHERE ID = :ID");
+						$STH->bindParam(':ID', $id);
+		        $STH->execute();
+		      } catch (Exception $e) {
+		         return ["status" => -1, "error" => "Er is iets fout gelopen in transaction received..."];
+		      }
+	    } else {
+	       	return ["status" => -1, "error" => "Onvoldoende parameters in transaction received..."];
+	    }
+  }
+
 	public static function deleteTransaction2($id) {
         global $DBH;
 		if (isset($id)) {
@@ -72,7 +90,7 @@ class FinancesService
            return ["status" => -1, "error" => "Onvoldoende parameters in delete transaction..."];
         }
     }
-	
+
 	public static function deleteTransaction($id) {
         global $DBH;
         try {
@@ -85,4 +103,3 @@ class FinancesService
         }
     }
 }
-

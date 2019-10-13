@@ -1,5 +1,5 @@
 $(document).ready(function () {
-	
+
 	// INIT BIKES TABLE
 	memberstable = $('#members_table').DataTable({
         paging: true,
@@ -35,14 +35,14 @@ $(document).ready(function () {
 			"smart":false
 		}
     });
-	
+
 	/* FILTER MEMBERS TABLE */
 	$('.filtermembers').on('change', function() {
         memberstable.draw();
     });
-	
+
 	$("div.filtermembers").html('<input type="checkbox" id="membersfilteractive" checked > Actief <input type="checkbox" id="membersfilterinactive" checked> Inactief');
-	
+
 	/* Custom filtering function for datatablesr items-table with lowstockcheckbox */
 	$.fn.dataTable.ext.search.push(
 		function( settings, data ) {
@@ -54,11 +54,11 @@ $(document).ready(function () {
 						return true;
 					} else
 						return false;
-					} 
+					}
 				else if (state == 0) {
 					if ($('#membersfilterinactive').is(':checked')){
 						return true;
-					} else {			
+					} else {
 						return false;
 					}
 				} else {
@@ -68,19 +68,19 @@ $(document).ready(function () {
 			return true;
 		}
 	);
-	
+
 	$('#parentdatepicker').datetimepicker({
 		//locale: 'nl',
 		defaultDate: new Date(),
 		format: 'YYYY-MM-DD'
 	});
-		
-		
+
+
 	$(document).on('click', '.editMember', function () {
 		rowdata = memberstable.row( $(this).closest('tr') ).data();
         setMemberForm(rowdata);
-    });	
-	
+    });
+
 	loadMembers();
 
 });
@@ -146,6 +146,22 @@ function setMemberForm(rowdata) {
 	viewTab('Members','one');
 }
 
+function setMemberFormByID(parentID){
+	$('#parent_id').val(parentID);
+	var p = db_parents.find(x => x.ID === parentID.toString());
+	$('#parent_name').val(p.Name);
+	$('#parent_surname').val(p.Surname);
+	$('#parent_street').val(p.Street);
+	$('#parent_streetnr').val(p.StreetNumber);
+	$('#parent_postal').val(p.Postal);
+	$('#parent_town').val(p.Town);
+	$('#parent_email').val(p.Email);
+	$('#parent_phone').val(p.Phone);
+	$('#parent_date').val(p.InitDate);
+	setKidForm(parentID);
+	viewTab('Members','one');
+}
+
 function setKidForm(parentID) {
 	// find kids
 	var kids = db_kids.filter(x => x.ParentID === parentID);
@@ -187,18 +203,19 @@ function saveMember() {
 	}
 	var kidsdata = [];
 	$("#kids_table_tbody").find('tr').each(function () {
-        var $this = $(this);
-		kidsdata.push({
-			'ID': $this.data('id').toString(),
-			'Name': $this.find(".kids_name_input")[0].value,
-			'Surname': $this.find(".kids_surname_input")[0].value,
-			'BirthDate': $this.find(".kids_birthdate_input")[0].value,
-			'Caution': "0",
-			'ExpiryDate': "0000-00-00",
-			'Active': "0",
-			'BikeID': "0"
-		});			
-    });	
+      var $this = $(this);
+			kidsdata.push({
+				'ID': $this.data('id').toString(),
+				'Name': $this.find(".kids_name_input")[0].value,
+				'Surname': $this.find(".kids_surname_input")[0].value,
+				'BirthDate': $this.find(".kids_birthdate_input")[0].value,
+				'Caution': "0",
+				'ExpiryDate': "0000-00-00",
+				'Active': "0",
+				'BikeID': "0",
+				'KidNr': "0"
+			});
+  });
 	var parentdata = {
 			'ID': parentid,
 			'Name': $('#parent_name').val(),

@@ -1,5 +1,5 @@
 $(document).ready(function () {
-	
+
 	// INIT BIKES TABLE
 	bikestable = $('#bikes_table').DataTable({
         paging: true,
@@ -11,7 +11,7 @@ $(document).ready(function () {
 		dom: '<l<"filterbikes">fr>tip',
 		"order": [[ 0, 'asc' ], [ 1, 'asc' ]],
 		autoWidth: true,
-        columns: [
+    columns: [
 			{data: 'Number', name: 'Number'},
 			{data: 'Name', name: 'Name'},
 			{data: 'Status', name: 'Status'},
@@ -33,14 +33,14 @@ $(document).ready(function () {
 			"smart":false
 		}
     });
-	
+
 	/* FILTER BIKES TABLE */
 	$('.filterbikes').on('change', function() {
         bikestable.draw();
     });
-	
+
 	$("div.filterbikes").html('<input type="checkbox" id="bikesfilteravailable" checked> Beschikbaar <input type="checkbox" id="bikesfilterloans" checked> Ontleend');
-	
+
 	/* Custom filtering function for datatablesr items-table with lowstockcheckbox */
 	$.fn.dataTable.ext.search.push(
 		function( settings, data ) {
@@ -52,11 +52,11 @@ $(document).ready(function () {
 						return true;
 					} else
 						return false;
-					} 
+					}
 				else if (state == "Beschikbaar") {
 					if ($('#bikesfilteravailable').is(':checked')){
 						return true;
-					} else {			
+					} else {
 						return false;
 					}
 				} else {
@@ -66,19 +66,19 @@ $(document).ready(function () {
 			return true;
 		}
 	);
-	
+
 	$('#bikedatepicker').datetimepicker({
 		//locale: 'nl',
 		defaultDate: new Date(),
 		format: 'YYYY-MM-DD'
 	});
-		
-		
+
+
 	$(document).on('click', '.editBike', function () {
 		rowdata = bikestable.row( $(this).closest('tr') ).data();
         setBikeForm(rowdata);
-    });	
-	
+    });
+
 	loadBikes();
 
 });
@@ -126,7 +126,11 @@ function emptyBikeForm() {
 
 function setNewBikeNr() {
 	// compute max bike and add 1
-	highestnr = db_bikes.reduce((max, bike) => bike.Number > max ? bike.Number : max, db_bikes[0].Number);
+	if (db_bikes.length>0) {
+		highestnr = db_bikes.reduce((max, bike) => bike.Number > max ? bike.Number : max, db_bikes[0].Number);
+	} else {
+		highestnr = 0;
+	}
 	console.log('highest bike nr is ' + highestnr);
 	$('#bike_nr').val(parseInt(highestnr)+parseInt(1));
 }
@@ -155,7 +159,7 @@ function saveBike() {
 			'Source': 'Donatie lid',
 			'InitDate': $('#bike_date').val()
 	});
-	
+
     $.ajax({
 		type: 'POST',
 		url: 'api/bikes',

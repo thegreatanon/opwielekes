@@ -1,6 +1,15 @@
 <?php
     session_start();
 
+
+    require_once(__DIR__ . "/api/pdoconnect.php");
+  	require_once(__DIR__ . "/api/Services/SettingsService.php");
+
+  	// load database info
+  	$accounts = SettingsService::getAccounts();
+  	$_SESSION['accounts'] = $accounts;
+    $_SESSION['dbcode'] = '';
+
     /**
      * De login zou ook via de REST api kunnen gedaan worden, maar ik doe
      * het even hier ter illustratie dat alles ook puur in php kan uiteraard.
@@ -8,25 +17,31 @@
      * worden.
      **/
     if (isset($_POST["password"])) {
-        if (!isset($_POST["environment"])) {
+        if (!isset($_POST["environmentID"])) {
             $_SESSION["error"] = "Geen omgeving geselecteerd.";
-        } else if ($_POST["environment"] != "ledeberg" && $_POST["environment"] != "moscou" && $_POST["environment"] != "demo") {
-            $_SESSION["error"] = "Omgeving " . $_POST["enviromnent"] . " bestaat niet";
+            $_SESSION["dbcode"] = '';
         } else {
-            if ($_POST["environment"] == "ledeberg" && $_POST["password"] == "NBV") {
-                $_SESSION["login"] = "ledeberg";
-			} else if ($_POST["environment"] == "moscou" && $_POST["password"] == "NBV") {
-                $_SESSION["login"] = "moscou";
-            } else if ($_POST["environment"] == "demo" && $_POST["password"] == "NBV") {
-                $_SESSION["login"] = "demo";
+            $envID = $_POST["environmentID"];
+            foreach ($accounts as $account) {
+               if ($account['AccountID'] == $envID) {
+                  $acname = $account['AccountName'];
+                  $acpswd = $account['AccountPassword'];
+                  $accode = $account['AccountCode'];
+                }
+            }
+            if ( $_POST["password"] == $acpswd ) {
+              $_SESSION["login"] = $acname;
+              $_SESSION["dbcode"] = $accode;
             } else {
-                $_SESSION["error"] = "Ongeldig wachtwoord.";
+              $_SESSION["error"] = "Ongeldig wachtwoord.";
+              $_SESSION["dbcode"] = '';
             }
         }
     }
 
     if (isset($_POST["logout"])) {
         unset($_SESSION["login"]);
+        unset($_SESSION["dbcode"]);
     }
 
     if (!isset($_SESSION["login"])) {
