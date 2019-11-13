@@ -1,14 +1,14 @@
 $(document).ready(function () {
 
-	settingsemailtype = $('#settings_email_type').select2({
+	settingsemailaction = $('#settings_email_action').select2({
 		placeholder: "Kies",
 		allowClear: true,
 		tags: false,
 		dropdownAutoWidth: true
 	}).on('select2:select', function() {
-		setSettingsEmailInfo();
+		setSettingsEmailLinks();
 	}).on('select2:unselect', function() {
-		resetSettingsEmailInfo();
+		resetSettingsEmailLinks();
 	});
 
 	settingsemailname = $('#settings_email_name').select2({
@@ -38,12 +38,28 @@ $(document).ready(function () {
 		resetSettingsEmail(false);
 	});
 
+	settingsemaillinktemplate = $('#settings_emaillink_template').select2({
+		placeholder: '',
+		allowClear: true,
+		dropdownAutoWidth: true
+	});
+
 	settingsemailquill = new Quill('#settings_email_message', {
-		modules: {
-			toolbar: quillToolbarOptions
-		},
-		theme: 'snow',
-		background: 'white'
+			modules: {
+				toolbar: quillToolbarOptions
+			},
+			theme: 'snow',
+			background: 'white'
+	});
+
+ $('#settings_action_form').on('change', '#settings_emaillink_actionsend', function() {
+		if ($(this).is(':checked')) {
+            $('#settings_emaillink_template').prop('disabled', false);
+    } else {
+        	settingsemaillinktemplate.val('').change();
+					$('#settings_emaillink_template').prop('disabled', true);
+
+    }
 	});
 
 	loadSettings();
@@ -147,40 +163,21 @@ function loadEmails(lastid) {
     });
 }
 
-function setSettingsEmailTypes(actions){
-	settingsemailtype.empty();
-	var newOption = new Option('', '', false, false);
-	settingsemailtype.append(newOption);
-	$(actions).each( function (index, item) {
-		var htmlOption = '<option value="' + item.ID + '" data-updatebike="' + item.UpdateBike + '" data-updatekid="' + item.UpdateKid + '" data-updatekidfin="' + item.UpdateKidFin + '" data-updatefin="' + item.UpdateFin + '" data-requirebikein="' + item.RequireBikeIn + '" data-requirebikeout ="' + item.RequireBikeOut + '" data-requirebikeall="' + item.RequireBikeAll + '" data-requiremembership="' + item.RequireMembership + '" data-requirecaution="' + item.RequireCaution + '" data-resultchangeactive="' + item.ResultChangeActive + '" data-resultkidactive="' + item.ResultKidActive + '" data-enablesave="' + item.EnableSave + '" data-donationreceived="' + item.DonationReceived + '" data-demandcaution="' + item.DemandCaution + '" data-returncaution="' + item.ReturnCaution + '" data-emailsend="' + item.EmailSend + '" data-emailid="' + item.EmailID + '">' + item.Name  + '</option>';
-		settingsemailtype.append(htmlOption);
-	});
-}
-
 function setSettingsEmailNames(emails,lastid){
 	settingsemailname.empty();
+	settingsemaillinktemplate.empty();
 	var newOption = new Option('', '', false, false);
 	settingsemailname.append(newOption);
+	settingsemaillinktemplate.append(newOption);
 	$(emails).each( function (index, item) {
 		var htmlOption = '<option value="' + item.ID + '" data-name="' + item.Name + '" data-subject="' + item.Subject + '" data-text="' + item.Text + '" data-cc="' + item.CC+ '">' + item.Name  + '</option>';
 		settingsemailname.append(htmlOption);
+		settingsemaillinktemplate.append(htmlOption);
 	});
 	newEmailTemplate = false;
 	if (lastid != 0) {
 		settingsemailname.val(lastid).trigger('change');
 	}
-}
-
-function setSettingsEmailInfo(){
-	settingsemailtype = actiontype.find('option:selected');
-	emailSend = settingsemailtype.data('emailsend');
-	emailID = settingsemailtype.data('emailid');
-	var e = db_emails.find(x => x.ID === emailID.toString());
-
-}
-
-function resetSettingsEmailInfo(){
-
 }
 
 function setSettingsEmail(){
@@ -236,12 +233,10 @@ function cancelEmail(){
 function saveEmail(){
 	emailoption = settingsemailname.find(':selected');
 	if (emailoption.val() == "") {
-		//console.log('empty email template');
 		toastr.error('Geen template geselecteerd.')
 		return;
 	}
 	if (emailoption.data('select2-tag')==true) {
-		//console.log('saving new email template');
 		emailid = 0;
 		emailname = emailoption.text();
 	} else {
@@ -263,6 +258,78 @@ function saveEmail(){
 		success: function (lastid) {
 			toastr.success('Emailtemplate opgeslagen.');
 			loadEmails(lastid);
+		},
+		error: function (data) {
+			console.error(data);
+		}
+	});
+}
+
+// LINK EMAILS TO ACTIONS
+
+function setSettingsEmailActions(actions){
+	settingsemailaction.empty();
+	var newOption = new Option('', '', false, false);
+	settingsemailaction.append(newOption);
+	$(actions).each( function (index, item) {
+		var htmlOption = '<option value="' + item.ID + '" data-updatebike="' + item.UpdateBike + '" data-updatekid="' + item.UpdateKid + '" data-updatekidfin="' + item.UpdateKidFin + '" data-updatefin="' + item.UpdateFin + '" data-requirebikein="' + item.RequireBikeIn + '" data-requirebikeout ="' + item.RequireBikeOut + '" data-requirebikeall="' + item.RequireBikeAll + '" data-requiremembership="' + item.RequireMembership + '" data-requirecaution="' + item.RequireCaution + '" data-resultchangeactive="' + item.ResultChangeActive + '" data-resultkidactive="' + item.ResultKidActive + '" data-enablesave="' + item.EnableSave + '" data-donationreceived="' + item.DonationReceived + '" data-demandcaution="' + item.DemandCaution + '" data-returncaution="' + item.ReturnCaution + '" data-emailsend="' + item.EmailSend + '" data-emailid="' + item.EmailID + '">' + item.Name  + '</option>';
+		settingsemailaction.append(htmlOption);
+	});
+}
+
+function setSettingsEmailLinks(){
+	actiontype = settingsemailaction.find(':selected');
+	emailSend = actiontype.data('emailsend');
+	emailID = actiontype.data('emailid');
+	if (emailSend == 1) {
+		$('#settings_emaillink_actionsend').prop('checked', true);
+				$('#settings_emaillink_template').prop('disabled', false);
+		if (emailID != 0) {
+			settingsemaillinktemplate.val(emailID).trigger('change');
+		} else {
+			settingsemaillinktemplate.val('').change();
+		}
+	} else {
+		$('#settings_emaillink_template').prop('disabled', true);
+		$('#settings_emaillink_actionsend').prop('checked', false);
+		settingsemaillinktemplate.val('').change();
+
+	}
+}
+
+function resetSettingsEmailLinks(){
+	$('#settings_emaillink_actionsend').prop('checked', false);
+	settingsemaillinktemplate.val('').change();
+	$('#settings_emaillink_template').prop('disabled', true);
+}
+
+function cancelEmailLink(){
+		settingsemailaction.val('').change();
+		resetSettingsEmailLinks();
+}
+
+function saveEmailLink() {
+	action = settingsemailaction.find(':selected').val();
+	send = $('#settings_emaillink_actionsend').is(':checked');
+	sendint = send ? 1 : 0;
+	template =	settingsemaillinktemplate.val();
+	if (sendint == 0) {
+		template=0;
+	}
+	console.log('action ' + action + ' send ' + sendint + ' templ ' + template)
+	$.ajax({
+		type: 'POST',
+		url: 'api/settings/emailsettings',
+		data: JSON.stringify({
+			'Action': action,
+			'Send': sendint,
+			'Template': template
+		}),
+		contentType: "application/json",
+		success: function () {
+			toastr.success('Email koppeling opgeslagen.');
+			loadActions();
+			resetSettingsEmailLinks();
 		},
 		error: function (data) {
 			console.error(data);

@@ -78,12 +78,29 @@ class SettingsService
 								 $STH->execute();
 								 return ["status" => 0];
 						 } catch (Exception $e) {
-								 return ["status" => -1, "error" => "Er is iets fout gelopen in update email..."];
+								 return ["status" => -1, "error" => "Er is iets fout gelopen in update email template..."];
 						 }
 				 } else {
-						 return ["status" => -1, "error" => "Onvoldoende parameters in update email..."];
+						 return ["status" => -1, "error" => "Onvoldoende parameters in update email template..."];
 				 }
 		 }
 
+		 public static function updateEmailSettings($data) {
+				 global $DBH;
+				 if (isset($data->Action) && isset($data->Send) && isset($data->Template)) {
+						 try {
+								 $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::ACTIONS) . " SET EmailSend = :EmailSend, EmailID = :EmailID WHERE ID=:ID");
+								 $STH->bindParam(':EmailSend', $data->Send);
+								 $STH->bindParam(':EmailID', $data->Template);
+								 $STH->bindParam(':ID', $data->Action);
+								 $STH->execute();
+								 return ["status" => 0];
+						 } catch (Exception $e) {
+								 return ["status" => -1, "error" => "Er is iets fout gelopen in update email settings..."];
+						 }
+				 } else {
+						 return ["status" => -1, "error" => "Onvoldoende parameters in update email settings..."];
+				 }
+		 }
 
 }

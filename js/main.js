@@ -9,9 +9,9 @@ function loadActions() {
     $.ajax({
         url: 'api/settings/actions',
         success: function (actions) {
-			db_actions = actions;
-			setSettingsEmailTypes(actions);
-		}
+					db_actions = actions;
+					setSettingsEmailActions(actions);
+				}
     });
 }
 
@@ -52,7 +52,7 @@ routie({
 	    },
 	'finances': function () {
         setPageActive('finances');
-				//financestable.columns.adjust().draw();
+				financestable.columns.adjust().draw();
     },
 	'stats': function () {
         setPageActive('stats');

@@ -156,6 +156,7 @@ function setActionMembers(members) {
 }
 
 function setActionTypes(selection, kidID)  {
+	console.log('setting action types');
 	actiontype.empty();
 	actiontype.append(new Option('', '', false, false));
 	bikeID = parseInt(selection.data('bikeid'));

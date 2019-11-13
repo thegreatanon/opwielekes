@@ -15,8 +15,7 @@
 	<link href="libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
 	<link href="libs/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
 	<link href="libs/select2/4.0.3/dist/css/select2.css" rel="stylesheet"/>
-  <link href="libs/datatables/datatables.min.css" rel="stylesheet"/>
-	<!--<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.18/af-2.3.3/b-1.5.6/r-2.2.2/rg-1.1.0/rr-1.2.4/sl-1.3.0/datatables.min.css"/>-->
+	<link href="libs/datatables/datatables.min.css" rel="stylesheet"/>
 	<link href="libs/daterangepicker/2.1.25/daterangepicker.css" rel="stylesheet"/>
 	<link href="libs/quill/1.3.6/quill.snow.css" rel="stylesheet">
 
@@ -57,8 +56,9 @@
                     <li class="active"><a href="#transactions">Ontleningen</a></li>
                     <li><a href="#bikes">Fietsen</a></li>
                     <li><a href="#members">Leden</a></li>
-					<li><a href="#finances">Financiën</a></li>
-					<li><a href="#stats">Statistieken</a></li>
+                    <!--<li><a href="#transactionhistory">Transacties</a></li>-->
+          					<li><a href="#finances">Financiën</a></li>
+          					<!--<li><a href="#stats">Statistieken</a></li>-->
 					<li class="dropdown">
 						<a href="#settings" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Instellingen <span class="caret"></span></a>
 						  <ul class="dropdown-menu">
@@ -198,7 +198,7 @@
 
 							<div class='col-sm-2' >
 								<label class="checkbox-label">
-									<input type="checkbox" class="form-control input-sm" id="action_sendemail" name="action_sendemail" value="send" checked> Verstuur
+									<input type="checkbox" class="form-control input-sm" id="action_sendemail" name="action_sendemail" value="send" disabled> Verstuur
 								</label>
 							</div>
 
@@ -514,8 +514,39 @@
 
 
 		</div>
-
     </section>
+
+    <section id="content_transactionhistory" class="content_section">
+     <h4 class="inlineh4">Transacties</h4>
+
+     <div class="container-fluid" width="100%">
+       <table id="transactions_table" class="table table-striped" width="100%">
+         <thead>
+           <tr>
+             <th>Datum</th>
+             <th>Ouder</th>
+             <th>Kind</th>
+             <th>Actie</th>
+             <th>Fiets IN</th>
+             <th>Fiets UIT</th>
+           </tr>
+         </thead>
+         <tfoot>
+           <tr>
+             <th>Datum</th>
+             <th>Ouder</th>
+             <th>Kind</th>
+             <th>Actie</th>
+             <th>Fiets IN</th>
+             <th>Fiets UIT</th>
+           </tr>
+         </tfoot>
+       </table>
+     </div>
+
+   </section>
+
+
 
     <section id="content_finances" class="content_section">
 		<h4 class="inlineh4">Financiële transacties</h4>
@@ -530,8 +561,8 @@
 						<th>Kind</th>
 						<th>Waarborg</th>
 						<th>Lidmaatschap</th>
-						<th>Totaal (EUR)</th>
-						<th></th>
+						<th>Totaal</th>
+						<th>Status</th>
 						<th></th>
 					</tr>
 				</thead>
@@ -542,13 +573,50 @@
 						<th>Kind</th>
 						<th>Waarborg</th>
 						<th>Lidmaatschap</th>
-						<th>Totaal (EUR)</th>
-						<th></th>
+						<th>Totaal</th>
+						<th>Status</th>
 						<th></th>
 					</tr>
 				</tfoot>
 			</table>
 
+      <!-- Modal -->
+      <div class="modal fade" id="editFinanceModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog modal-sm" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                              aria-hidden="true">&times;</span></button>
+                      <h4 class="modal-title" id="myModalLabel">Betaling wijzigen</h4>
+                  </div>
+                  <div class="modal-body">
+                      <form id="editFinanceForm">
+                          <div class="form-group">
+                              <label for="fin_date" class="control-label">Datum:</label>
+                              <div class="input-group" id='findatepicker'>
+                								<input type='text' class="form-control input-sm" id="fin_date" name="fin_date" />
+                								<span class="input-group-addon">
+                									 <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <label for="fin_status" class="control-label">Status:</label>
+                              <select style="width : 100%;" id="fin_status">
+                                  <option value="1">Voldaan</option>
+                                  <option value="0">In afwachting</option>
+                                </select>
+                          </div>
+                          <input type="hidden" id="fin_id" name="fin_id" value="0">
+                      </form>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Annuleren</button>
+                      <button type="button" class="btn btn-primary" id="submitEditFinance">Opslaan</button>
+                  </div>
+              </div>
+          </div>
+      </div>
 
 			<button type="button" onclick="checkExpiryDates()" class="btn btn-primary" style="display: none;">Controleer lidmaatschap</button>
 
@@ -631,7 +699,7 @@
 
 				<div class="form-group">
 					<label class="col-sm-2 control-label lb-sm">Template</label>
-					<div class="col-sm-3">
+					<div class="col-sm-4">
 						<select style="width : 100%;" class="form-control" id="settings_email_name" name="settings_email_name">
 						</select>
 					</div>
@@ -639,7 +707,7 @@
 
 				<div class="form-group">
 					<label class="col-sm-2 control-label lb-sm">CC</label>
-					<div class='col-sm-3'>
+					<div class='col-sm-4'>
 						<input class="form-control input-sm" type="text" value="" id="settings_email_cc" name="settings_email_cc">
 					</div>
 				</div>
@@ -658,18 +726,25 @@
 							</div>
 						</div>
 				</div>
+
+        <div class="input-group col-sm-10 actbtns">
+          <button type="button" onclick="deleteEmail()" class="btn btn-danger actbtn">Verwijderen</button>
+					<button type="button" onclick="cancelEmail()" class="btn btn-default actbtn">Annuleren</button>
+					<button type="button" onclick="saveEmail()" class="btn btn-primary actbtn">Opslaan</button>
+				</div>
+
 			</form>
 		</div>
 			<hr class="formhr">
 
-		<h4 class="inlineh4">Emails koppelen aan flow</h4>
+		<h4 class="inlineh4">Emails koppelen aan acties</h4>
 
 		<div class="container-fluid" width="100%">
 			<form id="settings_action_form" class="form-horizontal">
 				<div class="form-group">
 					<label class="col-sm-2 control-label lb-sm">Actie</label>
 					<div class="col-sm-3">
-						<select style="width : 100%;" class="form-control" id="settings_email_action" name="settings_email_type">
+						<select style="width : 100%;" class="form-control" id="settings_email_action" name="settings_email_action">
 						</select>
 					</div>
 				</div>
@@ -677,8 +752,8 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label lb-sm"></label>
 					<div class='col-sm-8' >
-						<input class="styled" type="checkbox" id="settings_email_send" name="settings_email_actionsend" value="settings_email_send">
-                        <label for="settings_email_send">
+						<input class="styled" type="checkbox" id="settings_emaillink_actionsend" name="settings_emaillink_actionsend" value="settings_emaillink_actionsend">
+                        <label for="settings_emaillink_actionsend">
                             Template versturen bij deze actie
                         </label>
 					</div>
@@ -687,10 +762,15 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label lb-sm">Template</label>
 					<div class="col-sm-3">
-						<select style="width : 100%;" class="form-control" id="settings_email_actionname" name="settings_email_type">
+						<select style="width : 100%;" class="form-control" id="settings_emaillink_template" name="settings_emaillink_template" disabled>
 						</select>
 					</div>
 				</div>
+
+        <div class="input-group col-sm-5 actbtns">
+          <button type="button" onclick="cancelEmailLink()" class="btn btn-default actbtn">Annuleren</button>
+          <button type="button" onclick="saveEmailLink()" class="btn btn-primary actbtn">Opslaan</button>
+        </div>
 
 			</form>
 
@@ -747,18 +827,16 @@
 <script src="libs/routie/0.3.2/routie.js"></script>
 <script src="libs/daterangepicker/2.1.25/daterangepicker.js"></script>
 <script src="libs/datatables/datatables.min.js"></script>
-<!--<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.18/af-2.3.3/b-1.5.6/r-2.2.2/rg-1.1.0/rr-1.2.4/sl-1.3.0/datatables.min.js"></script>-->
 <script src="libs/quill/1.3.6/quill.min.js"></script>
 
 <!-- own js -->
 <script src="js/globalvars.js"></script>
+<script src="js/finances.js"></script>
 <script src="js/settings.js"></script>
 <script src="js/main.js"></script>
 <script src="js/members.js"></script>
 <script src="js/bikes.js"></script>
-<script src="js/finances.js"></script>
 <script src="js/transactions.js"></script>
-
 
 
 </body>

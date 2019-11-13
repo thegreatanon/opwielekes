@@ -88,12 +88,12 @@ function loadBikes() {
     $.ajax({
         url: 'api/bikes',
         success: function (bikes) {
-			bikestable.clear();
-			bikestable.rows.add(bikes);
-			bikestable.columns.adjust().draw();
-			setActionBikes(bikes);
-			db_bikes = bikes;
-		}
+					bikestable.clear();
+					bikestable.rows.add(bikes);
+					bikestable.columns.adjust().draw();
+					setActionBikes(bikes);
+					db_bikes = bikes;
+				}
     });
 }
 
@@ -127,7 +127,7 @@ function emptyBikeForm() {
 function setNewBikeNr() {
 	// compute max bike and add 1
 	if (db_bikes.length>0) {
-		highestnr = db_bikes.reduce((max, bike) => bike.Number > max ? bike.Number : max, db_bikes[0].Number);
+		highestnr = db_bikes.reduce((max, bike) => parseInt(bike.Number) > max ? parseInt(bike.Number) : max, db_bikes[0].Number);
 	} else {
 		highestnr = 0;
 	}

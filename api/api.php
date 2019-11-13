@@ -421,6 +421,22 @@ $app->group('/settings', function() use ($app) {
             generateResponse(SettingsService::deleteEmail($id));
       });
 
+      $app->post('/emailsettings', function() use ($app) {
+        global $DBH;
+     		try {
+       			$DBH->beginTransaction();
+     				$newe = SettingsService::updateEmailSettings($GLOBALS["data"]);
+     				if ($newe["status"] == -1) {
+     					throw new Exception($newe["error"]);
+     				}
+     			  $DBH->commit();
+       		} catch (Exception $e) {
+       			$DBH->rollBack();
+       			$GLOBALS["error"] = $e->getMessage();
+       			$app->error();
+       		}
+     		  echo json_encode(null);
+       });
 });
 
 /*
