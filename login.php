@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 
-
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" href="/images/favicon.png">
+	  <link rel="icon" href="/images/favicon.png">
 
     <title>Op wielekes login</title>
 
@@ -19,24 +18,30 @@
 
     <div class="container">
 
-      <form class="form-signin" method="POST" action="">
-        <h2 class="form-signin-heading">Op wielekes login</h2>
-        <input type="password" name="password" class="form-control" placeholder="Password" required autofocus />
-        <select name="environmentID" class="form-control" title="EnvironmentID">
-          <?php
-            $accounts = $_SESSION['accounts'];
-						foreach ($accounts as $account) {
-							echo '<option value="' . $account['AccountID'] .  '">' . $account['AccountName'] . '</option>';
-						}
-					?>
-
-        </select>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Aanmelden</button>
+      <form class="form-signin" method="POST" action="" >
         <?php
-            if (isset($_SESSION["error"])) {
-                echo '<p class="bg-danger" style="padding: 10px; margin-top: 5px;">' . $_SESSION["error"] . '</p>';
-                unset($_SESSION["error"]);
-            }
+          if (isset($_SESSION["account"])) {
+          	  echo '<h2 class="form-signin-heading">Op wielekes ' . $_SESSION["account"]["AccountName"] . '</h2>';
+              echo '<input type="password" name="password" class="form-control" placeholder="Wachtwoord" required autofocus />';
+              echo '<input type="hidden" name="environmentID" class="form-control" value="' . $_SESSION["account"]["AccountID"] . '" />';
+              echo '<button class="btn btn-lg btn-primary btn-block" type="submit">Aanmelden</button>';
+              echo '<p class="fullsigninlink"><a href="index.php">Ander depot</a></p>';
+          } else {
+            echo '<h2 class="form-signin-heading">Op wielekes login</h2>';
+            echo '<input type="password" name="password" class="form-control" placeholder="Wachtwoord" required autofocus />';
+            echo '<select name="environmentID" class="form-control" title="EnvironmentID">';
+              $accounts = $_SESSION['accounts'];
+  						foreach ($accounts as $account) {
+  							echo '<option value="' . $account['AccountID'] .  '">' . $account['AccountName'] . '</option>';
+  						}
+            echo '</select>';
+            echo '  <button class="btn btn-lg btn-primary btn-block" type="submit">Aanmelden</button>';
+          }
+
+          if (isset($_SESSION["error"])) {
+              echo '<p class="bg-danger" style="padding: 10px; margin-top: 5px;">' . $_SESSION["error"] . '</p>';
+              unset($_SESSION["error"]);
+          }
         ?>
       </form>
 

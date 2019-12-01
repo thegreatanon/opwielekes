@@ -1,7 +1,6 @@
 <?php
     session_start();
 
-
     require_once(__DIR__ . "/api/pdoconnect.php");
   	require_once(__DIR__ . "/api/Services/SettingsService.php");
 
@@ -9,6 +8,29 @@
   	$accounts = SettingsService::getAccounts();
   	$_SESSION['accounts'] = $accounts;
     $_SESSION['dbcode'] = '';
+    $_SESSION['account'] = '';
+
+    // set paths
+  	if (substr($_SERVER['REMOTE_ADDR'], 0, 4) == '127.' || $_SERVER['REMOTE_ADDR'] == '::1') {
+      $locbase =  "/opwielekes/";
+  	} else {
+      $locbase =  "/";
+  	}
+
+    // detect location request
+    $request = $_SERVER['REQUEST_URI'];
+    $request2  = str_replace($locbase, "", $request);
+  	$request3 = explode("/",$request2);
+    $locationrequest = $request3[0];
+
+    // verify whether location request is valid
+    $key = array_search($locationrequest, array_column($accounts, 'AccountLink'));
+		if (false !== $key) {
+      $account = $accounts[$key];
+      $_SESSION['account'] = $account;
+    } else {
+			unset($_SESSION["account"]);
+		}
 
     /**
      * De login zou ook via de REST api kunnen gedaan worden, maar ik doe
