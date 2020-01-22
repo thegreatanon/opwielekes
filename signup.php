@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	  <link rel="icon" href="/images/favicon.png">
 
-    <title>Op wielekes login</title>
+    <title>Inschrijven Op wielekes</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
@@ -18,13 +18,16 @@
 
     <div class="container">
 
-      <form class="form-signin" method="POST" action="" >
+      <form class="form-signup" method="POST" action="" >
         <?php
-      	  echo '<h2 class="form-signin-heading">Op wielekes ' . $_SESSION["urlaccount"]["AccountName"] . '</h2>';
-          echo '<input type="password" name="password" class="form-control" placeholder="Wachtwoord" required autofocus />';
-          echo '<input type="hidden" name="loginID" class="form-control" value="' . $_SESSION["urlaccount"]["AccountID"] . '" />';
-          echo '<button class="btn btn-lg btn-primary btn-block" type="submit">Aanmelden</button>';
-          echo '<p class="fullsigninlink"><a href="index.php">Ander depot</a></p>';
+          if (isset($_SESSION["urlaccount"])) {
+          	  echo '<h2 class="form-signin-heading">Inschrijving Op wielekes</h2>';
+              echo '<p>' . $_SESSION["urlaccount"]["AccountName"] . '</p>';
+              echo '<input type="password" name="password" class="form-control" placeholder="Wachtwoord" required autofocus />';
+              echo '<input type="hidden" name="environmentID" class="form-control" value="' . $_SESSION["urlaccount"]["AccountID"] . '" />';
+              echo '<button class="btn btn-lg btn-primary btn-block" type="submit">Aanmelden</button>';
+              echo '<p class="fullsigninlink"><a href="../index.php">Ander depot</a></p>';
+          }
 
           if (isset($_SESSION["error"])) {
               echo '<p class="bg-danger" style="padding: 10px; margin-top: 5px;">' . $_SESSION["error"] . '</p>';

@@ -20,16 +20,15 @@
 
       <form class="form-signin" method="POST" action="" >
         <?php
-      	  echo '<h2 class="form-signin-heading">Op wielekes ' . $_SESSION["urlaccount"]["AccountName"] . '</h2>';
-          echo '<input type="password" name="password" class="form-control" placeholder="Wachtwoord" required autofocus />';
-          echo '<input type="hidden" name="loginID" class="form-control" value="' . $_SESSION["urlaccount"]["AccountID"] . '" />';
-          echo '<button class="btn btn-lg btn-primary btn-block" type="submit">Aanmelden</button>';
-          echo '<p class="fullsigninlink"><a href="index.php">Ander depot</a></p>';
+            echo '<h2 class="form-signin-heading">Op wielekes depot</h2>';
+            echo '<select name="selectaccountID" class="form-control" title="selectaccountID">';
+              $accounts = $_SESSION['accounts'];
+  						foreach ($accounts as $account) {
+  							echo '<option value="' . $account['AccountID'] .  '">' . $account['AccountName'] . '</option>';
+  						}
+            echo '</select>';
+            echo '<button class="btn btn-lg btn-primary btn-block" type="submit">Selecteer</button>';
 
-          if (isset($_SESSION["error"])) {
-              echo '<p class="bg-danger" style="padding: 10px; margin-top: 5px;">' . $_SESSION["error"] . '</p>';
-              unset($_SESSION["error"]);
-          }
         ?>
       </form>
 

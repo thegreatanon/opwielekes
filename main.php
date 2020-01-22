@@ -68,8 +68,8 @@
 					</li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-					<?php if (isset($_SESSION["login"])) {
-						echo '<p class="navbar-text text-black">' . ucfirst($_SESSION["login"]) . '</p>';
+					<?php if (isset($_SESSION["account"])) {
+						echo '<p class="navbar-text text-black">' . ucfirst($_SESSION["account"]["AccountName"]) . '</p>';
 					 } ?>
                     <li><a href="logout.php">Afmelden</a></li>
                 </ul>
