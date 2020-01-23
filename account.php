@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	  <link rel="icon" href="/images/favicon.png">
 
-    <title>Op wielekes login</title>
+    <title>Op wielekes</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
@@ -17,21 +17,7 @@
   <body>
 
     <div class="container">
-
-      <form class="form-signin" method="POST" action="" >
-        <?php
-            echo '<h2 class="form-signin-heading">Op wielekes depot</h2>';
-            echo '<select name="selectaccountID" class="form-control" title="selectaccountID">';
-              $accounts = $_SESSION['accounts'];
-  						foreach ($accounts as $account) {
-  							echo '<option value="' . $account['AccountID'] .  '">' . $account['AccountName'] . '</option>';
-  						}
-            echo '</select>';
-            echo '<button class="btn btn-lg btn-primary btn-block" type="submit">Selecteer</button>';
-
-        ?>
-      </form>
-
+        <h2 class="form-signin-heading">Dit is geen geldige link.</h2>
     </div>
 
 

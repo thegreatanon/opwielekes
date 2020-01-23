@@ -1,8 +1,10 @@
 <?php
-    session_start();
+
+  session_start();
 
     require_once(__DIR__ . "/api/pdoconnect.php");
-  	require_once(__DIR__ . "/api/Services/SettingsService.php");
+    require_once(__DIR__ . "/api/Services/SettingsService.php");
+
 
   	// load database info
   	$accounts = SettingsService::getAccounts();
@@ -17,6 +19,8 @@
       $locbase =  "/";
   	}
 
+
+    /*
     // check if a location has been selected in account.php
     if (isset($_POST["selectaccountID"])) {
       $accid = $_POST["selectaccountID"];
@@ -25,16 +29,22 @@
       if (false !== $key) {
         $account = $accounts[$key];
         $aclink = $account['AccountLink'];
-        $newurl = 'Location: ' . $aclink;
+        //$newurl = 'Location: ' . $aclink;
+        $newurl = 'Location:http://' . $aclink . '.opwielekes.be/';
         unset($_SESSION["account"]);
         header($newurl);
-        exit();
+        //exit;
       }
     }
+    */
 
     // detect location request
     $request = $_SERVER['REQUEST_URI'];
-    $request2  = str_replace($locbase, "", $request);
+
+    $pos = strpos($request, $locbase);
+    if ($pos !== false) {
+        $request2 = substr_replace($request, "", $pos, strlen($locbase));
+    }
   	$request3 = explode("/",$request2);
     $nrrequests = count($request3);
     $locationrequest = $request3[0];
@@ -50,7 +60,7 @@
 		}
 
     // verify whether it is a signup
-    if ($nrrequests == 2) {
+    if ($nrrequests > 1) {
       $siterequest = $request3[1];
       if ($siterequest == 'signup') {
             $_SESSION["mode"] ='signup';
@@ -104,3 +114,5 @@
             }
         }
     }
+
+?>

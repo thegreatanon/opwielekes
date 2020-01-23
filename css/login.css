@@ -43,3 +43,9 @@ body {
   text-align:center;
   padding-top:10px
 }
+
+.form-signup {
+  max-width: 550px;
+  padding: 15px;
+  margin: 0 auto;
+}
