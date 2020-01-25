@@ -9,26 +9,26 @@ class MembersService
 	public static function updateParentData($data) {
 
 		global $DBH;
-        if (isset($data->ID) && isset($data->Name) && isset($data->Surname) && isset($data->Street) && isset($data->StreetNumber) && isset($data->Postal) && isset($data->Town) && isset($data->Email) && isset($data->Phone) && isset($data->InitDate)) {
-			try {
-                $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::PARENTS) . " SET Name = :Name, Surname = :Surname, Street = :Street, StreetNumber = :StreetNumber, Postal = :Postal, Town = :Town, Email = :Email, Phone = :Phone, InitDate = :InitDate WHERE ID = :ID");
-				$STH->bindParam(':ID', $data->ID);
-				$STH->bindParam(':Name', $data->Name);
-				$STH->bindParam(':Surname', $data->Surname);
-				$STH->bindParam(':Street', $data->Street);
-				$STH->bindParam(':StreetNumber', $data->StreetNumber);
-				$STH->bindParam(':Postal', $data->Postal);
-				$STH->bindParam(':Town', $data->Town);
-				$STH->bindParam(':Email', $data->Email);
-				$STH->bindParam(':Phone', $data->Phone);
-				$STH->bindParam(':InitDate', $data->InitDate);
+        if (isset($data->ID) && isset($data->Name) && isset($data->Surname) && isset($data->Street) && isset($data->StreetNumber) && isset($data->Postal) && isset($data->Town) && isset($data->Email) && isset($data->Phone) && isset($data->InitDate) && isset($data->MembershipID) ) {
+						try {
+	              $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::PARENTS) . " SET Name = :Name, Surname = :Surname, Street = :Street, StreetNumber = :StreetNumber, Postal = :Postal, Town = :Town, Email = :Email, Phone = :Phone, InitDate = :InitDate, MembershipID = :MembershipID WHERE ID = :ID");
+								$STH->bindParam(':ID', $data->ID);
+								$STH->bindParam(':Name', $data->Name);
+								$STH->bindParam(':Surname', $data->Surname);
+								$STH->bindParam(':Street', $data->Street);
+								$STH->bindParam(':StreetNumber', $data->StreetNumber);
+								$STH->bindParam(':Postal', $data->Postal);
+								$STH->bindParam(':Town', $data->Town);
+								$STH->bindParam(':Email', $data->Email);
+								$STH->bindParam(':Phone', $data->Phone);
+								$STH->bindParam(':InitDate', $data->InitDate);
+								$STH->bindParam(':MembershipID', $data->MembershipID);
                 $STH->execute();
             } catch (Exception $e) {
-               return ["status" => -1, "error" => "Er is iets fout gelopen in update ouder data..."];
+               	return ["status" => -1, "error" => "Er is iets fout gelopen in update ouder data..."];
             }
         } else {
-           return ["status" => -1, "error" => "Onvoldoende parameters in update ouder data..."];
-
+           	return ["status" => -1, "error" => "Onvoldoende parameters in update ouder data..."];
         }
 
     }
@@ -52,22 +52,23 @@ class MembersService
 
 	public static function newParent($data) {
 		global $DBH;
-        if (isset($data->Name) && isset($data->Surname) && isset($data->Street) && isset($data->StreetNumber) && isset($data->Postal) && isset($data->Town) && isset($data->Email) && isset($data->Phone) && isset($data->InitDate) && isset($data->CautionAmount)) {
+        if (isset($data->Name) && isset($data->Surname) && isset($data->Street) && isset($data->StreetNumber) && isset($data->Postal) && isset($data->Town) && isset($data->Email) && isset($data->Phone) && isset($data->InitDate) && isset($data->CautionAmount) && isset($data->MembershipID)) {
             try {
-                $STH = $DBH->prepare("INSERT INTO " . TableService::getTable(TableEnum::PARENTS) . " (Name, Surname, Street, StreetNumber, Postal, Town, Email, Phone, InitDate, CautionAmount) VALUES (:Name, :Surname, :Street, :StreetNumber, :Postal, :Town, :Email, :Phone, :InitDate, :CautionAmount)");
-				$STH->bindParam(':Name', $data->Name);
-				$STH->bindParam(':Surname', $data->Surname);
-				$STH->bindParam(':Street', $data->Street);
-				$STH->bindParam(':StreetNumber', $data->StreetNumber);
-				$STH->bindParam(':Postal', $data->Postal);
-				$STH->bindParam(':Town', $data->Town);
-				$STH->bindParam(':Email', $data->Email);
-				$STH->bindParam(':Phone', $data->Phone);
-				$STH->bindParam(':InitDate', $data->InitDate);
-				$STH->bindParam(':CautionAmount', $data->CautionAmount);
-        $STH->execute();
-				$last_id = $DBH->lastInsertId();
-				return ["status" => 0, "lastid" => $last_id];
+                $STH = $DBH->prepare("INSERT INTO " . TableService::getTable(TableEnum::PARENTS) . " (Name, Surname, Street, StreetNumber, Postal, Town, Email, Phone, InitDate, CautionAmount, MembershipID) VALUES (:Name, :Surname, :Street, :StreetNumber, :Postal, :Town, :Email, :Phone, :InitDate, :CautionAmount, :MembershipID)");
+								$STH->bindParam(':Name', $data->Name);
+								$STH->bindParam(':Surname', $data->Surname);
+								$STH->bindParam(':Street', $data->Street);
+								$STH->bindParam(':StreetNumber', $data->StreetNumber);
+								$STH->bindParam(':Postal', $data->Postal);
+								$STH->bindParam(':Town', $data->Town);
+								$STH->bindParam(':Email', $data->Email);
+								$STH->bindParam(':Phone', $data->Phone);
+								$STH->bindParam(':InitDate', $data->InitDate);
+								$STH->bindParam(':CautionAmount', $data->CautionAmount);
+								$STH->bindParam(':MembershipID', $data->MembershipID);
+				        $STH->execute();
+								$last_id = $DBH->lastInsertId();
+								return ["status" => 0, "lastid" => $last_id];
             } catch (Exception $e) {
                return ["status" => -1, "error" => "Er is iets fout gelopen in nieuwe ouder..."];
             }
@@ -218,10 +219,12 @@ class MembersService
 
 	public static function getJoinedMembers() {
         global $DBH;
-		$STH = $DBH->prepare("SELECT k.ID KidID, k.Name KidName, k.Surname KidSurname, k.BirthDate KidBirthDate, k.ExpiryDate KidExpiryDate, k.Active KidActive, k.BikeID KidBikeID, k.KidNr KidNr, p.ID ParentID, p.Name ParentName, p.Surname ParentSurname, p.InitDate ParentInitDate, p.CautionAmount ParentCautionAmount
+		$STH = $DBH->prepare("SELECT k.ID KidID, k.Name KidName, k.Surname KidSurname, k.BirthDate KidBirthDate, k.ExpiryDate KidExpiryDate, k.Active KidActive, k.BikeID KidBikeID, k.KidNr KidNr, p.ID ParentID, p.Name ParentName, p.Surname ParentSurname, p.InitDate ParentInitDate, p.CautionAmount ParentCautionAmount, p.MembershipID ParentMembershipID, m.MembershipName ParentMembershipName
 			FROM " . TableService::getTable(TableEnum::KIDS) . " k
 			LEFT JOIN " . TableService::getTable(TableEnum::PARENTS) . " p
-			ON k.ParentID = p.ID");
+			ON k.ParentID = p.ID
+			LEFT JOIN " . TableService::getTable(TableEnum::MEMBERSHIPS) . " m
+			ON p.MembershipID = m.ID");
 		$STH->execute();
 		return $STH->fetchAll();
 
@@ -229,10 +232,12 @@ class MembersService
 
 	public static function getParents() {
         global $DBH;
-		$STH = $DBH->prepare("SELECT p.ID, p.Name, p.Surname, p.Street, p.StreetNumber, p.Postal, p.Town, p.Email, p.Phone, p.InitDate, p.CautionAmount, COUNT(k.ParentID) NrKids, SUM(CASE WHEN k.Active THEN 1 ELSE 0 END) ActiveKids, (SELECT SUM(CASE WHEN t.ActionID = '4' THEN 1 ELSE 0 END) FROM " . TableService::getTable(TableEnum::TRANSACTIONS) . " t WHERE t.ParentID = p.ID GROUP BY t.ParentID) Donations
+		$STH = $DBH->prepare("SELECT p.ID, p.Name, p.Surname, p.Street, p.StreetNumber, p.Postal, p.Town, p.Email, p.Phone, p.InitDate, p.CautionAmount, COUNT(k.ParentID) NrKids, SUM(CASE WHEN k.Active THEN 1 ELSE 0 END) ActiveKids, (SELECT SUM(CASE WHEN t.ActionID = '4' THEN 1 ELSE 0 END) FROM " . TableService::getTable(TableEnum::TRANSACTIONS) . " t WHERE t.ParentID = p.ID GROUP BY t.ParentID) Donations, p.MembershipID, m.MembershipName
 			FROM " . TableService::getTable(TableEnum::PARENTS) . " p
 			LEFT JOIN " . TableService::getTable(TableEnum::KIDS) . " k
 			ON p.ID = k.ParentID
+			LEFT JOIN " . TableService::getTable(TableEnum::MEMBERSHIPS) . " m
+			ON p.MembershipID = m.ID
 			GROUP BY ID
 			ORDER BY Name");
 		$STH->execute();

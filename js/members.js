@@ -3,37 +3,44 @@ $(document).ready(function () {
 	// INIT BIKES TABLE
 	memberstable = $('#members_table').DataTable({
         paging: true,
-		pageLength: 25,
-		"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Alle"]],
-		ordering: true,
-		sortable: true,
-		rowId: 'parentID',
-		dom: '<l<"filtermembers">fr>tip',
-		"order": [[ 0, 'asc' ], [ 1, 'asc' ]],
-		autoWidth: true,
-        columns: [
-			{data: 'Name', name: 'Number'},
-			{data: 'Surname', name: 'Name'},
-			{data: 'Street', name: 'Street'},
-            {data: 'NrKids', name: 'NrKids'},
-			{data: 'ActiveKids', name: 'ActiveKids'},
-			{data: 'CautionAmount', name: 'CautionAmount'},
-			{data: 'Donations', name: 'Donations'},
-			{
-                data: {
-					ID: 'ID',
-					InitDate: 'InitDate'
-                },
-                render: function (data, type) {
-                    return '<button type="button" class="btn btn-default editMember">Bewerk</button>';
-                },
-				sortable: false
-            }
-        ],
-		"search": {
-			"regex": true,
-			"smart":false
-		}
+				pageLength: 25,
+				"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Alle"]],
+				ordering: true,
+				sortable: true,
+				rowId: 'parentID',
+				dom: '<l<"filtermembers">fr>tip',
+				"order": [[ 0, 'asc' ], [ 1, 'asc' ]],
+				autoWidth: true,
+	        columns: [
+						{data: 'Name', name: 'Number'},
+						{data: 'Surname', name: 'Name'},
+						{data: 'Street', name: 'Street'},
+						{ data: {
+								MembershipID: 'MembershipID',
+								MembershipName: 'MembershipName'
+			         },
+	              render: function (data, type) {
+	                  return data.MembershipName;
+	              },
+								sortable: true
+			      },
+						{data: 'ActiveKids', name: 'ActiveKids'},
+						{data: 'CautionAmount', name: 'CautionAmount'},
+						{data: 'Donations', name: 'Donations'},
+						{ data: {
+								ID: 'ID',
+								InitDate: 'InitDate'
+			         },
+	              render: function (data, type) {
+	                  return '<button type="button" class="btn btn-default editMember">Bewerk</button>';
+	              },
+								sortable: false
+			      }
+	        ],
+				"search": {
+					"regex": true,
+					"smart":false
+				}
     });
 
 	/* FILTER MEMBERS TABLE */
@@ -69,17 +76,17 @@ $(document).ready(function () {
 		}
 	);
 
+
 	$('#parentdatepicker').datetimepicker({
 		//locale: 'nl',
 		defaultDate: new Date(),
 		format: 'YYYY-MM-DD'
 	});
 
-
 	$(document).on('click', '.editMember', function () {
 		rowdata = memberstable.row( $(this).closest('tr') ).data();
-        setMemberForm(rowdata);
-    });
+    setMemberForm(rowdata);
+  });
 
 	loadMembers();
 
@@ -91,11 +98,9 @@ function loadMembers() {
 	$.ajax({
         url: 'api/members/all',
         success: function (members) {
-			console.log('members:');
-			console.log(members);
-			loadParents(members);
-			//setActionMembers(members);
-		}
+					loadParents(members);
+					//setActionMembers(members);
+				}
     });
 }
 
@@ -103,14 +108,12 @@ function loadParents(members) {
     $.ajax({
         url: 'api/parents',
         success: function (parents) {
-			//console.log('parents:');
-			//console.log(parents);
-			memberstable.clear();
-			memberstable.rows.add(parents);
-			memberstable.columns.adjust().draw();
-			db_parents = parents;
-			setActionMembers(members);
-		}
+						memberstable.clear();
+						memberstable.rows.add(parents);
+						memberstable.columns.adjust().draw();
+						db_parents = parents;
+						setActionMembers(members);
+					}
     });
 }
 
@@ -142,6 +145,8 @@ function setMemberForm(rowdata) {
 	$('#parent_email').val(rowdata.Email);
 	$('#parent_phone').val(rowdata.Phone);
 	$('#parent_date').val(rowdata.InitDate);
+	$('#parent_membership').val(rowdata.MembershipID);
+	$('#parent_membership').trigger('change');
 	setKidForm(rowdata.ID);
 	viewTab('Members','one');
 }
@@ -158,8 +163,16 @@ function setMemberFormByID(parentID){
 	$('#parent_email').val(p.Email);
 	$('#parent_phone').val(p.Phone);
 	$('#parent_date').val(p.InitDate);
+	$('#parent_membership').val(p.MembershipID);
+	$('#parent_membership').trigger('change');
 	setKidForm(parentID);
 	viewTab('Members','one');
+}
+
+function viewMember() {
+	parentID = $('#action_parentid').val();
+	console.log('action_parentid ' + parentID);
+	setMemberFormByID(parentID);
 }
 
 function setKidForm(parentID) {
@@ -184,6 +197,8 @@ function emptyMemberForm() {
 	$('#parent_email').val('');
 	$('#parent_phone').val('');
 	$('#parent_date').val(myGetDate());
+	$('#parent_membership').val(defaultMembershipID);
+	$('#parent_membership').trigger('change');
 	// kids
 	$('#kids_table_tbody').empty();
 
@@ -227,10 +242,9 @@ function saveMember() {
 			'Email': $('#parent_email').val(),
 			'Phone': $('#parent_phone').val(),
 			'InitDate': $('#parent_date').val(),
-			'CautionAmount': "0"
+			'CautionAmount': "0",
+			'MembershipID':  $('#parent_membership').val()
 		};
-	console.log(kidsdata);
-	console.log(parentdata);
     $.ajax({
 		type: 'POST',
 		url: 'api/members',

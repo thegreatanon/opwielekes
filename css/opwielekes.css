@@ -11,9 +11,10 @@
 .hidden {
     visibility: hidden !important;
 }
+
 body {
   padding-top: 40px;
-  padding-bottom: 40px;
+  /*padding-bottom: 40px;*/
   /*background-color: #eee;*/
 }
 .toast {
@@ -61,11 +62,11 @@ body {
 }
 
 #action_kids_table td {
-   text-align: center; 
+   text-align: center;
 }
 
 #action_kids_table th {
-   text-align: center; 
+   text-align: center;
 }
 
 .financerangediv{
@@ -92,3 +93,35 @@ body {
   display: inline;
 }
 
+input[type=number]{
+    width: 70px;
+}
+
+.outlined {
+  border: 2px solid;
+	border-color: #eee;
+}
+
+
+
+* {
+margin: 0;
+}
+html, body {
+height: 100%;
+}
+.wrapper {
+min-height: 100%;
+height: auto !important;
+height: 100%;
+margin: 0 auto -4em;
+}
+.footer, .push {
+height: 4em;
+text-align: center;
+}
+
+.logotext {
+    margin:0;
+    display: inline-block;
+}

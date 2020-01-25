@@ -11,37 +11,37 @@
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    <link href="../css/login.css" rel="stylesheet">
+    <link href="../css/signup.css" rel="stylesheet">
   </head>
 
   <body>
-
-
-      <div class="container">
+        <div class="container">
 
         <!-- inspiration: https://bootsnipp.com/snippets/8ANqZ -->
-        <div class="row">
-              <div class="col-md-6">
-                  <form class="form-signup" method="POST" action="" id="fileForm" role="form">
+
+              <div class="col-md-12">
+                  <form class="form-signup" method="POST" action="" id="fileForm" class="form-horizontal">
                     <?php
                       if (!isset($_SESSION["urlaccount"])) {
-                        echo '<h2 class="form-signin-heading">Geen geldige link.</h2>';
+                        echo '<h1 class="h3 mb-3 font-weight-normal form-signup-heading">Geen geldige link.</h1>';
                         exit;
                       } else {
-                        echo '<h2 class="form-signup-heading">Inschrijven Op Wielekes ' . $_SESSION["urlaccount"]["AccountName"] . '</h2>';
+                        echo '<h1 class="h3 mb-3 font-weight-normal">Inschrijven Op Wielekes ' . $_SESSION["urlaccount"]["AccountName"] . '</h1>';
                       }
                     ?>
-                          <div class="form-group">
-                              <label for="firstname">Voornaam ouder<span class="req">* </span>: </label>
-                                  <input class="form-control" type="text" name="firstname" id = "txt" onkeyup = "Validate(this)" required />
-                                      <div id="errFirst"></div>
-                          </div>
+
+
+
 
                           <div class="form-group">
-                              <label for="lastname">Achternaam ouder<span class="req">* </span>: </label>
-                                  <input class="form-control" type="text" name="lastname" id = "txt" onkeyup = "Validate(this)" placeholder="hyphen or single quote OK" required />
-                                      <div id="errLast"></div>
+                                <label class="control-label lb-md">Ouder<span class="req">* </span>: </label>
+                                  <div class="form-group">
+                                  <input class="form-control class='col-md-5'" type="text" name="parentfirstname" id = "txt" placeholder="Voornaam" onkeyup = "Validate(this)" required />
+                                  <input class="form-control class='col-md-7'" type="text" name="parentlastname" id = "txt" placeholder="Familienaam" onkeyup = "Validate(this)" required />
+  </div>
                           </div>
+
+
 
                           <div class="form-group">
                               <label for="email">E-mailadres<span class="req">* </span>: </label>
@@ -76,7 +76,7 @@
                               <input type="hidden" value="0" name="activate" />
                               <hr>
 
-                              <input type="checkbox" required name="terms" onchange="this.setCustomValidity(validity.valueMissing ? 'Ik ga akkoord met de Algemene Voorwaarden' : '');" id="field_terms">   <label for="terms">Ik ga akkoord met de <a href="terms.php" title="Je kan de algemene voorwaarden lezen door op deze link te klikken">algmene voorwaarden</a>.</label>
+                              <input type="checkbox" required name="terms" onchange="this.setCustomValidity(validity.valueMissing ? 'Ik ga akkoord met de Algemene Voorwaarden' : '');" id="field_terms">   <label for="terms">Ik ga akkoord met de <a href="terms.php" title="Je kan de algemene voorwaarden lezen door op deze link te klikken">algemene voorwaarden</a>.</label>
                           </div>
 
                           <div class="form-group">
@@ -87,8 +87,9 @@
                     </form>
 
                 </div>
-          </div>
+
       </div>
+
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>

@@ -9,9 +9,9 @@ abstract class TableEnum extends BasicEnum {
 	const EMAILS = 'emails';
 	const FINANCES = 'finances';
 	const KIDS = 'kids';
+	const MEMBERSHIPS = 'memberships';
   const PARENTS = 'parents';
 	const PREFERENCES = 'preferences';
-	const PRICES = 'prices';
 	const TRANSACTIONS = 'transactions';
 
 }

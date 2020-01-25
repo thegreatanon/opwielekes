@@ -1,5 +1,16 @@
 $(document).ready(function () {
 
+	// TO ADD: set default membership
+	//defaultmembership = $('#default_membership').select2({
+	//	tags: false,
+	//	dropdownAutoWidth: true
+	//});
+
+	// this one is in the members section but is loaded earlier
+	parentmembership = $('#parent_membership').select2({
+		tags: false
+	});
+
 	settingsemailaction = $('#settings_email_action').select2({
 		placeholder: "Kies",
 		allowClear: true,
@@ -77,48 +88,68 @@ function loadSettings() {
 
 function loadPrices() {
     $.ajax({
-        url: 'api/settings/prices',
-        success: function (prices) {
-			setPriceTable(prices);
-			db_prices = prices;
-		}
+        url: 'api/settings/memberships',
+        success: function (memberships) {
+					setPriceTable(memberships);
+					setDefaultMembership(memberships, parentmembership);
+					//setDefaultMembership(memberships, defaultmembership);
+					db_memberships = memberships;
+				}
     });
 }
 
-function setPriceTable(prices) {
+function setPriceTable(memberships) {
 	$('#settings_prices_table_tbody').empty();
 	var myhtml = '';
-	$.each(prices, function (index, item) {
+	$.each(memberships, function (index, item) {
 		myhtml = getPriceRowHTML(item);
 		$('#settings_prices_table_tbody').append(myhtml);
 	});
 }
 
+function setDefaultMembership(memberships, selectbox) {
+	selectbox.empty();
+	for (var i = 0, len = memberships.length; i < len; i++) {
+		var newOption = new Option(memberships[i].MembershipName, memberships[i].ID, false, false);
+		selectbox.append(newOption);
+	}
+	// TO ADD: select actual preference
+	selectbox.trigger('change');
+}
+
 function cancelPrices() {
-	setPriceTable(db_prices)
+	setPriceTable(db_memberships)
 }
 
 function savePrices() {
 	if (document.getElementById("settings_prices_form").checkValidity()) {
-		var updatePriceData = [];
+		var updateMembershipData = [];
 		$('#settings_prices_table_tbody').find('tr').each(function () {
 			row = $(this);
-			updatePriceData.push({
+			updateMembershipData.push({
 				'ID': parseFloat(row.data('priceid')),
-				'Kid1': row.find('.price_kid1 input')[0].value,
-				'Kid2': row.find('.price_kid2 input')[0].value,
-				'Kid3': row.find('.price_kid3 input')[0].value,
-				'Kid4': row.find('.price_kid4 input')[0].value
+				'MembershipName': row.find('.price_name input')[0].value,
+				'YearsValid': row.find('.price_years input')[0].value,
+				'MonthsValid': row.find('.price_months input')[0].value,
+				'DaysValid': row.find('.price_days input')[0].value,
+				'MembershipK1': row.find('.price_mkid1 input')[0].value,
+				'MembershipK2': row.find('.price_mkid2 input')[0].value,
+				'MembershipK3': row.find('.price_mkid3 input')[0].value,
+				'MembershipK4': row.find('.price_mkid4 input')[0].value,
+				'CautionK1': row.find('.price_ckid1 input')[0].value,
+				'CautionK2': row.find('.price_ckid2 input')[0].value,
+				'CautionK3': row.find('.price_ckid3 input')[0].value,
+				'CautionK4': row.find('.price_ckid4 input')[0].value
 			});
 		});
 
 		// check if prices are if (!$.isNumeric(price)){ ??
 		$.ajax({
 			type: 'POST',
-			url: 'api/settings/prices',
+			url: 'api/settings/memberships',
 			dataType: 'json',
 			data: JSON.stringify({
-				'updateData': updatePriceData
+				'updateData': updateMembershipData
 			}),
 			success: function (result) {
 				toastr.success('Prijzen opgeslagen');
@@ -133,19 +164,18 @@ function savePrices() {
 
 function getPriceRowHTML(item) {
 	var myhtml = '<tr data-priceid="' + item.ID + '" style="height:100% ">';
-	myhtml += '<td>' + item.Rate + '</td>';
-	myhtml += '<td>' + item.Type + '</td>';
-	if (item.Rate != "Normaal") {
-		myhtml += '<td class="price_kid1"><input type="number" value="' + item.Kid1 + '" step=".01" min="0" disabled></td>';
-		myhtml += '<td class="price_kid2"><input type="number" value="' + item.Kid2 + '" step=".01" min="0"  disabled></td>';
-		myhtml += '<td class="price_kid3"><input type="number" value="' + item.Kid3 + '" step=".01" min="0" disabled></td>';
-		myhtml += '<td class="price_kid4"><input type="number" value="' + item.Kid4 + '" step=".01" min="0" disabled></td>';
-	} else {
-		myhtml += '<td class="price_kid1"><input type="number" value="' + item.Kid1 + '" step=".01" min="0"></td>';
-		myhtml += '<td class="price_kid2"><input type="number" value="' + item.Kid2 + '" step=".01" min="0"></td>';
-		myhtml += '<td class="price_kid3"><input type="number" value="' + item.Kid3 + '" step=".01" min="0"></td>';
-		myhtml += '<td class="price_kid4"><input type="number" value="' + item.Kid4 + '" step=".01" min="0"></td>';
-	}
+	myhtml += '<td class="price_name"><input type="text" value="' + item.MembershipName + '"></td>';
+	myhtml += '<td class="price_years"><input type="number" value="' + item.YearsValid + '" step="1" min="0"></td>';
+	myhtml += '<td class="price_months"><input type="number" value="' + item.MonthsValid + '" step="1" min="0"></td>';
+	myhtml += '<td class="price_days"><input type="number" value="' + item.DaysValid + '" step="1" min="0"></td>';
+	myhtml += '<td class="price_mkid1"><input type="number" value="' + item.MembershipK1 + '" step=".01" min="0"</td>';
+	myhtml += '<td class="price_mkid2"><input type="number" value="' + item.MembershipK2 + '" step=".01" min="0"</td>';
+	myhtml += '<td class="price_mkid3"><input type="number" value="' + item.MembershipK3 + '" step=".01" min="0"</td>';
+	myhtml += '<td class="price_mkid4"><input type="number" value="' + item.MembershipK4 + '" step=".01" min="0"</td>';
+	myhtml += '<td class="price_ckid1"><input type="number" value="' + item.CautionK1 + '" step=".01" min="0"></td>';
+	myhtml += '<td class="price_ckid2"><input type="number" value="' + item.CautionK2 + '" step=".01" min="0"></td>';
+	myhtml += '<td class="price_ckid3"><input type="number" value="' + item.CautionK3 + '" step=".01" min="0"></td>';
+	myhtml += '<td class="price_ckid4"><input type="number" value="' + item.CautionK4 + '" step=".01" min="0"></td>';
 	myhtml += '</tr>';
 	return myhtml;
 }

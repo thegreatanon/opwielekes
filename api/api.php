@@ -26,7 +26,7 @@ require_once(__DIR__ . "/Services/TableEnum.php");
 \Slim\Slim::registerAutoLoader();
 $app = new \Slim\Slim();
 $app->response->headers->set('Content-Type', 'application/json');
-$app->response->headers->set('Access-Control-Allow-Origin', 'http://localhost/talismanneke');
+$app->response->headers->set('Access-Control-Allow-Origin', 'http://localhost/opwielekes');
 $app->response->headers->set('Access-Control-Allow-Methods', 'GET');
 $app->error(function() use ($app) {
     if (isset($GLOBALS["error"])) {
@@ -40,7 +40,7 @@ $app->error(function() use ($app) {
  * Hook (called before every dispatch of the event)
  **/
 $app->hook("slim.before.dispatch", function() use ($app) {
-    if (!isset($_SESSION["login"])) {
+    if (!isset($_SESSION["account"])) {
         /**
          * If a user is not logged in, stop here! Otherwise all functions below need a check
          * unless the call is to /items, since this is used for a the public as well
@@ -360,18 +360,18 @@ $app->group('/settings', function() use ($app) {
         echo json_encode($STH->fetchAll());
     });
 
-	$app->get('/prices', function() use ($app) {
+	$app->get('/memberships', function() use ($app) {
 		global $DBH;
-        $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::PRICES));
+        $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::MEMBERSHIPS));
         echo json_encode($STH->fetchAll());
     });
 
-	$app->post('/prices', function() use ($app) {
+	$app->post('/memberships', function() use ($app) {
         global $DBH;
 		try {
 			$DBH->beginTransaction();
 			foreach ($GLOBALS["data"]->updateData as $item) {
-				$updp = SettingsService::updatePrices($item);
+				$updp = SettingsService::updateMemberships($item);
 				if ($updp["status"] == -1) {
 					throw new Exception($updp["error"]);
 				}

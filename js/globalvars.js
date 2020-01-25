@@ -15,19 +15,23 @@ var db_bikes;
 var db_emails;
 var db_kids;
 var db_parents;
-var db_prices;
+var db_memberships;
 
 // selectboxes
 var actiontype;
 var actionmember;
 var actionbikeout;
 var actionbikeall;
+var defaultmembership;
+var parentmembership;
 
 // finance variables
 var cautionBalance;
 var membershipBalance;
 
 var actionDateIsLocked = 0;
+
+var defaultMembershipID = 1;
 
 // email variables
 var newEmailTemplate;

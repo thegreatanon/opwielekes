@@ -6,23 +6,31 @@ require_once(__DIR__ . "/TableEnum.php");
 class SettingsService
 {
 
-	public static function updatePrices($data) {
+	public static function updateMemberships($data) {
 
 		global $DBH;
-        if (isset($data->ID) && isset($data->Kid1) && isset($data->Kid2) && isset($data->Kid3) && isset($data->Kid4)) {
-			try {
-                $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::PRICES) . " SET Kid1 = :Kid1, Kid2 = :Kid2, Kid3 = :Kid3, Kid4 = :Kid4 WHERE ID = :ID");
-				$STH->bindParam(':ID', $data->ID);
-				$STH->bindParam(':Kid1', $data->Kid1);
-				$STH->bindParam(':Kid2', $data->Kid2);
-				$STH->bindParam(':Kid3', $data->Kid3);
-				$STH->bindParam(':Kid4', $data->Kid4);
+        if (isset($data->ID) && isset($data->MembershipName) && isset($data->YearsValid) && isset($data->MonthsValid) && isset($data->DaysValid) && isset($data->MembershipK1) && isset($data->MembershipK2) && isset($data->MembershipK3) && isset($data->MembershipK4) && isset($data->CautionK1) && isset($data->CautionK2) && isset($data->CautionK3) && isset($data->CautionK4)) {
+						try {
+				        $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::MEMBERSHIPS) . " SET MembershipName = :MembershipName, YearsValid = :YearsValid, MonthsValid = :MonthsValid, DaysValid = :DaysValid, MembershipK1 = :MembershipK1, MembershipK2 = :MembershipK2, MembershipK3 = :MembershipK3, MembershipK4 = :MembershipK4, CautionK1 = :CautionK1, CautionK2 = :CautionK2, CautionK3 = :CautionK3, CautionK4 = :CautionK4 WHERE ID = :ID");
+								$STH->bindParam(':ID', $data->ID);
+								$STH->bindParam(':MembershipName', $data->MembershipName);
+								$STH->bindParam(':YearsValid', $data->YearsValid);
+								$STH->bindParam(':MonthsValid', $data->MonthsValid);
+								$STH->bindParam(':DaysValid', $data->DaysValid);
+								$STH->bindParam(':MembershipK1', $data->MembershipK1);
+								$STH->bindParam(':MembershipK2', $data->MembershipK2);
+								$STH->bindParam(':MembershipK3', $data->MembershipK3);
+								$STH->bindParam(':MembershipK4', $data->MembershipK4);
+								$STH->bindParam(':CautionK1', $data->CautionK1);
+								$STH->bindParam(':CautionK2', $data->CautionK2);
+								$STH->bindParam(':CautionK3', $data->CautionK3);
+								$STH->bindParam(':CautionK4', $data->CautionK4);
                 $STH->execute();
             } catch (Exception $e) {
-               return ["status" => -1, "error" => "Er is iets fout gelopen in update prices data..."];
+               return ["status" => -1, "error" => "Er is iets fout gelopen in update memberships data..."];
             }
         } else {
-           return ["status" => -1, "error" => "Onvoldoende parameters in update prices data..."];
+           return ["status" => -1, "error" => "Onvoldoende parameters in update memberships data..."];
 
         }
 

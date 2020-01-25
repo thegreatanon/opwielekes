@@ -149,7 +149,7 @@ function setActionMembers(members) {
 	for (var i = 0, len = members.length; i < len; i++) {
 		var m = members[i];
 		var p = db_parents.find(x => x.ID === m.ParentID.toString());
-		var htmlOption = '<option value="' + m.KidID + '" data-parentid="' + m.ParentID +'" data-parentname="' + m.ParentName + ' ' + m.ParentSurname + '" data-parentdate="' + m.ParentInitDate + '" data-parentnrkids="' + p.NrKids + '" data-parentactivekids="' + p.ActiveKids + '" data-parentdonations="' + p.Donations + '" data-parentcautionamount="' + m.ParentCautionAmount + '" data-kidactive="' + m.KidActive + '" data-cautionamount="' + m.KidCautionAmount + '" data-expirydate="' + m.KidExpiryDate + '" data-bikeid="' + m.KidBikeID + '" data-kidnr="' + m.KidNr + '" data-email="' + p.Email + '">' + m.KidName + ' ' + m.KidSurname + ' - ' +  m.ParentName + ' ' + m.ParentSurname  + '</option>';
+		var htmlOption = '<option value="' + m.KidID + '" data-parentid="' + m.ParentID +'" data-parentname="' + m.ParentName + ' ' + m.ParentSurname + '" data-parentdate="' + m.ParentInitDate + '" data-parentnrkids="' + p.NrKids + '" data-parentactivekids="' + p.ActiveKids + '" data-parentdonations="' + p.Donations + '" data-parentcautionamount="' + m.ParentCautionAmount + '" data-parentmembershipid="' + m.ParentMembershipID + '" data-parentmembershipname="' + m.ParentMembershipName + '" data-kidactive="' + m.KidActive + '" data-cautionamount="' + m.KidCautionAmount + '" data-expirydate="' + m.KidExpiryDate + '" data-bikeid="' + m.KidBikeID + '" data-kidnr="' + m.KidNr + '" data-email="' + p.Email + '">' + m.KidName + ' ' + m.KidSurname + ' - ' +  m.ParentName + ' ' + m.ParentSurname  + '</option>';
 		actionmember.append(htmlOption);
 	}
 	actionmember.trigger('change');
@@ -186,10 +186,11 @@ function setActionMemberInfo(selection, kidID) {
 	}
 	// PARENT
 	parentID = selection.data('parentid').toString();
-	document.getElementById('action_parentname').innerHTML = selection.data('parentname');
-	document.getElementById('action_parentsince').innerHTML = selection.data('parentdate');
+	document.getElementById('action_parentname').innerHTML = '<a href="#members" onclick="viewMember()">' + selection.data('parentname') + '</a>';
+	document.getElementById('action_membership').innerHTML = selection.data('parentmembershipname');
 	document.getElementById('action_parentcaution').innerHTML = selection.data('parentcautionamount');
 	document.getElementById('action_parentactivekids').innerHTML = selection.data('parentactivekids');
+	$('#action_parentid').val(selection.data('parentid'));
 	$('#action_emailaddress').val(selection.data('email'));
 	// KIDS
 	var kids = db_kids.filter(x => x.ParentID === parentID);
@@ -221,9 +222,10 @@ function resetActionMemberInfo(selection, kidID) {
 	document.getElementById('action_currentbiketext').innerHTML = '';
 	// PARENTS
 	document.getElementById('action_parentname').innerHTML = '';
-	document.getElementById('action_parentsince').innerHTML = '';
+	document.getElementById('action_membership').innerHTML = '';
 	document.getElementById('action_parentcaution').innerHTML = '';
 	document.getElementById('action_parentactivekids').innerHTML = '';
+	$('#action_parentid').val(0);
 	$('#action_emailaddress').val('');
 	// KIDS
 	$('#action_kids_table_tbody').empty();
@@ -347,17 +349,20 @@ function checkCaution(actionoption, memberoption) {
 	}
 	//console.log('activekids: ' + activeKids);
 	//activeKids = activeKids - nrDonations;
-	desiredCautionAmount = computeCaution(activeKids);
+	desiredCautionAmount = computeCaution(activeKids, memberoption.data('parentmembershipid'));
 	var balance = desiredCautionAmount - cautionAmount;
 	//console.log('cautionbalance: ' + balance);
 	return balance;
 }
 
-function computeCaution(activeKids) {
+function computeCaution(activeKids,membershipID) {
+	console.log(membershipID);
+	console.log(db_memberships);
 	var caution = 0;
-	prices = db_prices[1];
+	var thismembership = db_memberships.find(x => x.ID === membershipID.toString());
+	console.log(thismembership);
 	for (var i = 1; i < activeKids+1; i++) {
-		caution = caution + parseFloat(prices['Kid'+i]);
+		caution = caution + parseFloat(thismembership['CautionK'+i]);
 	}
 	return caution;
 }

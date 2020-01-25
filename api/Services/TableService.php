@@ -12,8 +12,8 @@ class TableService {
         if (!TableEnum::isValidValue($tableName)) {
             throw new Exception("table does not exist");
         }
-
-        if (isset($_SESSION["login"]) && isset($_SESSION["dbcode"])) {
+      
+        if (isset($_SESSION["account"]) && isset($_SESSION["dbcode"])) {
             return $_SESSION["dbcode"] . '_' . $tableName;
         } else {
             return $tableName;
