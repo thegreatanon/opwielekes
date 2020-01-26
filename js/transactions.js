@@ -528,7 +528,18 @@ function saveTransaction() {
 			'Date': aDate
 		};
 		validInput = verifyActionInput(actionoption, kidID, bikeOutID, bikeInID, aDate);
-
+		// Email
+		sendmail = document.getElementById("action_sendemail").checked;
+		mailData = [];
+		if (sendmail) {
+			mailData = {
+				'sendto' : document.getElementById("action_emailaddress").value,
+				'replyto' : 'maarten@bewustverbuiken.be',
+				'replytoname' : 'Opwielekes Webmaster',
+				'message' : actionquill.root.innerHTML,
+				'subject': document.getElementById("action_emailsubject").value
+			};
+		}
 		console.log('API data: ' + JSON.stringify({
 					'transactionData': transactionData,
 					'updateKid': updateKid,
@@ -569,6 +580,12 @@ function saveTransaction() {
 				error: function (data) {
 					toastr.error('Er is een fout opgetreden', 'Niet opgeslagen');
 					console.error(data);
+				},
+				complete: function () {
+					if (sendmail) {
+						sendEmail(mailData);
+					}
+
 				}
 			});
 		}
@@ -622,4 +639,33 @@ function verifyActionInput(actionoption, kidID, bikeOutID, bikeInID, aDate) {
 			validInput = false;
 	}
 	return validInput;
+}
+
+
+function sendEmail(mailData) {
+	$('#saveActionBtn').button('loading');
+	console.log(' in email');
+	console.log(mailData);
+	console.log(mailData.message);
+	$.ajax({
+		type: 'POST',
+		url: 'sendEmail.php',
+		data: {
+			'sendto': [mailData.sendto],
+			'replyto': mailData.replyto,
+			'replytoname': mailData.replytoname,
+			'subject': mailData.subject,
+			'message': mailData.message
+		},
+		success: function (result) {
+			toastr.success('Email verzonden');
+			$('#saveActionBtn').button('reset');
+		},
+		error: function() {
+			toastr.error('Kon email niet verzenden');
+			$('#saveActionBtn').button('reset');
+		}
+	});
+
+
 }

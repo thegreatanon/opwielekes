@@ -90,7 +90,7 @@
 
   			<div class="col-sm-12">
 
-  				<form id="action_form" class="form-horizontal">
+  				<form id="action_form" class="form-horizontal" target="_blank">
 
 
   					<div class="form-group">
@@ -180,18 +180,27 @@
   							<input class="form-control input-sm" type="number" step="0.01" value="0" id="amount_membership">
   						</div>
 
-  						<div class="actbtns">
-  							<input type="hidden" id="action_bikeinid" name="bikeinid" value="0">
-  							<button type="button" onclick="cancelTransaction()" class="btn btn-default actbtn">Annuleren</button>
-  							<button type="submit" id="saveActionBtn" class="btn btn-primary actbtn" disabled>Opslaan</button>
-  						</div>
-
   					</div>
+
+            <div class="form-group">
+              <label class="col-sm-1 control-label lb-sm">Email</label>
+
+              <div class='col-sm-2' >
+                <div class="checkbox">
+                      <label><input type="checkbox" class="test" id="action_sendemail" name="action_sendemail" value="send" checked> Verstuur</label>
+                  </div>
+              </div>
+              <div class="actbtns">
+                <input type="hidden" id="action_bikeinid" name="bikeinid" value="0">
+                <button type="button" onclick="cancelTransaction()" class="btn btn-default actbtn">Annuleren</button>
+                <button type="submit" id="saveActionBtn" class="btn btn-primary actbtn" disabled>Opslaan</button>
+              </div>
+
+            </div>
 
   					<div id="action_emaildiv" hidden>
   						<div class="form-group">
-  							<label class="col-sm-1 control-label lb-sm">Email</label>
-
+  							<label class="col-sm-1 control-label lb-sm"></label>
 
   							<label class="col-sm-1 control-label lb-sm">Onderwerp</label>
   							<div class='col-sm-3'>
@@ -202,20 +211,15 @@
   							<div class='col-sm-2'>
   								<input class="form-control input-sm" type="text" id="action_emailaddress" name="action_emailaddress">
   							</div>
-
-  							<div class='col-sm-2' >
-  								<label class="checkbox-label">
-  									<input type="checkbox" class="form-control input-sm" id="action_sendemail" name="action_sendemail" value="send" disabled> Verstuur
-  								</label>
-  							</div>
-
   						</div>
+
   						<div class="form-group">
   							<label class="col-sm-1 control-label lb-sm"></label>
   							<div class="col-sm-8">
   									<div id="actionemail">
   									</div>
   								</div>
+
 
   						</div>
   					</div>
