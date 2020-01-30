@@ -3,7 +3,7 @@ $(document).ready(function () {
 	$('#actiondatepicker').datetimepicker({
 		//locale: 'nl',
 		defaultDate: new Date(),
-		format: 'YYYY-MM-DD'
+		format: 'DD-MM-YYYY'
 	});
 
 	actionbikeall = $('#action_bike_all').select2({
@@ -65,6 +65,19 @@ $(document).ready(function () {
 	$('#action_membershipinput').on('change', 'input', function (e) {
         setSaveDisabled(false);
 	});
+
+	$('#action_membershipinput').on('change', 'input', function (e) {
+				setSaveDisabled(false);
+	});
+
+/*
+	$(document).on('change', '#action_sendemail', function() {
+			console.log('checkbox changed');
+	    if(this.checked) {
+	      // checkbox is checked
+	    }
+	});
+*/
 
 	$('#action_form').on('submit',function(e){
 		e.preventDefault();
@@ -203,6 +216,7 @@ function setActionMemberInfo(selection, kidID) {
 			bike = db_bikes.find(x => x.ID === bikeID.toString());
 			bikenr = bike.Number;
 		}
+		console.log(kids[i]);
 		$('#action_kids_table_tbody').append(template_kidsactionrow({ID: kids[i].ID, fullname: kids[i].Name + ' ' + kids[i].Surname, kidnr: kids[i].KidNr, expirydate: kids[i].ExpiryDate, active: kids[i].Active, bikenr: bikenr }));
 	}
 	// FINANCES
@@ -291,9 +305,13 @@ function setActionInfo() {
 		$('#action_emailsubject').val(e.Subject);
 		actionquill.root.innerHTML = e.Text;
 		$("#action_emaildiv").show();
+		$("#action_sendemail").prop('checked', true);
+		$("#action_sendemail").prop('disabled', false);
 
 	} else {
 		$("#action_emaildiv").hide();
+		$("#action_sendemail").prop('checked', false);
+		$("#action_sendemail").prop('disabled', true);
 	}
 	// CAUTION
 	memberoption = actionmember.find('option:selected');
@@ -320,20 +338,19 @@ function checkMembership(actionoption, memberoption) {
 	var today =  moment();
 	var expirydate = memberoption.data('expirydate');
 	console.log('valid: ' + moment(expirydate).isValid());
+	console.log(memberoption);
+	membershipid = memberoption.data('parentmembershipid');
+	membership = db_memberships.find(x => x.ID === membershipid.toString());
+		console.log('expired :' + moment(expirydate, 'DD-MM-YYYY').isBefore(today));
 	var balance = 0;
-	// temporarily use updatekidfn as variable for membership needed
-	if (actionoption.data('updatekidfin')=="1") {
-		if (!moment(expirydate).isValid() || moment(expirydate).isBefore(today)) {
-			if (memberoption.data('kidnr') == "0") {
-				currentKidNr = parseInt(memberoption.data('parentactivekids')) + 1;
-			} else {
-				currentKidNr = memberoption.data('kidnr');
-			}
-			prices = db_prices[0];
-			balance = parseFloat(prices['Kid'+currentKidNr]);
+	if (!moment(expirydate, 'DD-MM-YYYY').isValid() || moment(expirydate, 'DD-MM-YYYY').isBefore(today)) {
+		if (memberoption.data('kidnr') == "0") {
+			currentKidNr = parseInt(memberoption.data('parentactivekids')) + 1;
+		} else {
+			currentKidNr = memberoption.data('kidnr');
 		}
+		balance = balance + parseFloat(membership['MembershipK'+currentKidNr]);
 	}
-	console.log('membershipbalance: ' + balance);
 	return balance;
 }
 
@@ -384,6 +401,8 @@ function resetActionInfo() {
 	$("#saveActionBtn").prop("disabled", true);
 	// EMAIL
 	$("#action_emaildiv").hide();
+	$("#action_sendemail").prop('checked', false);
+	$("#action_sendemail").prop('disabled', true);
 	// CAUTION
 	document.getElementById('action_cautioninfotext').innerHTML = "";
 	cautionBalance = 0;
@@ -436,7 +455,7 @@ function saveTransaction() {
 		kidID = actionmember.val();
 		actionoption = actiontype.find('option:selected');
 		action= actiontype.val();
-		aDate = $('#action_date').val();
+		aDate = convertDate($('#action_date').val());
 		// BIKE STATUS
 		var newBikeID = "0";
 		bikeStatus = [];
@@ -481,7 +500,7 @@ function saveTransaction() {
 				'ID': kidID,
 				'Active': kidActive,
 				'KidNr': kidNr,
-				'ExpiryDate': expirydate,
+				'ExpiryDate': convertDate(expirydate),
 				'BikeID': bikeOutID
 			};
 		}
@@ -659,6 +678,9 @@ function sendEmail(mailData) {
 		},
 		success: function (result) {
 			toastr.success('Email verzonden');
+			data = JSON.parse(result)
+			console.log( typeof(data) );
+			console.log( data.success );
 			$('#saveActionBtn').button('reset');
 		},
 		error: function() {

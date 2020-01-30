@@ -147,7 +147,7 @@ $(document).ready(function () {
 	$('#findatepicker').datetimepicker({
 		//locale: 'nl',
 		defaultDate: new Date(),
-		format: 'YYYY-MM-DD'
+		format: 'DD-MM-YYYY'
 	});
 
 	$('#fin_status').select2({
@@ -178,7 +178,7 @@ $(document).ready(function () {
 					type: 'POST',
 					url: 'api/finances/update/' + $('#fin_id').val(),
 					data: JSON.stringify({
-							'TransactionDate': $('#fin_date').val(),
+							'TransactionDate': convertDate($('#fin_date').val()),
 							'Received': parseInt($('#fin_status').val())
 					}),
 					contentType: "application/json",

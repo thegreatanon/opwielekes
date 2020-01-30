@@ -29,5 +29,12 @@ class TransactionsService
         }
 	}
 
+	public static function getTransactions() {
+			$mysqldateformat = $GLOBALS['mysqldateformat'];
+			global $DBH;
+			$STH = $DBH->prepare("SELECT ID,	KidID,	ParentID,	ActionID,	BikeOutID,	BikeInID,	Caution,	Membership,	 DATE_FORMAT(Date, '" . $mysqldateformat . "') Date FROM " . TableService::getTable(TableEnum::TRANSACTIONS) . " ORDER BY Date");
+			$STH->execute();
+			return $STH->fetchAll();
+	}
 
 }

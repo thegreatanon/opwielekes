@@ -190,18 +190,16 @@ class MembersService
         }
 	}
 
-	/* DOES NOT WORK CAUSE BIKEID CAN BE 0 */
-	/*
+
+
 	public static function getKids() {
-        global $DBH;
-		$STH = $DBH->prepare("SELECT k.ID, k.Name, k.Surname, k.BirthDate, k.Caution, k.ExpiryDate, k.Active, k.BikeID, b.Number BikeNumber, b.Name BikeName
-			FROM " . TableService::getTable(TableEnum::KIDS) . " k
-			LEFT JOIN " . TableService::getTable(TableEnum::BIKES) . " b
-			ON k.BikeID = b.ID");
-		$STH->execute();
-		return $STH->fetchAll();
+			$mysqldateformat = $GLOBALS['mysqldateformat'];
+      global $DBH;
+			$STH = $DBH->prepare("SELECT ID, ParentID, Name, Surname, DATE_FORMAT(BirthDate, '" . $mysqldateformat . "') BirthDate, Caution, DATE_FORMAT(ExpiryDate, '" . $mysqldateformat . "') ExpiryDate, Active, BikeID, KidNr FROM " . TableService::getTable(TableEnum::KIDS) );
+			$STH->execute();
+			return $STH->fetchAll();
     }
-	*/
+
 	/*
 	// DOES NOT WORK, MISSING FIELDS FOR KIDS WITH USED PARENTID
 	public static function getJoinedMembers2() {
@@ -218,8 +216,9 @@ class MembersService
 	*/
 
 	public static function getJoinedMembers() {
+		$mysqldateformat = $GLOBALS['mysqldateformat'];
         global $DBH;
-		$STH = $DBH->prepare("SELECT k.ID KidID, k.Name KidName, k.Surname KidSurname, k.BirthDate KidBirthDate, k.ExpiryDate KidExpiryDate, k.Active KidActive, k.BikeID KidBikeID, k.KidNr KidNr, p.ID ParentID, p.Name ParentName, p.Surname ParentSurname, p.InitDate ParentInitDate, p.CautionAmount ParentCautionAmount, p.MembershipID ParentMembershipID, m.MembershipName ParentMembershipName
+		$STH = $DBH->prepare("SELECT k.ID KidID, k.Name KidName, k.Surname KidSurname, DATE_FORMAT(k.BirthDate, '" . $mysqldateformat . "') KidBirthDate, DATE_FORMAT(k.ExpiryDate, '" . $mysqldateformat . "') KidExpiryDate, k.Active KidActive, k.BikeID KidBikeID, k.KidNr KidNr, p.ID ParentID, p.Name ParentName, p.Surname ParentSurname, DATE_FORMAT(p.InitDate, '" . $mysqldateformat . "') ParentInitDate, p.CautionAmount ParentCautionAmount, p.MembershipID ParentMembershipID, m.MembershipName ParentMembershipName
 			FROM " . TableService::getTable(TableEnum::KIDS) . " k
 			LEFT JOIN " . TableService::getTable(TableEnum::PARENTS) . " p
 			ON k.ParentID = p.ID
@@ -232,7 +231,8 @@ class MembersService
 
 	public static function getParents() {
         global $DBH;
-		$STH = $DBH->prepare("SELECT p.ID, p.Name, p.Surname, p.Street, p.StreetNumber, p.Postal, p.Town, p.Email, p.Phone, p.InitDate, p.CautionAmount, COUNT(k.ParentID) NrKids, SUM(CASE WHEN k.Active THEN 1 ELSE 0 END) ActiveKids, (SELECT SUM(CASE WHEN t.ActionID = '4' THEN 1 ELSE 0 END) FROM " . TableService::getTable(TableEnum::TRANSACTIONS) . " t WHERE t.ParentID = p.ID GROUP BY t.ParentID) Donations, p.MembershipID, m.MembershipName
+				$mysqldateformat = $GLOBALS['mysqldateformat'];
+		$STH = $DBH->prepare("SELECT p.ID, p.Name, p.Surname, p.Street, p.StreetNumber, p.Postal, p.Town, p.Email, p.Phone, DATE_FORMAT(p.InitDate, '" . $mysqldateformat . "') InitDate, p.CautionAmount, COUNT(k.ParentID) NrKids, SUM(CASE WHEN k.Active THEN 1 ELSE 0 END) ActiveKids, (SELECT SUM(CASE WHEN t.ActionID = '4' THEN 1 ELSE 0 END) FROM " . TableService::getTable(TableEnum::TRANSACTIONS) . " t WHERE t.ParentID = p.ID GROUP BY t.ParentID) Donations, p.MembershipID, m.MembershipName
 			FROM " . TableService::getTable(TableEnum::PARENTS) . " p
 			LEFT JOIN " . TableService::getTable(TableEnum::KIDS) . " k
 			ON p.ID = k.ParentID

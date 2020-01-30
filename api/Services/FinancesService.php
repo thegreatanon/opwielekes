@@ -7,8 +7,9 @@ class FinancesService
 {
 
 	public static function getTransactions() {
-        global $DBH;
-		$STH = $DBH->prepare("SELECT f.ID, f.TransactionDate, f.ParentID, f.KidID, f.Amount, f.Membership, f.Caution, f.Received, p.Name ParentName, p.Surname ParentSurname, k.Name KidName, k.Surname KidSurname
+		$mysqldateformat = $GLOBALS['mysqldateformat'];
+    global $DBH;
+		$STH = $DBH->prepare("SELECT f.ID, DATE_FORMAT(f.TransactionDate, '" . $mysqldateformat . "') TransactionDate, f.ParentID, f.KidID, f.Amount, f.Membership, f.Caution, f.Received, p.Name ParentName, p.Surname ParentSurname, k.Name KidName, k.Surname KidSurname
 			FROM " . TableService::getTable(TableEnum::FINANCES) . " f
 			LEFT JOIN " . TableService::getTable(TableEnum::PARENTS) . " p
 			ON f.ParentID = p.ID

@@ -5,9 +5,9 @@ require_once(__DIR__ . "/TableEnum.php");
 
 class BikesService
 {
-	
+
 	public static function updateBike($data) {
-		
+
 		global $DBH;
         if (isset($data->ID) && isset($data->Number) && isset($data->Name) && isset($data->Frame) && isset($data->Wheel) && isset($data->Source) && isset($data->InitDate) ) {
 			try {
@@ -25,13 +25,13 @@ class BikesService
             }
         } else {
            return ["status" => -1, "error" => "Onvoldoende parameters in update fiets..."];
-        
+
         }
-		
+
     }
 
 	public static function updateBikeStatus($data) {
-		
+
 		global $DBH;
         if (isset($data->ID) && isset($data->Status) ) {
 			try {
@@ -44,11 +44,11 @@ class BikesService
             }
         } else {
            return ["status" => -1, "error" => "Onvoldoende parameters in update fietsstatus..."];
-        
+
         }
-		
+
     }
-	
+
 	public static function newBike($data) {
 		global $DBH;
         if (isset($data->Number) && isset($data->Name) && isset($data->Status) && isset($data->Frame) && isset($data->Wheel) && isset($data->Source) && isset($data->InitDate) ) {
@@ -67,10 +67,10 @@ class BikesService
             }
         } else {
            return ["status" => -1, "error" => "Onvoldoende parameters in nieuwe fiets..."];
-        
+
         }
 	}
-	
+
 	public static function deleteBike($id) {
         global $DBH;
         try {
@@ -82,5 +82,13 @@ class BikesService
             return ["status" => -1, "error" => $e];
         }
     }
-}
 
+		public static function getBikes() {
+				$mysqldateformat = $GLOBALS['mysqldateformat'];
+				global $DBH;
+				$STH = $DBH->prepare("SELECT ID, Number, Name, Frame, Wheel, DATE_FORMAT(InitDate, '" . $mysqldateformat . "') InitDate, Status, Source FROM " . TableService::getTable(TableEnum::BIKES) . " ORDER BY Number");
+				$STH->execute();
+				return $STH->fetchAll();
+		}
+
+}

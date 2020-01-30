@@ -187,7 +187,7 @@
 
               <div class='col-sm-2' >
                 <div class="checkbox">
-                      <label><input type="checkbox" class="test" id="action_sendemail" name="action_sendemail" value="send" checked> Verstuur</label>
+                      <label><input type="checkbox" class="test" id="action_sendemail" name="action_sendemail" value="send" disabled> Verstuur</label>
                   </div>
               </div>
               <div class="actbtns">
@@ -199,6 +199,8 @@
             </div>
 
   					<div id="action_emaildiv" hidden>
+
+
   						<div class="form-group">
   							<label class="col-sm-1 control-label lb-sm"></label>
 

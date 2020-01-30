@@ -80,7 +80,7 @@ $(document).ready(function () {
 	$('#parentdatepicker').datetimepicker({
 		//locale: 'nl',
 		defaultDate: new Date(),
-		format: 'YYYY-MM-DD'
+		format: 'DD-MM-YYYY'
 	});
 
 	$(document).on('click', '.editMember', function () {
@@ -223,7 +223,7 @@ function saveMember() {
 				'ID': $this.data('id').toString(),
 				'Name': $this.find(".kids_name_input")[0].value,
 				'Surname': $this.find(".kids_surname_input")[0].value,
-				'BirthDate': $this.find(".kids_birthdate_input")[0].value,
+				'BirthDate': convertDate($this.find(".kids_birthdate_input")[0].value),
 				'Caution': "0",
 				'ExpiryDate': "0000-00-00",
 				'Active': "0",
@@ -241,7 +241,7 @@ function saveMember() {
 			'Town': $('#parent_town').val(),
 			'Email': $('#parent_email').val(),
 			'Phone': $('#parent_phone').val(),
-			'InitDate': $('#parent_date').val(),
+			'InitDate': convertDate($('#parent_date').val()),
 			'CautionAmount': "0",
 			'MembershipID':  $('#parent_membership').val()
 		};
@@ -268,7 +268,7 @@ function saveMember() {
 /* KIDS */
 
 function addNewKidRow() {
-	$('#kids_table_tbody').append(template_kidsrow({ID: '0', name: '', surname: '', birthdate: '0000-00-00'}));
+	$('#kids_table_tbody').append(template_kidsrow({ID: '0', name: '', surname: '', birthdate: '00-00-0000'}));
 }
 
 function addKidItem(data) {

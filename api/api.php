@@ -68,11 +68,9 @@ $app->get('/', function() use($app) {
 
 $app->group('/bikes', function() use ($app) {
 
-    $app->get('/', function() use ($app) {
-		global $DBH;
-        $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::BIKES)  . " ORDER BY Number");
-        echo json_encode($STH->fetchAll());
-    });
+  $app->get('/', function() use ($app) {
+      echo json_encode(BikesService::getBikes());
+  });
 
 	$app->post('/', function() use ($app) {
         global $DBH;
@@ -134,21 +132,16 @@ $app->group('/parents', function() use ($app) {
 
 $app->group('/kids', function() use ($app) {
 
-    $app->get('/', function() use ($app) {
-		global $DBH;
-        $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::KIDS)  . " ORDER BY BirthDate");
-        echo json_encode($STH->fetchAll());
+	  $app->get('/', function() use ($app) {
+		    echo json_encode(MembersService::getKids());
     });
 
-	/* DOES NOT WORK
-	$app->get('/', function() use ($app) {
-		echo json_encode(MembersService::getKids());
-    });
-	*/
 });
 
 $app->group('/members', function() use ($app) {
 
+  /*
+  // not in use anymore?
 	$app->get('/', function() use ($app) {
 		global $DBH;
         $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::KIDS)  . " ORDER BY BirthDate");
@@ -157,7 +150,7 @@ $app->group('/members', function() use ($app) {
 		$parents = $STHP->fetchAll();
         echo json_encode(["status" => 0, "kids" => $kids, "parents" => $parents]);
     });
-
+    */
 	$app->get('/all', function() use ($app) {
       echo json_encode(MembersService::getJoinedMembers());
     });
@@ -251,9 +244,7 @@ $app->group('/members', function() use ($app) {
 $app->group('/transactions', function() use ($app) {
 
     $app->get('/', function() use ($app) {
-		global $DBH;
-        $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::TRANSACTIONS)  . " ORDER BY Date");
-        echo json_encode($STH->fetchAll());
+      echo json_encode(TransactionsService::getTransactions());
     });
 
 	$app->post('/', function() use ($app) {

@@ -70,7 +70,7 @@ $(document).ready(function () {
 	$('#bikedatepicker').datetimepicker({
 		//locale: 'nl',
 		defaultDate: new Date(),
-		format: 'YYYY-MM-DD'
+		format: 'DD-MM-YYYY'
 	});
 
 
@@ -149,17 +149,6 @@ function saveBike() {
 		var succesmsg = 'Fiets aangepast';
 		bstatus = document.getElementById('bike_status').innerHTML;
 	}
-	console.log({
-			'ID': bikeid,
-			'Number': $('#bike_nr').val(),
-			'Name': $('#bike_name').val(),
-			'Status': bstatus,
-			'Frame': $('#bike_frame').val(),
-			'Wheel': $('#bike_wheel').val(),
-			'Source': 'Donatie lid',
-			'InitDate': $('#bike_date').val()
-	});
-
     $.ajax({
 		type: 'POST',
 		url: 'api/bikes',
@@ -171,7 +160,7 @@ function saveBike() {
 			'Frame': $('#bike_frame').val(),
 			'Wheel': $('#bike_wheel').val(),
 			'Source': 'Donatie lid',
-			'InitDate': $('#bike_date').val()
+			'InitDate': convertDate($('#bike_date').val())
 		}),
 		contentType: "application/json",
 		success: function () {

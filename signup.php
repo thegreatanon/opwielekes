@@ -95,7 +95,7 @@
                               </div>
 
                               <?php
-                              $date_entered = date('Y-mm-dd');
+                              $date_entered = date('dd-mm-Y');
                               echo '<input type="hidden" value="<' . $date_entered . '" name="dateregistered">';
                               ?>
 

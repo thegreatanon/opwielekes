@@ -11,7 +11,7 @@ function registerMember() {
 				'Town': $('#parenttown').val(),
 				'Email': $('#parentemail').val(),
 				'Phone': $('#parentphone').val(),
-				'InitDate': $('#dateregistered').val(),
+				'InitDate': convertDate($('#dateregistered').val()),
 				'CautionAmount': "0",
 				'MembershipID':  defaultMembershipID
 			};
