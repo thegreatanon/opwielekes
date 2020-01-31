@@ -1,7 +1,18 @@
 <?php
 // variables for PDO
-$pdohost = 'localhost';
-$pdouser = 'maartyl236_admin';
-$pdopass = 'dronepictures';
-$pdodbname = 'maartyl236_opwielekes';
+$pdohost = '';
+$pdouser = '';
+$pdopass = '';
+$pdodbname = '';
+// variables for emails
+$mailhost = 'smtp.gmail.com';  						  // Specify main and backup SMTP servers
+$mailport = 465; 									  // TCP port to connect to
+$mailsmtpauth = true;                               // Enable SMTP authentication
+$mailusername = '';                // SMTP username
+$mailpassword = '';                        // SMTP password
+$mailsmtpecure = 'ssl';
+$mailfromaddress = '';
+$mailfromname = '';
+// for date conversion
+$GLOBALS['mysqldateformat'] = '%d-%m-%Y';
 ?>
