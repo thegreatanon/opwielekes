@@ -52,7 +52,9 @@
                       <span class="icon-bar"></span>
                       <span class="icon-bar"></span>
                   </button>
-                  <a class="navbar-brand" href="index.php">
+                  <?php if (isset($_SESSION["baseurl"])) {
+                    echo '<a class="navbar-brand" href="' . $_SESSION["baseurl"] . '">';
+                  } ?>
                       <span><img class="mb-4" src="images/opwielekes.jpg" alt="" width="20"></span>
                       <span>  Op wielekes</span>
                   </a>
@@ -71,6 +73,7 @@
   						  <ul class="dropdown-menu">
   							<li><a href="#settings_prices">Prijzen</a></li>
   							<li><a href="#settings_emails">Emails</a></li>
+                <li><a href="#settings_memberships">Lidmaatschap</a></li>
   						  </ul>
   					</li>
                   </ul>
@@ -387,7 +390,10 @@
   		<div id="tabMembersAll" class="tabContent">
 
   			<h4 class="inlineh4">Overzicht Leden</h4>
-  			<button onclick="newMember()" class="btn btn-default bikebtns compact">Nieuw lid</button>
+        <button onclick="newMember()" class="btn btn-default bikebtns compact">Nieuw lid</button>
+        <?php if (isset($_SESSION["baseurl"])) {
+          echo '<a class="button btn btn-default bikebtns compact" href="' . $_SESSION["baseurl"] . '/signup" target="_blank">Zelf inschrijven</a>';
+        } ?>
 
   			<table id="members_table" class="table table-striped" width="100%">
   				<thead>
@@ -820,6 +826,103 @@
   		</div>
 
       </section>
+
+
+
+      <section id="content_settings_memberships" class="content_section">
+        <h4 class="inlineh4">Beheer lidmaatschap</h4>
+
+        <div class="container-fluid" width="100%">
+          <form id="settings_memberships_form" class="form-horizontal">
+
+
+            <div class="form-group form-inline">
+              <label class="col-sm-2 control-label lb-sm">Herinnering 1</label>
+              <div class="col-sm-10">
+              <input type="checkbox" required name="terms1" id="field_terms1"> <label for="terms1" class="plabel"> Een automatische herinnering sturen
+                <select class="form-control" name="sort" id="sort">
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="30">30</option>
+                </select>
+                  dagen voor de vervaldag. Het bedrag wordt toegvoegd aan de financiëntabel.</label>
+
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-2 control-label lb-sm"></label>
+                <label class="col-sm-1 control-label lb-sm">Onderwerp</label>
+              <div class='col-sm-6'>
+                <input class="form-control input-sm" type="text" value="" placeholder="Onderwerp" id="settings_membership_reminder1subject" name="settings_membership_reminder1subject">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-2 control-label lb-sm"></label>
+              <label class="col-sm-1 control-label lb-sm">Bericht</label>
+              <div class="col-sm-6">
+                  <div id="settings_membership_reminder1text">
+                  </div>
+                </div>
+            </div>
+
+            <div class="form-group form-inline">
+              <label class="col-sm-2 control-label lb-sm">Herinnering 2</label>
+              <div class="col-sm-10">
+              <input type="checkbox" required name="terms1" id="field_terms1"> <label for="terms1" class="plabel"> Een automatische herinnering sturen
+                <select class="form-control" name="sort" id="sort">
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="30">30</option>
+                </select>
+                 dag(en) voor de vervaldag, indien de betaling nog niet ontvangen is.</label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-2 control-label lb-sm"></label>
+              <label class="col-sm-1 control-label lb-sm">Onderwerp</label>
+              <div class='col-sm-6'>
+                <input class="form-control input-sm" type="text" value="" placeholder="Onderwerp" id="settings_membership_reminder2subject" name="settings_membership_reminder2subject">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-2 control-label lb-sm"></label>
+              <label class="col-sm-1 control-label lb-sm">Bericht</label>
+              <div class="col-sm-6">
+                  <div id="settings_membership_reminder2text">
+                  </div>
+                </div>
+            </div>
+
+            <div class="input-group col-sm-9 actbtns">
+              <button type="button" onclick="cancelEmail()" class="btn btn-default actbtn">Annuleren</button>
+              <button type="button" onclick="saveEmail()" class="btn btn-primary actbtn">Opslaan</button>
+            </div>
+
+          </form>
+        </div>
+
+
+        </section>
 
   </div>
 

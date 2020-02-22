@@ -63,6 +63,9 @@ routie({
 	'settings_emails': function () {
         setPageActive('settings_emails');
     },
+	'settings_memberships': function () {
+	        setPageActive('settings_memberships');
+	    },
     'logout': function () {
         setPageActive('logout');
     }

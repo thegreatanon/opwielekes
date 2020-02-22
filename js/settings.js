@@ -73,6 +73,21 @@ $(document).ready(function () {
     }
 	});
 
+	settingsreminder1quill = new Quill('#settings_membership_reminder1text', {
+			modules: {
+				toolbar: quillToolbarOptions
+			},
+			theme: 'snow',
+			background: 'white'
+	});
+
+	settingsreminder2quill = new Quill('#settings_membership_reminder2text', {
+			modules: {
+				toolbar: quillToolbarOptions
+			},
+			theme: 'snow',
+			background: 'white'
+	});
 	loadSettings();
 });
 

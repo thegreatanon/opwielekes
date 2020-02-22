@@ -113,12 +113,22 @@
     }
 
 
+
+
+
     if ($_SESSION['mode'] == 'signup') {
         require_once('signup.php');
     } else {
         if (!isset($_SESSION["account"])) {
             require_once('login.php');
         } else {
+            // set path
+            if (substr($_SERVER['REMOTE_ADDR'], 0, 4) == '127.' || $_SERVER['REMOTE_ADDR'] == '::1') {
+              $_SESSION["baseurl"] =  "//localhost/opwielekes/" . $_SESSION["account"]["AccountLink"];
+            } else {
+              $_SESSION["baseurl"] =  "http://" . $_SESSION["account"]["AccountLink"] . "opwielekes.be";
+            }
+            // load main
             if ($_SESSION["account"]["AccountLink"] == $_SESSION["urlaccount"]["AccountLink"]) {
               require_once('main.php');
             } else {

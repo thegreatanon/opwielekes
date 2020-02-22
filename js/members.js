@@ -274,3 +274,9 @@ function addNewKidRow() {
 function addKidItem(data) {
     $('#kids_table_tbody').append(template_kidsrow({ID: data.ID, name: data.Name, surname: data.Surname, birthdate: data.BirthDate}));
 }
+
+function signup() {
+	//var signuplink = $_SESSION["baseurl"] . "/signup";
+	var signuplink =  "/signup";
+  window.open(signuplink, "_blank");
+}

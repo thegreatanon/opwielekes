@@ -125,3 +125,8 @@ text-align: center;
     margin:0;
     display: inline-block;
 }
+
+/* select 2 does not automatically show has-error */
+.has-error .select2-selection {
+    border-color: rgb(185, 74, 72) !important;
+}
