@@ -16,7 +16,10 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     <link href="../libs/toastr/2.1.3/toastr.min.css" rel="stylesheet"/>
+    <link href="../libs/select2/4.0.3/dist/css/select2.css" rel="stylesheet"/>
     <link href="../libs/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css"/>
+
     <link href="../css/signup.css" rel="stylesheet">
   </head>
 
@@ -35,35 +38,38 @@
                         echo '<h1 class="h3 mb-3 font-weight-normal">Inschrijven Op Wielekes ' . $_SESSION["urlaccount"]["AccountName"] . '</h1>';
                       }
                     ?>
+                      <div id="showinput">
                           <div class="form-group">
                                 <label class="control-label lb-md">Ouder<span class="req"> * </span></label>
                                 <div class="row">
-                                  <div class="form-group col-md-6">
-                                    <input class="form-control"  type="text" name="parentfirstname" id="parentfirstname" placeholder="Voornaam" required />
+                                  <div class="form-group col-md-6" id="parentfirstnamediv">
+                                    <input class="form-control"  type="text" name="parentfirstname" id="parentfirstname" placeholder="Voornaam" />
                                   </div>
-                                  <div class="form-group col-md-6">
-                                    <input class="form-control" type="text" name="parentlastname" id="parentlastname" placeholder="Familienaam"  required />
+                                  <div class="form-group col-md-6" id="parentlastnamediv">
+                                    <input class="form-control" type="text" name="parentlastname" id="parentlastname" placeholder="Familienaam" />
                                   </div>
                                 </div>
 
                                 <label class="control-label lb-md">Adres<span class="req"> * </span></label>
 
                                 <div class="row">
-                                  <div class="form-group col-md-8">
-                                    <input class="form-control" type="text" name="parentstreet" id="parentstreet" placeholder="Straat" required />
+                                  <div class="form-group col-md-8" id="parentstreetdiv">
+                                    <input class="form-control" type="text" name="parentstreet" id="parentstreet" placeholder="Straat" />
                                   </div>
-                                  <div class="form-group col-md-4">
-                                    <input class="form-control" type="text" name="parentstreetnr" id="parentstreetnr" placeholder="Nummer" required />
+                                  <div class="form-group col-md-4" id="parentstreetnrdiv">
+                                    <input class="form-control" type="text" name="parentstreetnr" id="parentstreetnr" placeholder="Nummer"/>
                                   </div>
                                 </div>
 
                                 <div class="row">
                                   <div class="col-md-4">
-                                    <input class="form-control col-md-5" type="text" name="parentpostal" id="parentpostal" placeholder="Postcode" required />
+                                    <input disabled class="form-control" type="text" name="parentpostal" id="parentpostal" />
                                   </div>
-                                  <div class="col-md-8">
-                                    <input class="form-control col-md-8" type="text" name="parenttown" id="parenttown" placeholder="Stad" required />
+                                  <div class="col-md-8" id="parenttowndiv">
+                                    <select style="width : 100%;" class="form-control" id="parenttown" name="parenttown">
+                                    </select>
                                   </div>
+
                                 </div>
                             </div>
 
@@ -71,19 +77,19 @@
                           <div class="form-group">
                               <div class="row">
                                 <label for="email" class="col-md-6">E-mailadres<span class="req"> * </span></label>
-                                <label for="phonenumber" class="col-md-6">Telefoonnummer<span class="req"> * </span></label>
+                                <label for="phonenumber" class="col-md-6">Telefoonnr (bvb 0475123456)<span class="req"> * </span></label>
                               </div>
                               <div class="row">
-                                <div class="form-group col-md-6">
-                                    <input class="form-control" type="text" name="parentemail" id="parentemail" placeholder="naam@email.com" required />
+                                <div class="form-group col-md-6" id="parentemaildiv">
+                                    <input class="form-control" type="text" name="parentemail" id="parentemail" placeholder="naam@email.com" />
                                 </div>
-                                <div class="form-group col-md-6">
-                                    <input class="form-control" type="text" name="parentphone" id="parentphone" placeholder="0472263099" required />
+                                <div class="form-group col-md-6" id="parentphonediv">
+                                    <input class="form-control" type="text" name="parentphone" id="parentphone" placeholder="0475123456"  />
                                 </div>
                               </div>
-  
+
                               <div class="row">
-                                <label class="col-md-8">Kind 1</label>
+                                <label class="col-md-8">Kind 1 (indien van toepassing)</label>
                                 <label class="col-md-4">Geboortedatum</label>
                               </div>
                               <div class="row">
@@ -104,7 +110,7 @@
                               </div>
 
                               <div class="row">
-                                <label class="col-md-8">Kind 2</label>
+                                <label class="col-md-8">Kind 2 (indien van toepassing)</label>
                                 <label class="col-md-4">Geboortedatum</label>
                               </div>
                               <div class="row">
@@ -124,18 +130,18 @@
                                 </div>
                               </div>
 
-                              <div class="form-group">
+                              <div>
                               <?php
                               $date_entered = date('dd-mm-Y');
                               echo '<input type="hidden" value="<' . $date_entered . '" name="dateregistered">';
                               echo '<div class="row">';
-                              echo '<div class="col-md-12">';
-                              echo '<input type="checkbox" required name="terms1" id="field_terms1"> <label for="terms1"> Ik teken dat ik op wielekes toestemming geef me te contacteren.<span class="req"> * </span></label>';
+                              echo '<div class="col-md-12" form-group" id="signcontactdiv">';
+                              echo '<input type="checkbox" name="signcontact" id="signcontact"> <label class="control-label" for="signcontact"> Ik teken dat ik op wielekes toestemming geef me te contacteren.<span class="req"> * </span></label>';
                               echo '</div>';
                               echo '</div>';
                               echo '<div class="row">';
-                              echo '<div class="col-md-12">';
-                              echo '<input type="checkbox" required name="terms" id="field_terms">  <label for="terms"> Ik teken het <a href="terms.php" title="Je kan het intern reglement lezen door op deze link te klikken">intern reglement</a>.<span class="req"> * </span></label>';
+                              echo '<div class="col-md-12 form-group" id="signrulesdiv">';
+                              echo '<input type="checkbox" name="signrules" id="signrules">  <label class="control-label" for="signrules"> Ik teken het <a data-fancybox data-type="iframe" href="https://admin.opwielekes.be/pdf/ReglementOpwielekes.pdf" title="Je kan het intern reglement lezen door op deze link te klikken">intern reglement</a>.<span class="req"> * </span></label>';
                               echo '</div>';
                               echo '</div>';
                               //echo '<input type="checkbox" required name="terms" onchange="this.setCustomValidity(validity.valueMissing ? 'Ik ga akkoord met het intern reglement' : '');" id="field_terms">   <label for="terms">Ik ga akkoord met het <a href="terms.php" title="Je kan de algemene voorwaarden lezen door op deze link te klikken">intern reglement</a>.<span class="req"> * </span></label>';
@@ -144,10 +150,81 @@
                           </div>
 
                           <div class="form-group">
-                              <input class="btn btn-success" type="submit" onclick="registerMember()" value="Inschrijven">
+                              <input class="btn btn-success actbtn" type="button" onclick="verifyMember()" value="Inschrijven">
                           </div>
 
+                        </div>
 
+                        <div id="showsummary" style="display: none;">
+                          <p style="margin-top:30px;margin-bottom:20px;"> Je hebt volgende gegevens ingegeven:</p>
+
+                          <div class="col-sm-12">
+                            <label class="col-sm-2 control-label">Naam</label>
+              							<div class="col-sm-10">
+              								<p id="sumname"> </p>
+              							</div>
+                          </div>
+
+                          <div class="col-sm-12">
+                            <label class="col-sm-2 control-label">Adres</label>
+                            <div class="col-sm-10">
+                              <p id="sumaddress"> </p>
+                            </div>
+                          </div>
+
+                          <div class="col-sm-12">
+                            <label class="col-sm-2 control-label">Email</label>
+                            <div class="col-sm-10">
+                              <p id="sumemail"> </p>
+                            </div>
+                          </div>
+
+                          <div class="col-sm-12">
+                            <label class="col-sm-2 control-label">Tel</label>
+                            <div class="col-sm-10">
+                              <p id="sumphone"> </p>
+                            </div>
+                          </div>
+
+                          <div class="col-sm-12">
+                            <label class="col-sm-2 control-label">Kinderen</label>
+                            <div class="col-sm-10">
+                              <p id="sumkids"> </p>
+                            </div>
+                          </div>
+
+          								<div class="col-sm-12 checkbox">
+                            <div style="padding-left:15px">
+          										<label><input type="checkbox" checked disabled> Ik teken dat ik op wielekes toestemming geef me te contacteren.</label>
+                            </div>
+                          </div>
+
+          								<div class="col-sm-12 checkbox">
+          	                <div style="padding-left:15px">
+          										<label><input type="checkbox" checked disabled> Ik teken het <a data-fancybox data-type="iframe" href="https://admin.opwielekes.be/pdf/ReglementOpwielekes.pdf" title="Je kan het intern reglement lezen door op deze link te klikken">intern reglement</a>.</label>
+                            </div>
+          								</div>
+
+                          <div class="form-group" >
+                            	<div class="col-sm-12" style="margin-top:40px;">
+                              </div>
+                          </div>
+
+                          <div class="form-group">
+
+                                <input class="btn btn-primary" type="button" onclick="editMember()" value="Wijzigen">
+                                <input class="btn btn-success actbtn" type="button" onclick="registerMember()" value="Bevestigen">
+
+                          </div>
+                        </div>
+
+                        <div id="showsuccess" style="display: none;">
+                          <p style="margin-top:30px;margin-bottom:20px;"> Je bent ingeschreven.</p>
+                          <!--<p> Er werd een bevestigingsemail gestuurd. </p>-->
+                          <div class="form-group">
+                              <input class="btn btn-success actbtn" type="button" onclick="resetSignupForm()" value="Nieuwe inschrijving">
+                          </div>
+                        </div>
                     </form>
 
                 </div>
@@ -158,7 +235,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="../libs/toastr/2.1.3/toastr.min.js"></script>
+    <script src="../libs/select2/4.0.3/dist/js/select2.min.js"></script>
     <script src="../libs/datetimepicker/bootstrap-datetimepicker.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
 
     <script src="../js/globalvars.js"></script>
     <script src="../js/signup.js"></script>

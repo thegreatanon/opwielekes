@@ -88,6 +88,14 @@ $(document).ready(function () {
 			theme: 'snow',
 			background: 'white'
 	});
+
+	settingsreminder3quill = new Quill('#settings_membership_reminder3text', {
+			modules: {
+				toolbar: quillToolbarOptions
+			},
+			theme: 'snow',
+			background: 'white'
+	});
 	loadSettings();
 });
 

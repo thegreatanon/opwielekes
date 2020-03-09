@@ -18,7 +18,7 @@ require_once(__DIR__ . "/Services/TransactionsService.php");
 require_once(__DIR__ . "/Services/TableService.php");
 require_once(__DIR__ . "/Services/TableEnum.php");
 
-
+ ini_set('display_errors', 1); error_reporting('E_ALL');
 
 /**
  * Create Slim and set settings
@@ -40,7 +40,11 @@ $app->error(function() use ($app) {
  * Hook (called before every dispatch of the event)
  **/
 $app->hook("slim.before.dispatch", function() use ($app) {
-    if (!isset($_SESSION["account"])) {
+    if ( !( ($app->request->getResourceUri() == '/members/register')
+        || $app->request->getResourceUri() == '/settings/postalcodes'
+        || isset($_SESSION["account"]) )) {
+
+    //if ($app->request->getResourceUri() != '/members' && $app->request->getResourceUri() != '/settings/postalcodes' && !isset($_SESSION["account"])) {
         /**
          * If a user is not logged in, stop here! Otherwise all functions below need a check
          * unless the call is to /items, since this is used for a the public as well
@@ -94,6 +98,10 @@ $app->group('/bikes', function() use ($app) {
 			$app->error();
 		}
 		echo json_encode(null);
+    });
+
+    $app->post('/delete/:id', function($id) use ($app) {
+      generateResponse(BikesService::deleteBike($id));
     });
 
 });
@@ -155,8 +163,8 @@ $app->group('/members', function() use ($app) {
       echo json_encode(MembersService::getJoinedMembers());
     });
 
-	$app->post('/', function() use ($app) {
-        global $DBH;
+  $app->post('/', function() use ($app) {
+    global $DBH;
 		try {
 			$DBH->beginTransaction();
 			if ($GLOBALS["data"]->parentID == 0) {
@@ -172,7 +180,6 @@ $app->group('/members', function() use ($app) {
 				}
 				$parentid = $GLOBALS["data"]->parentID;
 			}
-
 			foreach ($GLOBALS["data"]->kidsdata as $kid) {
 				if ($kid->ID == 0) {
 					$newk = MembersService::newKid($kid,$parentid);
@@ -186,18 +193,12 @@ $app->group('/members', function() use ($app) {
 					}
 				}
 			}
-
-
-			// delete any removed lines
-			/*
-			foreach ($GLOBALS["data"]->deleteorderitems as $orderitemnr) {
-				$remol = OrdersService::deleteOrderLine($orderitemnr);
-				if ($remol["status"] == -1) {
-					throw new Exception($remol["error"]);
-				}
-			}
-			*/
-
+      foreach ($GLOBALS["data"]->deleteKids as $kidnr) {
+        $delk = MembersService::deleteKid($kidnr);
+        if ($delk["status"] == -1) {
+          throw new Exception($delk["error"]);
+        }
+      }
 			$DBH->commit();
 		} catch (Exception $e) {
 			$DBH->rollBack();
@@ -206,38 +207,93 @@ $app->group('/members', function() use ($app) {
 		}
 		echo json_encode(null);
     });
+
+    $app->post('/register', function() use ($app) {
+      global $DBH;
+  		try {
+  			$DBH->beginTransaction();
+				$newp = MembersService::newParent($GLOBALS["data"]->parentdata);
+				if ($newp["status"] == -1) {
+					throw new Exception($newp["error"]);
+				}
+				$parentid = $newp["lastid"];
+  			foreach ($GLOBALS["data"]->kidsdata as $kid) {
+					$newk = MembersService::newKid($kid,$parentid);
+					if ($newk["status"] == -1) {
+						throw new Exception($newk["error"]);
+					}
+  			}
+        $newl = MembersService::logRegistration($GLOBALS["data"]->logdata, $parentid);
+        if ($newl["status"] == -1) {
+          throw new Exception($newl["error"]);
+        }
+  			$DBH->commit();
+  		} catch (Exception $e) {
+  			$DBH->rollBack();
+  			$GLOBALS["error"] = $e->getMessage();
+  			$app->error();
+  		}
+  		echo json_encode(null);
+      });
 
 	$app->post('/payments', function() use ($app) {
         global $DBH;
-		try {
-			$DBH->beginTransaction();
+    		try {
+    			$DBH->beginTransaction();
 
-			$pr = FinancesService::receiveTransaction($GLOBALS["data"]->finTransID);
-			if ($pr["status"] == -1) {
-				throw new Exception($pr["error"]);
-			}
+    			$pr = FinancesService::receiveTransaction($GLOBALS["data"]->finTransID);
+    			if ($pr["status"] == -1) {
+    				throw new Exception($pr["error"]);
+    			}
 
-			if ($GLOBALS["data"]->updateCaution != 0) {
-				$upc = MembersService::updateParentCaution($GLOBALS["data"]->cautionData);
-				if ($upc["status"] == -1) {
-					throw new Exception($upc["error"]);
-				}
-			}
+    			if ($GLOBALS["data"]->updateCaution != 0) {
+    				$upc = MembersService::updateParentCaution($GLOBALS["data"]->cautionData);
+    				if ($upc["status"] == -1) {
+    					throw new Exception($upc["error"]);
+    				}
+    			}
 
-			if ($GLOBALS["data"]->updateMembership != 0) {
-				$upm = MembersService::updateKidExpiryDate($GLOBALS["data"]->membershipData);
-				if ($upm["status"] == -1) {
-					throw new Exception($upm["error"]);
-				}
-			}
-			$DBH->commit();
-		} catch (Exception $e) {
-			$DBH->rollBack();
-			$GLOBALS["error"] = $e->getMessage();
-			$app->error();
-		}
-		echo json_encode(null);
+    			if ($GLOBALS["data"]->updateMembership != 0) {
+    				$upm = MembersService::updateKidExpiryDate($GLOBALS["data"]->membershipData);
+    				if ($upm["status"] == -1) {
+    					throw new Exception($upm["error"]);
+    				}
+    			}
+    			$DBH->commit();
+    		} catch (Exception $e) {
+    			$DBH->rollBack();
+    			$GLOBALS["error"] = $e->getMessage();
+    			$app->error();
+    		}
+    		echo json_encode(null);
     });
+
+    $app->post('/delete', function() use ($app) {
+      global $DBH;
+      try {
+        $DBH->beginTransaction();
+        foreach ($GLOBALS["data"]->kidsid as $kid) {
+          $delk = MembersService::deleteKid($kid->ID);
+          if ($delk["status"] == -1) {
+            throw new Exception($delk["error"]);
+          }
+        }
+        $delp = MembersService::deleteParent($GLOBALS["data"]->parentid);
+        if ($delp["status"] == -1) {
+          throw new Exception($delp["error"]);
+        }
+        $DBH->commit();
+      } catch (Exception $e) {
+        $DBH->rollBack();
+        $GLOBALS["error"] = $e->getMessage();
+        $app->error();
+      }
+      echo json_encode(null);
+    });
+
+    $app->post('/deletekid/:id', function($id) use ($app) {
+          generateResponse(MembersService::deleteKid($id));
+      });
 });
 
 
@@ -350,6 +406,12 @@ $app->group('/settings', function() use ($app) {
         $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::ACTIONS));
         echo json_encode($STH->fetchAll());
     });
+
+    $app->get('/postalcodes', function() use ($app) {
+      global $DBH;
+          $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::POSTALCODES) . " order by City");
+          echo json_encode($STH->fetchAll());
+      });
 
 	$app->get('/memberships', function() use ($app) {
 		global $DBH;

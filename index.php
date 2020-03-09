@@ -21,53 +21,41 @@
     require_once(__DIR__ . "/api/pdoconnect.php");
     require_once(__DIR__ . "/api/Services/SettingsService.php");
   	$accounts = SettingsService::getAccounts();
-  	$_SESSION['accounts'] = $accounts;
-    $_SESSION['urlaccount'] = '';
-    $_SESSION['mode'] = 'signin';
+
+    // variables for authentication management
+    // account is the account we are logged in
+    // urlaccount is the account corresponding to the url
+  	$_SESSION['accounts'] = $accounts; // all possible accounts
+    $_SESSION['mode'] = 'signin';      // sign in or sign up
 
     // set paths
   	if (substr($_SERVER['REMOTE_ADDR'], 0, 4) == '127.' || $_SERVER['REMOTE_ADDR'] == '::1') {
       $locbase =  "/opwielekes/";
+      $folbase = "";
+      $_SESSION["pdfbase"] = "http://localhost/opwielekes/pdf/";
   	} else {
       $locbase =  "/";
+      $folbase = "";
+      $_SESSION["pdfbase"] = "http://admin.opwielekes.be/pdf/";
   	}
-
-
-    /*
-    // check if a location has been selected in account.php
-    if (isset($_POST["selectaccountID"])) {
-      $accid = $_POST["selectaccountID"];
-      //unset($_POST["selectaccountID"]));
-      $key = array_search($accid, array_column($accounts, 'AccountID'));
-      if (false !== $key) {
-        $account = $accounts[$key];
-        $aclink = $account['AccountLink'];
-        //$newurl = 'Location: ' . $aclink;
-        $newurl = 'Location:http://' . $aclink . '.opwielekes.be/';
-        unset($_SESSION["account"]);
-        header($newurl);
-        //exit;
-      }
-    }
-    */
 
     // detect location request
     $request = $_SERVER['REQUEST_URI'];
-
     $pos = strpos($request, $locbase);
     if ($pos !== false) {
         $request2 = substr_replace($request, "", $pos, strlen($locbase));
     }
   	$request3 = explode("/",$request2);
     $nrrequests = count($request3);
-    $locationrequest = $request3[0];
+    $depot = $request3[0];
 
     // verify whether location request is valid
-    $key = array_search($locationrequest, array_column($accounts, 'AccountLink'));
+    $key = array_search($depot, array_column($accounts, 'AccountLink'));
 		if (false !== $key) {
       $account = $accounts[$key];
-      $_SESSION['urlaccount'] = $account;
+      $_SESSION["urlaccount"] = $account;
     } else {
+      // not a valid location
       require_once('account.php');
       exit();
 		}
@@ -80,42 +68,22 @@
       }
     }
 
-    // upon submitting this form
+    // verify if we are logged in
     if (isset($_POST["password"])) {
-        if (!isset($_POST["loginID"])) {
-            $_SESSION["error"] = "Geen omgeving geselecteerd.";
-            $_SESSION["dbcode"] = '';
+        if ( $_POST["password"] == $_SESSION['urlaccount']['AccountPassword'] ) {
+          $_SESSION["account"] = $_SESSION['urlaccount'];
         } else {
-            $envID = $_POST["loginID"];
-            foreach ($accounts as $account) {
-               if ($account['AccountID'] == $envID) {
-                  $acname = $account['AccountName'];
-                  $acpswd = $account['AccountPassword'];
-                  $accode = $account['AccountCode'];
-                  $aclink = $account['AccountLink'];
-                  $loginaccount = $account;
-                }
-            }
-            if ( $_POST["password"] == $acpswd ) {
-              $_SESSION["account"] = $loginaccount;
-              $_SESSION["dbcode"] = $accode;
-            } else {
-              $_SESSION["error"] = "Ongeldig wachtwoord.";
-              $_SESSION["dbcode"] = '';
-            }
+          unset($_SESSION["account"]);
+          $_SESSION["error"] = "Ongeldig wachtwoord.";
         }
     }
 
     // if we get sent here by logout
     if (isset($_POST["logout"])) {
         unset($_SESSION["account"]);
-        unset($_SESSION["dbcode"]);
     }
 
-
-
-
-
+    // require the right php file
     if ($_SESSION['mode'] == 'signup') {
         require_once('signup.php');
     } else {
@@ -126,7 +94,7 @@
             if (substr($_SERVER['REMOTE_ADDR'], 0, 4) == '127.' || $_SERVER['REMOTE_ADDR'] == '::1') {
               $_SESSION["baseurl"] =  "//localhost/opwielekes/" . $_SESSION["account"]["AccountLink"];
             } else {
-              $_SESSION["baseurl"] =  "http://" . $_SESSION["account"]["AccountLink"] . "opwielekes.be";
+              $_SESSION["baseurl"] =  "http://" . $_SESSION["account"]["AccountLink"] . ".opwielekes.be";
             }
             // load main
             if ($_SESSION["account"]["AccountLink"] == $_SESSION["urlaccount"]["AccountLink"]) {

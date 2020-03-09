@@ -14,7 +14,9 @@
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    <link href="css/login.css" rel="stylesheet">
+    <?php
+      echo '<link href="' . $folbase . 'css/login.css" rel="stylesheet">';
+    ?>
   </head>
 
   <body>
@@ -23,11 +25,11 @@
 
       <form class="form-signin" method="POST" action="" >
         <?php
-          echo '<img class="mb-4" src="images/opwielekes.jpg" alt="" width="122" height="140">';
+          echo '<img class="mb-4" src="' . $folbase . 'images/opwielekes.jpg" alt="" width="122" height="140">';
       	  echo '<h1 class="h3 mb-3 font-weight-normal">' . $_SESSION["urlaccount"]["AccountName"] . '</h1>';
           echo '<label for="inputPassword" class="sr-only">Wachtwoord</label>';
           echo '<input type="password" name="password"  class="form-control" placeholder="Wachtwoord" required autofocus>';
-          echo '<input type="hidden" name="loginID" class="form-control" value="' . $_SESSION["urlaccount"]["AccountID"] . '" />';
+          //echo '<input type="hidden" name="loginID" class="form-control" value="' . $_SESSION["urlaccount"]["AccountID"] . '" />';
           echo '<button class="btn btn-lg btn-primary btn-block" type="submit">Aanmelden</button>';
           //echo '<p class="fullsigninlink"><a href="https://admin.opwielekes.be/index.php">Ander depot</a></p>';
 

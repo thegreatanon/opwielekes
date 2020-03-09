@@ -217,7 +217,12 @@ function setActionMemberInfo(selection, kidID) {
 			bikenr = bike.Number;
 		}
 		console.log(kids[i]);
-		$('#action_kids_table_tbody').append(template_kidsactionrow({ID: kids[i].ID, fullname: kids[i].Name + ' ' + kids[i].Surname, kidnr: kids[i].KidNr, expirydate: kids[i].ExpiryDate, active: kids[i].Active, bikenr: bikenr }));
+		if (kids[i].BirthDate == "00-00-0000") {
+			kidsage = "";
+		} else {
+			kidsage = moment().diff(convertDate(kids[i].BirthDate), 'years');
+		}
+		$('#action_kids_table_tbody').append(template_kidsactionrow({ID: kids[i].ID, fullname: kids[i].Name + ' ' + kids[i].Surname, kidnr: kids[i].KidNr, age: kidsage, expirydate: kids[i].ExpiryDate, active: kids[i].Active, bikenr: bikenr }));
 	}
 	// FINANCES
 
@@ -658,36 +663,4 @@ function verifyActionInput(actionoption, kidID, bikeOutID, bikeInID, aDate) {
 			validInput = false;
 	}
 	return validInput;
-}
-
-
-function sendEmail(mailData) {
-	$('#saveActionBtn').button('loading');
-	console.log(' in email');
-	console.log(mailData);
-	console.log(mailData.message);
-	$.ajax({
-		type: 'POST',
-		url: 'sendEmail.php',
-		data: {
-			'sendto': [mailData.sendto],
-			'replyto': mailData.replyto,
-			'replytoname': mailData.replytoname,
-			'subject': mailData.subject,
-			'message': mailData.message
-		},
-		success: function (result) {
-			toastr.success('Email verzonden');
-			data = JSON.parse(result)
-			console.log( typeof(data) );
-			console.log( data.success );
-			$('#saveActionBtn').button('reset');
-		},
-		error: function() {
-			toastr.error('Kon email niet verzenden');
-			$('#saveActionBtn').button('reset');
-		}
-	});
-
-
 }

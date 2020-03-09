@@ -12,12 +12,22 @@ class TableService {
         if (!TableEnum::isValidValue($tableName)) {
             throw new Exception("table does not exist");
         }
-      
-        if (isset($_SESSION["account"]) && isset($_SESSION["dbcode"])) {
-            return $_SESSION["dbcode"] . '_' . $tableName;
+
+
+        if ($tableName == "postalcodes" ) {
+          return $tableName;
         } else {
-            return $tableName;
+          //return 'dem_' . $tableName;
+          //exit();
+          if (isset($_SESSION["account"])) {
+              return $_SESSION["account"]["AccountCode"] . '_' . $tableName;
+          } elseif (isset($_SESSION["urlaccount"])) {
+              return $_SESSION["urlaccount"]["AccountCode"] . '_' . $tableName;
+          } else {
+              return $tableName;
+          }
         }
+
 
     }
 

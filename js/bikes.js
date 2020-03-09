@@ -79,6 +79,35 @@ $(document).ready(function () {
         setBikeForm(rowdata);
     });
 
+		$(document).on('click', '.deletebike', function () {
+						// determine which item to delete
+						var row = $(this).closest('tr');
+						var id = row.data('id');
+						if (id == "0") {
+							$(this).closest("tr").remove();
+						} else {
+							if (parseInt(row.data('active')) > 0) {
+								alert('Dit kind heeft momenteel een fietsje en kan niet verwijderd worden.');
+							} else {
+								if (confirm('Ben je zeker dat je ' + row.data('name') +  ' ' + row.data('surname') + ' wilt verwijderen?')) {
+									kidsToDelete.push(id);
+									$(this).closest("tr").remove();
+
+									$.ajax({
+											type: 'POST',
+											url: 'api/members/deletekid/' + id,
+											success: function () {
+												loadMembers();
+											},
+											error: function () {
+													console.error();
+											}
+									});
+								}
+							}
+						}
+				});
+
 	loadBikes();
 
 });
@@ -172,4 +201,34 @@ function saveBike() {
 			console.error(data);
 		}
 	});
+}
+
+function deleteBike() {
+	var bikeid = $('#bike_id').val();
+	if (bikeid==0){
+		viewTab('Members','all');
+	} else {
+		var kids = db_kids.filter(x => x.BikeID === bikeid);
+		console.log(kids)
+		console.log(kids.length)
+		if (kids.length > 0) {
+			alert('Dit fietsje is momenteel in gebruik en kan niet verwijderd worden.');
+		} else {
+			if (confirm('Ben je zeker dat je deze fiets wilt verwijderen?')) {
+				$.ajax({
+					type: 'POST',
+					url: 'api/bikes/delete/' + bikeid,
+					contentType: "application/json",
+					success: function () {
+						toastr.success('Fiets verwijderd');
+						loadBikes();
+						viewTab('Bikes','all');
+					},
+					error: function (data) {
+						console.error(data);
+					}
+				});
+			}
+		}
+	}
 }

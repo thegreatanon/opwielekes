@@ -75,7 +75,7 @@ class BikesService
         global $DBH;
         try {
             $STH = $DBH->prepare("DELETE FROM " . TableService::getTable(TableEnum::BIKES) . " WHERE ID=:id ");
-    		$STH->bindParam(':id', $id);
+    				$STH->bindParam(':id', $id);
             $STH->execute();
             return ["status" => 0];
         } catch (Exception $e) {

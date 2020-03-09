@@ -360,6 +360,7 @@
   									</div>
   									<div class="input-group col-sm-6" id="actbtns">
   										<input type="hidden" id="bike_id" name="bike_id" value="0">
+                        <button type="button" onclick="deleteBike()" class="btn btn-danger actbtn">Verwijderen</button>
   										<button type="button" onclick="cancelBike()" class="btn btn-default actbtn">Annuleren</button>
   										<button type="button" onclick="saveBike()" class="btn btn-primary actbtn">Opslaan</button>
   									</div>
@@ -394,6 +395,7 @@
         <?php if (isset($_SESSION["baseurl"])) {
           echo '<a class="button btn btn-default bikebtns compact" href="' . $_SESSION["baseurl"] . '/signup" target="_blank">Zelf inschrijven</a>';
         } ?>
+        <button onclick="loadMembers()" class="btn btn-default bikebtns compact">Tabel herladen</button>
 
   			<table id="members_table" class="table table-striped" width="100%">
   				<thead>
@@ -509,6 +511,8 @@
   											<th>Voornaam</th>
   											<th>Achternaam</th>
   											<th>Geboortedatum</th>
+                        <th>Fiets</th>
+                        <th>Lid tot</th>
   											<th></th>
   										</tr>
   									</thead>
@@ -523,6 +527,7 @@
   							</div>
   							<div class="input-group col-sm-6" id="actbtns">
   								<input type="hidden" id="parent_id" name="parent_id" value="0">
+                  <button type="button" onclick="deleteMember()" class="btn btn-danger actbtn">Verwijderen</button>
   								<button type="button" onclick="cancelMember()" class="btn btn-default actbtn">Annuleren</button>
   								<button type="button" onclick="saveMember()" class="btn btn-primary actbtn">Opslaan</button>
   							</div>
@@ -697,8 +702,8 @@
               <tr>
                 <th colspan="1" scope='colgroup'></th>
                 <th colspan="3" scope='colgroup' class="outlined">Geldig</th>
-                <th colspan="4" scope='colgroup' class="outlined">Lidmaatschap</th>
-                <th colspan="4" scope='colgroup' class="outlined">Waarborg</th>
+                <th colspan="4" scope='colgroup' class="outlined">Prijs lidmaatschap</th>
+                <th colspan="4" scope='colgroup' class="outlined">Prijs waarborg</th>
               </tr>
     					<tr>
     						<th scope='col'>Type</th>
@@ -852,6 +857,8 @@
                     <option value="10">10</option>
                     <option value="15">15</option>
                     <option value="30">30</option>
+                    <option value="45">45</option>
+                    <option value="60">60</option>
                 </select>
                   dagen voor de vervaldag. Het bedrag wordt toegvoegd aan de financiëntabel.</label>
 
@@ -891,6 +898,8 @@
                     <option value="10">10</option>
                     <option value="15">15</option>
                     <option value="30">30</option>
+                    <option value="45">45</option>
+                    <option value="60">60</option>
                 </select>
                  dag(en) voor de vervaldag, indien de betaling nog niet ontvangen is.</label>
               </div>
@@ -909,6 +918,46 @@
               <label class="col-sm-1 control-label lb-sm">Bericht</label>
               <div class="col-sm-6">
                   <div id="settings_membership_reminder2text">
+                  </div>
+                </div>
+            </div>
+
+            <div class="form-group form-inline">
+              <label class="col-sm-2 control-label lb-sm">Herinnering 3</label>
+              <div class="col-sm-10">
+              <input type="checkbox" required name="terms1" id="field_terms1"> <label for="terms1" class="plabel"> Een automatische herinnering sturen
+                <select class="form-control" name="sort" id="sort">
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="30">30</option>
+                    <option value="45">45</option>
+                    <option value="60">60</option>
+                </select>
+                 dag(en) voor de vervaldag, indien de betaling nog niet ontvangen is.</label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-2 control-label lb-sm"></label>
+              <label class="col-sm-1 control-label lb-sm">Onderwerp</label>
+              <div class='col-sm-6'>
+                <input class="form-control input-sm" type="text" value="" placeholder="Onderwerp" id="settings_membership_reminder3subject" name="settings_membership_reminder3subject">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-2 control-label lb-sm"></label>
+              <label class="col-sm-1 control-label lb-sm">Bericht</label>
+              <div class="col-sm-6">
+                  <div id="settings_membership_reminder3text">
                   </div>
                 </div>
             </div>
@@ -937,22 +986,26 @@
 
 <!-- Row in kids table -->
 <script id="kidsrow" type="text/x-handlebars-template">
-    <tr data-id="{{ID}}">
-		<td class="kids_name">
+    <tr data-id="{{ID}}" data-name="{{name}}" data-surname="{{surname}}" data-active="{{active}}" data-expirydate="{{expirydate}}">
+    		<td class="kids_name">
             <input type="text" class="form-control kids_name_input" value="{{name}}">
         </td>
-		<td class="kids_surname">
+    		<td class="kids_surname">
             <input type="text" class="form-control kids_surname_input" value="{{surname}}">
         </td>
-		<td class="kids_birthdate">
+		     <td class="kids_birthdate">
             <input type="text" class="form-control kids_birthdate_input" value="{{birthdate}}">
         </td>
+        <td class="kids_bike">
+           <input disabled type="text" class="form-control kids_bike_input" value="{{bike}}">
+       </td>
+        <td class="kids_expirydate">
+            <input disabled type="text" class="form-control kids_expirydate_input" value="{{expirydate}}">
+        </td>
         <td class="col-sm-1">
-			<!--
-            <button type="button" class="btn btn-default kids_deleterow">
+            <button type="button" class="btn btn-default deletekidrow">
                 <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
             </button>
-			-->
         </td>
     </tr>
 </script>
@@ -961,7 +1014,7 @@
 <script id="kidsactionrow" type="text/x-handlebars-template">
     <tr data-id="{{ID}}">
 		<td>{{fullname}}</td>
-		<td></td>
+		<td>{{age}}</td>
 		<td>{{active}}</td>
 		<td>{{bikenr}}</td>
 		<td>{{expirydate}}</td>

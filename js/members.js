@@ -88,12 +88,29 @@ $(document).ready(function () {
     setMemberForm(rowdata);
   });
 
+	$(document).on('click', '.deletekidrow', function () {
+	        // determine which item to delete
+	        var row = $(this).closest('tr');
+	        var id = row.data('id');
+					if (id == "0") {
+						$(this).closest("tr").remove();
+					} else {
+						if (parseInt(row.data('active')) > 0) {
+							alert('Dit kind heeft momenteel een fietsje en kan niet verwijderd worden.');
+						} else {
+							kidsToDelete.push(id);
+							$(this).closest("tr").remove();
+						}
+	        }
+	});
+
 	loadMembers();
 
 });
 
 
 function loadMembers() {
+	kidsToDelete = [];
 	loadKids();
 	$.ajax({
         url: 'api/members/all',
@@ -118,19 +135,20 @@ function loadParents(members) {
 }
 
 function loadKids() {
-    $.ajax({
-        url: 'api/kids',
-        success: function (kids) {
-			db_kids = kids;
-			//console.log('kids:');
-			//console.log(kids);
-		}
-    });
+  $.ajax({
+      url: 'api/kids',
+      success: function (kids) {
+				db_kids = kids;
+				//console.log('kids:');
+				//console.log(kids);
+			}
+  });
 }
 
 function newMember() {
 	emptyMemberForm();
 	addNewKidRow();
+	kidsToDelete = [];
 	viewTab('Members','one');
 }
 
@@ -244,18 +262,21 @@ function saveMember() {
 			'InitDate': convertDate($('#parent_date').val()),
 			'CautionAmount': "0",
 			'MembershipID':  $('#parent_membership').val()
-		};
-    $.ajax({
+	};
+	//if (confirm('Ben je zeker dat je kind ' + row.data('name') +  ' ' + row.data('surname') + ' wilt verwijderen?')) {
+  $.ajax({
 		type: 'POST',
 		url: 'api/members',
 		data: JSON.stringify({
 			'kidsdata': kidsdata,
 			'parentdata': parentdata,
-			'parentID': parentid
+			'parentID': parentid,
+			'deleteKids': kidsToDelete
 		}),
 		contentType: "application/json",
 		success: function () {
 			toastr.success(succesmsg);
+			kidsToDelete = [];
 			loadMembers();
 			viewTab('Members','all');
 		},
@@ -264,15 +285,76 @@ function saveMember() {
 		}
 	});
 }
+/*
+$.ajax({
+		type: 'POST',
+		url: 'api/members/deletekid/' + id,
+		success: function () {
+			loadMembers();
+		},
+		error: function () {
+				console.error();
+		}
+});
+*/
+function deleteMember() {
+	var parentid = $('#parent_id').val();
+	if (parentid==0){
+		viewTab('Members','all');
+	} else {
+		var kids = db_kids.filter(x => x.ParentID === parentid);
+		var kidsid = [];
+		var kidsactive = 0;
+		$.each(kids, function (index, item) {
+				kidsid.push({
+					'ID': item.ID,
+				});
+				kidsactive += item.Active;
+	  });
+		if (kidsactive > 0) {
+			alert('Dit lid heeft momenteel fietsjes en kan niet verwijderd worden.');
+		} else {
+			console.log(JSON.stringify({
+				'parentid': parentid,
+				'kidsid': kidsid
+			}));
+
+			if (confirm('Ben je zeker dat je dit lid en bijhorende kinderen wilt verwijderen?')) {
+				$.ajax({
+					type: 'POST',
+					url: 'api/members/delete',
+					data: JSON.stringify({
+						'parentid': parentid,
+						'kidsid': kidsid
+					}),
+					contentType: "application/json",
+					success: function () {
+						toastr.success('Lid verwijderd');
+						loadMembers();
+						viewTab('Members','all');
+					},
+					error: function (data) {
+						console.error(data);
+					}
+				});
+			}
+		}
+	}
+}
 
 /* KIDS */
 
 function addNewKidRow() {
-	$('#kids_table_tbody').append(template_kidsrow({ID: '0', name: '', surname: '', birthdate: '00-00-0000'}));
+	$('#kids_table_tbody').append(template_kidsrow({ID: '0', name: '', surname: '', birthdate: '00-00-0000', active:'0', expirydate:"00-00-0000", bike:""}));
 }
 
 function addKidItem(data) {
-    $('#kids_table_tbody').append(template_kidsrow({ID: data.ID, name: data.Name, surname: data.Surname, birthdate: data.BirthDate}));
+		if (data.BikeID==0) {
+			bikenr = "";
+		} else {
+			bikenr = data.BikeID;
+		}
+    $('#kids_table_tbody').append(template_kidsrow({ID: data.ID, name: data.Name, surname: data.Surname, birthdate: data.BirthDate, active: data.Active, expirydate:data.ExpiryDate, bike:bikenr}));
 }
 
 function signup() {
