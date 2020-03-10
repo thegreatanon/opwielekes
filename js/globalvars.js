@@ -83,11 +83,10 @@ function sendEmail(mailData) {
 			//console.log( typeof(data) );
 			//console.log( data.success );
 			$('#saveActionBtn').button('reset');
-
 			// button doesn't disable after reset
 			// https://stackoverflow.com/questions/10707229/jquery-disable-enable-button-not-working-after-reset
 			// workaround:
-			setTimeout(function()
+			setTimeout(function() {
 				$('#saveActionBtn').prop("disabled", true);
 			},0);
 		},
