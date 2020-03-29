@@ -9,9 +9,9 @@ class MembersService
 	public static function updateParentData($data) {
 
 		global $DBH;
-        if (isset($data->ID) && isset($data->Name) && isset($data->Surname) && isset($data->Street) && isset($data->StreetNumber) && isset($data->Postal) && isset($data->Town) && isset($data->Email) && isset($data->Phone) && isset($data->InitDate) && isset($data->MembershipID) ) {
+        if (isset($data->ID) && isset($data->Name) && isset($data->Surname) && isset($data->Street) && isset($data->StreetNumber) && isset($data->Postal) && isset($data->Town) && isset($data->Email) && isset($data->Phone) && isset($data->InitDate) && isset($data->MembershipID) && isset($data->Notes) ) {
 						try {
-	              $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::PARENTS) . " SET Name = :Name, Surname = :Surname, Street = :Street, StreetNumber = :StreetNumber, Postal = :Postal, Town = :Town, Email = :Email, Phone = :Phone, InitDate = :InitDate, MembershipID = :MembershipID WHERE ID = :ID");
+	              $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::PARENTS) . " SET Name = :Name, Surname = :Surname, Street = :Street, StreetNumber = :StreetNumber, Postal = :Postal, Town = :Town, Email = :Email, Phone = :Phone, InitDate = :InitDate, MembershipID = :MembershipID, Notes = :Notes WHERE ID = :ID");
 								$STH->bindParam(':ID', $data->ID);
 								$STH->bindParam(':Name', $data->Name);
 								$STH->bindParam(':Surname', $data->Surname);
@@ -23,6 +23,7 @@ class MembersService
 								$STH->bindParam(':Phone', $data->Phone);
 								$STH->bindParam(':InitDate', $data->InitDate);
 								$STH->bindParam(':MembershipID', $data->MembershipID);
+								$STH->bindParam(':Notes', $data->Notes);
                 $STH->execute();
             } catch (Exception $e) {
                	return ["status" => -1, "error" => "Er is iets fout gelopen in update ouder data..."];
@@ -53,9 +54,9 @@ class MembersService
 	public static function newParent($data) {
 			global $DBH;
         if (isset($data->Name) && isset($data->Surname) && isset($data->Street) && isset($data->StreetNumber) && isset($data->Postal) && isset($data->Town) && isset($data->Email) && isset($data->Phone) && isset($data->InitDate) &&
-				isset($data->CautionAmount) && isset($data->MembershipID)) {
+				isset($data->CautionAmount) && isset($data->MembershipID) && isset($data->Notes) ) {
             try {
-                $STH = $DBH->prepare("INSERT INTO " . TableService::getTable(TableEnum::PARENTS) . " (Name, Surname, Street, StreetNumber, Postal, Town, Email, Phone, InitDate, CautionAmount, MembershipID) VALUES (:Name, :Surname, :Street, :StreetNumber, :Postal, :Town, :Email, :Phone, :InitDate, :CautionAmount, :MembershipID)");
+                $STH = $DBH->prepare("INSERT INTO " . TableService::getTable(TableEnum::PARENTS) . " (Name, Surname, Street, StreetNumber, Postal, Town, Email, Phone, InitDate, CautionAmount, MembershipID, Notes) VALUES (:Name, :Surname, :Street, :StreetNumber, :Postal, :Town, :Email, :Phone, :InitDate, :CautionAmount, :MembershipID, :Notes)");
 								$STH->bindParam(':Name', $data->Name);
 								$STH->bindParam(':Surname', $data->Surname);
 								$STH->bindParam(':Street', $data->Street);
@@ -67,6 +68,7 @@ class MembersService
 								$STH->bindParam(':InitDate', $data->InitDate);
 								$STH->bindParam(':CautionAmount', $data->CautionAmount);
 								$STH->bindParam(':MembershipID', $data->MembershipID);
+								$STH->bindParam(':Notes', $data->Notes);
 				        $STH->execute();
 								$last_id = $DBH->lastInsertId();
 								return ["status" => 0, "lastid" => $last_id];
@@ -267,7 +269,7 @@ class MembersService
 	public static function getParents() {
         global $DBH;
 				$mysqldateformat = $GLOBALS['mysqldateformat'];
-		$STH = $DBH->prepare("SELECT p.ID, p.Name, p.Surname, p.Street, p.StreetNumber, p.Postal, p.Town, p.Email, p.Phone, DATE_FORMAT(p.InitDate, '" . $mysqldateformat . "') InitDate, p.CautionAmount, COUNT(k.ParentID) NrKids, SUM(CASE WHEN k.Active THEN 1 ELSE 0 END) ActiveKids, (SELECT SUM(CASE WHEN t.ActionID = '4' THEN 1 ELSE 0 END) FROM " . TableService::getTable(TableEnum::TRANSACTIONS) . " t WHERE t.ParentID = p.ID GROUP BY t.ParentID) Donations, p.MembershipID, m.MembershipName
+		$STH = $DBH->prepare("SELECT p.ID, p.Name, p.Surname, p.Street, p.StreetNumber, p.Postal, p.Town, p.Email, p.Phone, DATE_FORMAT(p.InitDate, '" . $mysqldateformat . "') InitDate, p.CautionAmount, p.Notes, COUNT(k.ParentID) NrKids, SUM(CASE WHEN k.Active THEN 1 ELSE 0 END) ActiveKids, (SELECT SUM(CASE WHEN t.ActionID = '4' THEN 1 ELSE 0 END) FROM " . TableService::getTable(TableEnum::TRANSACTIONS) . " t WHERE t.ParentID = p.ID GROUP BY t.ParentID) Donations, p.MembershipID, m.MembershipName
 			FROM " . TableService::getTable(TableEnum::PARENTS) . " p
 			LEFT JOIN " . TableService::getTable(TableEnum::KIDS) . " k
 			ON p.ID = k.ParentID

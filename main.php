@@ -286,6 +286,7 @@
   						<th>Frame</th>
   						<th>Wiel</th>
   						<th>Ingebracht</th>
+              <th>Notities</th>
   						<th></th>
   					</tr>
   				</thead>
@@ -297,6 +298,7 @@
   						<th>Frame</th>
   						<th>Wiel</th>
   						<th>Ingebracht</th>
+              <th>Notities</th>
   						<th></th>
   					</tr>
   				</tfoot>
@@ -354,6 +356,13 @@
   									</div>
   								</div>
 
+                  <div class="form-group">
+          					<label class="col-sm-2 control-label lb-sm">Notities</label>
+          					<div class="col-sm-10">
+          							<div id="bike_notes">
+          							</div>
+          						</div>
+          				</div>
 
   								<div class="form-group">
   									<div class="col-sm-6">
@@ -407,6 +416,7 @@
   						<th>Actieve kids</th>
   						<th>Waarborg</th>
   						<th>Donaties</th>
+              <th>Notities</th>
   						<th></th>
   					</tr>
   				</thead>
@@ -419,6 +429,7 @@
   						<th>Actieve kids</th>
   						<th>Waarborg</th>
   						<th>Donaties</th>
+              <th>Notities</th>
   						<th></th>
   					</tr>
   				</tfoot>
@@ -486,6 +497,14 @@
                 </div>
   						</div>
 
+              <div class="form-group">
+                <label class="col-sm-2 control-label lb-sm">Notities</label>
+                <div class="col-sm-10">
+                    <div id="parent_notes">
+                    </div>
+                  </div>
+              </div>
+
   						<hr class="formhr">
 
   					    <div class="row">
@@ -521,6 +540,8 @@
   								</table>
   							</div>
   						</div>
+
+
 
   						<div class="form-group">
   							<div class="col-sm-6">

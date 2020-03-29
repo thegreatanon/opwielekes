@@ -106,7 +106,8 @@ function registerMember() {
 				'Phone': $('#parentphone').val(),
 				'InitDate': convertDate(myGetDate()),
 				'CautionAmount': "0",
-				'MembershipID': defaultMembershipID.toString()
+				'MembershipID': defaultMembershipID.toString(),
+				'Notes': "",
 			};
 			var logdata = {
 				'Datetime' : moment().utcOffset(60).format('YYYY-MM-DD HH:mm:ss'),

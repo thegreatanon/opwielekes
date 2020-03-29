@@ -15,12 +15,13 @@ $(document).ready(function () {
 			{data: 'Number', name: 'Number'},
 			{data: 'Name', name: 'Name'},
 			{data: 'Status', name: 'Status'},
-            {data: 'Frame', name: 'Frame'},
+      {data: 'Frame', name: 'Frame'},
 			{data: 'Wheel', name: 'Wheel'},
 			{data: 'InitDate', name: 'InitDate'},
+			{data: 'Notes', name: 'Notes', 'visible': false},
 			{
                 data: {
-					ID: 'ID'
+										ID: 'ID'
                 },
                 render: function (data, type) {
                     return '<button type="button" class="btn btn-default editBike">Bewerk</button>';
@@ -73,6 +74,13 @@ $(document).ready(function () {
 		format: 'DD-MM-YYYY'
 	});
 
+	bikequill = new Quill('#bike_notes', {
+			modules: {
+				toolbar: quillToolbarOptions
+			},
+			theme: 'snow',
+			background: 'white'
+	});
 
 	$(document).on('click', '.editBike', function () {
 		rowdata = bikestable.row( $(this).closest('tr') ).data();
@@ -140,6 +148,7 @@ function setBikeForm(rowdata) {
 	$('#bike_frame').val(rowdata.Frame);
 	$('#bike_wheel').val(rowdata.Wheel);
 	$('#bike_date').val(rowdata.InitDate);
+	bikequill.root.innerHTML = rowdata.Notes;
 	viewTab('Bikes','one');
 }
 
@@ -151,6 +160,7 @@ function emptyBikeForm() {
 	$('#bike_frame').val('');
 	$('#bike_wheel').val('');
 	$('#bike_date').val(myGetDate());
+	bikequill.setContents([]);
 }
 
 function setNewBikeNr() {
@@ -189,7 +199,8 @@ function saveBike() {
 			'Frame': $('#bike_frame').val(),
 			'Wheel': $('#bike_wheel').val(),
 			'Source': 'Donatie lid',
-			'InitDate': convertDate($('#bike_date').val())
+			'InitDate': convertDate($('#bike_date').val()),
+			'Notes': bikequill.root.innerHTML,
 		}),
 		contentType: "application/json",
 		success: function () {

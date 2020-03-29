@@ -27,6 +27,7 @@ $(document).ready(function () {
 						{data: 'ActiveKids', name: 'ActiveKids'},
 						{data: 'CautionAmount', name: 'CautionAmount'},
 						{data: 'Donations', name: 'Donations'},
+						{data: 'Notes', name: 'Notes', 'visible': false},
 						{ data: {
 								ID: 'ID',
 								InitDate: 'InitDate'
@@ -81,6 +82,14 @@ $(document).ready(function () {
 		//locale: 'nl',
 		defaultDate: new Date(),
 		format: 'DD-MM-YYYY'
+	});
+
+	parentquill = new Quill('#parent_notes', {
+			modules: {
+				toolbar: quillToolbarOptions
+			},
+			theme: 'snow',
+			background: 'white'
 	});
 
 	$(document).on('click', '.editMember', function () {
@@ -165,6 +174,7 @@ function setMemberForm(rowdata) {
 	$('#parent_date').val(rowdata.InitDate);
 	$('#parent_membership').val(rowdata.MembershipID);
 	$('#parent_membership').trigger('change');
+	parentquill.root.innerHTML = rowdata.Notes;
 	setKidForm(rowdata.ID);
 	viewTab('Members','one');
 }
@@ -217,6 +227,7 @@ function emptyMemberForm() {
 	$('#parent_date').val(myGetDate());
 	$('#parent_membership').val(defaultMembershipID);
 	$('#parent_membership').trigger('change');
+	parentquill.setContents([]);
 	// kids
 	$('#kids_table_tbody').empty();
 
@@ -261,7 +272,8 @@ function saveMember() {
 			'Phone': $('#parent_phone').val(),
 			'InitDate': convertDate($('#parent_date').val()),
 			'CautionAmount': "0",
-			'MembershipID':  $('#parent_membership').val()
+			'MembershipID':  $('#parent_membership').val(),
+			'Notes': parentquill.root.innerHTML,
 	};
 	//if (confirm('Ben je zeker dat je kind ' + row.data('name') +  ' ' + row.data('surname') + ' wilt verwijderen?')) {
   $.ajax({
