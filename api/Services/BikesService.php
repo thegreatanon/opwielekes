@@ -9,15 +9,16 @@ class BikesService
 	public static function updateBike($data) {
 
 		global $DBH;
-        if (isset($data->ID) && isset($data->Number) && isset($data->Name) && isset($data->Frame) && isset($data->Wheel) && isset($data->Source) && isset($data->InitDate) && isset($data->Notes) ) {
+        if (isset($data->ID) && isset($data->Number) && isset($data->Name) && isset($data->Frame) && isset($data->Wheel) && isset($data->Source) && isset($data->InitDate) && isset($data->Status) && isset($data->Notes) ) {
 					try {
-		          $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::BIKES) . " SET Number = :Number, Name = :Name, Frame = :Frame, Wheel = :Wheel, InitDate = :InitDate, Source = :Source, Notes = :Notes  WHERE ID = :ID");
+		          $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::BIKES) . " SET Number = :Number, Name = :Name, Frame = :Frame, Wheel = :Wheel, InitDate = :InitDate, Status = :Status, Source = :Source, Notes = :Notes  WHERE ID = :ID");
 							$STH->bindParam(':ID', $data->ID);
 							$STH->bindParam(':Number', $data->Number);
 							$STH->bindParam(':Name', $data->Name);
 							$STH->bindParam(':Frame', $data->Frame);
 							$STH->bindParam(':Wheel', $data->Wheel);
 							$STH->bindParam(':InitDate', $data->InitDate);
+							$STH->bindParam(':Status', $data->Status);
 							$STH->bindParam(':Source', $data->Source);
 							$STH->bindParam(':Notes', $data->Notes);
 			        $STH->execute();
@@ -88,7 +89,11 @@ class BikesService
 		public static function getBikes() {
 				$mysqldateformat = $GLOBALS['mysqldateformat'];
 				global $DBH;
-				$STH = $DBH->prepare("SELECT ID, Number, Name, Frame, Wheel, DATE_FORMAT(InitDate, '" . $mysqldateformat . "') InitDate, Status, Source, Notes FROM " . TableService::getTable(TableEnum::BIKES) . " ORDER BY Number");
+				$STH = $DBH->prepare("SELECT b.ID, b.Number, b.Name, b.Frame, b.Wheel, DATE_FORMAT(b.InitDate, '" . $mysqldateformat . "') InitDate, b.Status StatusNr, b.Source, b.Notes, s.Name StatusName, s.OnLoan StatusOnLoan, s.Available StatusAvailable
+				FROM " . TableService::getTable(TableEnum::BIKES) . " b
+				LEFT JOIN " . TableService::getTable(TableEnum::BIKESTATUS) . " s
+				ON b.Status = s.ID
+				ORDER BY Number");
 				$STH->execute();
 				return $STH->fetchAll();
 		}

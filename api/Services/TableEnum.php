@@ -6,6 +6,7 @@ abstract class TableEnum extends BasicEnum {
 
 	const ACTIONS = 'actions';
 	const BIKES = 'bikes';
+	const BIKESTATUS = 'bikestatus';
 	const EMAILS = 'emails';
 	const FINANCES = 'finances';
 	const KIDS = 'kids';

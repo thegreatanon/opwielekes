@@ -37,14 +37,14 @@ class MembersService
 	public static function updateParentCaution($data) {
 		global $DBH;
         if (isset($data->ID) && isset($data->CautionAmount)) {
-			try {
-                $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::PARENTS) . " SET CautionAmount = :CautionAmount WHERE ID = :ID");
-				$STH->bindParam(':ID', $data->ID);
-				$STH->bindParam(':CautionAmount', $data->CautionAmount);
-                $STH->execute();
-            } catch (Exception $e) {
-               return ["status" => -1, "error" => "Er is iets fout gelopen in update ouder waarborg..."];
-            }
+					try {
+				        $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::PARENTS) . " SET CautionAmount = :CautionAmount WHERE ID = :ID");
+								$STH->bindParam(':ID', $data->ID);
+								$STH->bindParam(':CautionAmount', $data->CautionAmount);
+				        $STH->execute();
+				    } catch (Exception $e) {
+				       return ["status" => -1, "error" => "Er is iets fout gelopen in update ouder waarborg..."];
+				    }
         } else {
            return ["status" => -1, "error" => "Onvoldoende parameters in update ouder waarborg..."];
 

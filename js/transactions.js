@@ -146,7 +146,7 @@ function setActionBikes(bikes) {
 	for (var i = 0, len = bikes.length; i < len; i++) {
 		var newOption = new Option( bikes[i].Number + " - " + bikes[i].Name, bikes[i].ID, false, false);
 		actionbikeall.append(newOption);
-		if (bikes[i].Status == "Beschikbaar") {
+		if (bikes[i].StatusAvailable == "1") {
 			var bOption = new Option( bikes[i].Number + " - " + bikes[i].Name, bikes[i].ID, false, false);
 			actionbikeout.append(bOption);
 		}
@@ -169,7 +169,6 @@ function setActionMembers(members) {
 }
 
 function setActionTypes(selection, kidID)  {
-	console.log('setting action types');
 	actiontype.empty();
 	actiontype.append(new Option('', '', false, false));
 	bikeID = parseInt(selection.data('bikeid'));
@@ -216,7 +215,6 @@ function setActionMemberInfo(selection, kidID) {
 			bike = db_bikes.find(x => x.ID === bikeID.toString());
 			bikenr = bike.Number;
 		}
-		console.log(kids[i]);
 		if (kids[i].BirthDate == "00-00-0000") {
 			kidsage = "";
 		} else {
@@ -342,11 +340,11 @@ function setActionInfo() {
 function checkMembership(actionoption, memberoption) {
 	var today =  moment();
 	var expirydate = memberoption.data('expirydate');
-	console.log('valid: ' + moment(expirydate).isValid());
-	console.log(memberoption);
+	//console.log('valid: ' + moment(expirydate).isValid());
+	//console.log(memberoption);
 	membershipid = memberoption.data('parentmembershipid');
 	membership = db_memberships.find(x => x.ID === membershipid.toString());
-		console.log('expired :' + moment(expirydate, 'DD-MM-YYYY').isBefore(today));
+	//console.log('expired :' + moment(expirydate, 'DD-MM-YYYY').isBefore(today));
 	var balance = 0;
 	if (!moment(expirydate, 'DD-MM-YYYY').isValid() || moment(expirydate, 'DD-MM-YYYY').isBefore(today)) {
 		if (memberoption.data('kidnr') == "0") {
@@ -378,11 +376,11 @@ function checkCaution(actionoption, memberoption) {
 }
 
 function computeCaution(activeKids,membershipID) {
-	console.log(membershipID);
-	console.log(db_memberships);
+	//console.log(membershipID);
+	//console.log(db_memberships);
 	var caution = 0;
 	var thismembership = db_memberships.find(x => x.ID === membershipID.toString());
-	console.log(thismembership);
+	//console.log(thismembership);
 	for (var i = 1; i < activeKids+1; i++) {
 		caution = caution + parseFloat(thismembership['CautionK'+i]);
 	}
@@ -469,7 +467,7 @@ function saveTransaction() {
 		if (actionoption.data('requirebikein')=="1"){
 			bikeStatus.push({
 				'ID': bikeInID,
-				'Status': 'Beschikbaar'
+				'Status': defaultBikeAvailableID
 			});
 		} else {
 			bikeInID = "0";
@@ -482,7 +480,7 @@ function saveTransaction() {
 			bikeOutID = actionbikeout.val();
 			bikeStatus.push({
 				'ID': bikeOutID,
-				'Status': 'Ontleend'
+				'Status': defaultBikeOnLoanID
 			});
 		}
 		// KID STATUS

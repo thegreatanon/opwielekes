@@ -111,4 +111,23 @@ class SettingsService
 				 }
 		 }
 
+		 public static function updateBikeStatuses($data) {
+				 global $DBH;
+				 if (isset($data->ID) && isset($data->Name) && isset($data->Available)&& isset($data->Active)) {
+						 try {
+								 $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::BIKESTATUS) . " SET Name = :Name, Available = :Available, Active = :Active WHERE ID=:ID");
+								 $STH->bindParam(':Name', $data->Name);
+								 $STH->bindParam(':Available', $data->Available);
+								 $STH->bindParam(':Active', $data->Active);
+								 $STH->bindParam(':ID', $data->ID);
+								 $STH->execute();
+								 return ["status" => 0];
+						 } catch (Exception $e) {
+								 return ["status" => -1, "error" => "Er is iets fout gelopen in update bike status..."];
+						 }
+				 } else {
+						 return ["status" => -1, "error" => "Onvoldoende parameters in update bike status..."];
+				 }
+		 }
+
 }

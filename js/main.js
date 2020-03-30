@@ -57,6 +57,9 @@ routie({
 	'stats': function () {
         setPageActive('stats');
     },
+	'settings_bikes': function () {
+				setPageActive('settings_bikes');
+		},
 	'settings_prices': function () {
         setPageActive('settings_prices');
     },

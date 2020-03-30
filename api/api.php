@@ -401,45 +401,70 @@ $app->group('/finances', function() use ($app) {
 
 $app->group('/settings', function() use ($app) {
 
-	$app->get('/actions', function() use ($app) {
-		global $DBH;
+	 $app->get('/actions', function() use ($app) {
+		    global $DBH;
         $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::ACTIONS));
         echo json_encode($STH->fetchAll());
     });
 
-    $app->get('/postalcodes', function() use ($app) {
-      global $DBH;
-          $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::POSTALCODES) . " order by City");
-          echo json_encode($STH->fetchAll());
+    $app->get('/bikestatuses', function() use ($app) {
+         global $DBH;
+         $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::BIKESTATUS));
+         echo json_encode($STH->fetchAll());
+     });
+
+     $app->post('/bikestatuses', function() use ($app) {
+       global $DBH;
+       try {
+           $DBH->beginTransaction();
+           foreach ($GLOBALS["data"]->statusData as $item) {
+             $updb = SettingsService::updateBikeStatuses($item);
+             if ($updb["status"] == -1) {
+               throw new Exception($updb["error"]);
+             }
+           }
+           $DBH->commit();
+         } catch (Exception $e) {
+           $DBH->rollBack();
+           $GLOBALS["error"] = $e->getMessage();
+           $app->error();
+         }
+         echo json_encode(null);
       });
 
-	$app->get('/memberships', function() use ($app) {
-		global $DBH;
-        $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::MEMBERSHIPS));
-        echo json_encode($STH->fetchAll());
+    $app->get('/postalcodes', function() use ($app) {
+          global $DBH;
+          $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::POSTALCODES) . " order by City");
+          echo json_encode($STH->fetchAll());
     });
 
-	$app->post('/memberships', function() use ($app) {
+  	$app->get('/memberships', function() use ($app) {
+  		    global $DBH;
+          $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::MEMBERSHIPS));
+          echo json_encode($STH->fetchAll());
+    });
+
+	   $app->post('/memberships', function() use ($app) {
         global $DBH;
-		try {
-			$DBH->beginTransaction();
-			foreach ($GLOBALS["data"]->updateData as $item) {
-				$updp = SettingsService::updateMemberships($item);
-				if ($updp["status"] == -1) {
-					throw new Exception($updp["error"]);
-				}
-			}
-			$DBH->commit();
-		} catch (Exception $e) {
-			$DBH->rollBack();
-			$GLOBALS["error"] = $e->getMessage();
-			$app->error();
-		}
-		echo json_encode(null);
+    		try {
+    			$DBH->beginTransaction();
+    			foreach ($GLOBALS["data"]->updateData as $item) {
+    				$updp = SettingsService::updateMemberships($item);
+    				if ($updp["status"] == -1) {
+    					throw new Exception($updp["error"]);
+    				}
+    			}
+    		$DBH->commit();
+    		} catch (Exception $e) {
+    			$DBH->rollBack();
+    			$GLOBALS["error"] = $e->getMessage();
+    			$app->error();
+    		}
+    		echo json_encode(null);
     });
 
     $app->get('/emails', function() use ($app) {
-		global $DBH;
+		    global $DBH;
         $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::EMAILS));
         echo json_encode($STH->fetchAll());
     });

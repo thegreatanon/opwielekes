@@ -17,6 +17,7 @@ var db_kids;
 var db_parents;
 var db_memberships;
 var db_postalcodes;
+var db_bikestatuses;
 
 // selectboxes
 var actiontype;
@@ -34,6 +35,8 @@ var actionDateIsLocked = 0;
 
 // for database
 var defaultMembershipID = 1;
+var defaultBikeAvailableID = 2;
+var defaultBikeOnLoanID;
 var replyto = 'maarten@bewustverbuiken.be';
 
 var kidsToDelete = [];

@@ -96,6 +96,12 @@ $(document).ready(function () {
 			theme: 'snow',
 			background: 'white'
 	});
+
+	$(document).on('click', '.addStatusRowBtn', function () {
+		var myhtml = getBikestatusHtmlRow();
+		$(myhtml).insertAfter($(this).closest('tr'));
+  });
+
 	loadSettings();
 });
 
@@ -103,6 +109,7 @@ $(document).ready(function () {
 /* SETTINGS */
 
 function loadSettings() {
+	loadBikeStatuses();
 	loadPrices();
 	loadEmails(0);
 }
@@ -386,6 +393,84 @@ function saveEmailLink() {
 		},
 		error: function (data) {
 			console.error(data);
+		}
+	});
+}
+
+// BIKE Status
+function loadBikeStatuses() {
+    $.ajax({
+        url: 'api/settings/bikestatuses',
+        success: function (bikestatuses) {
+					db_bikestatuses = bikestatuses;
+					setBikeStatusTable(bikestatuses);
+					var loanstatus = bikestatuses.filter(x => x.OnLoan === '1');
+					defaultBikeOnLoanID = loanstatus[0].ID;
+					//setDefaultBikestatus();
+				}
+    });
+}
+
+function setBikeStatusTable(bikestatuses) {
+	$('#settings_bikes_table_tbody').empty();
+	var myhtml = '';
+	$.each(bikestatuses, function (index, item) {
+		if (item.OnLoan == 1) {
+			disa = ' disabled';
+		} else {
+			disa = '';
+		}
+		myhtml = '<tr data-statusid="' + item.ID + '" data-onloan="' + item.OnLoan + '" style="height:100%">';
+		myhtml += '<td class="status_name"><input type="text" value="' + item.Name + '"' + disa + '></td>';
+		myhtml += '<td><input type="checkbox" class="status_available"' + disa;
+		if  (item.Available == 1) {
+			myhtml += ' checked></td>';
+		} else {
+			myhtml += '></td>';
+		}
+		myhtml += '<td><input type="checkbox" class="status_active"'+ disa;
+		if  (item.Active == 1) {
+			myhtml += ' checked></td>';
+		} else {
+			myhtml += '></td>';
+		}
+		//myhtml += '<td><button type="button" class="btn btn-default addStatusRowBtn"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></td>';
+		myhtml += '</tr>';
+		$('#settings_bikes_table_tbody').append(myhtml);
+	});
+}
+
+function getBikestatusHtmlRow(){
+
+}
+
+function saveBikeSettings(){
+	var updateStatusData = [];
+	var row;
+	$('#settings_bikes_table_tbody').find('tr').each(function () {
+		row = $(this);
+		updateStatusData.push({
+			'ID': parseFloat(row.data('statusid')),
+			'Name': row.find('.status_name input')[0].value,
+			'Available': row.find('.status_available').is(":checked"),
+			'Active': row.find('.status_active').is(":checked")
+		});
+	});
+	console.log(updateStatusData);
+	$.ajax({
+		type: 'POST',
+		url: 'api/settings/bikestatuses',
+		dataType: 'json',
+		data: JSON.stringify({
+			'statusData': updateStatusData
+		}),
+		success: function (result) {
+			toastr.success('Statussen opgeslagen');
+			loadBikeStatuses();
+			loadBikes();
+		},
+		error: function() {
+			toastr.error('Statussen niet opgeslagen','Er liep iets fout');
 		}
 	});
 }

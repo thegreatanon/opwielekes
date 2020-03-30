@@ -14,14 +14,17 @@ $(document).ready(function () {
     columns: [
 			{data: 'Number', name: 'Number'},
 			{data: 'Name', name: 'Name'},
-			{data: 'Status', name: 'Status'},
+			{data: 'StatusName', name: 'StatusName'},
       {data: 'Frame', name: 'Frame'},
 			{data: 'Wheel', name: 'Wheel'},
 			{data: 'InitDate', name: 'InitDate'},
 			{data: 'Notes', name: 'Notes', 'visible': false},
 			{
                 data: {
-										ID: 'ID'
+										ID: 'ID',
+										StatusOnLoan: 'StatusOnLoan',
+										StatusNr: 'StatusNr',
+										StatusAvailable: 'StatusAvailable'
                 },
                 render: function (data, type) {
                     return '<button type="button" class="btn btn-default editBike">Bewerk</button>';
@@ -40,33 +43,40 @@ $(document).ready(function () {
         bikestable.draw();
     });
 
-	$("div.filterbikes").html('<input type="checkbox" id="bikesfilteravailable" checked> Beschikbaar <input type="checkbox" id="bikesfilterloans" checked> Ontleend');
+	$("div.filterbikes").html('<input type="checkbox" id="bikesfilternotavailable" checked> Niet beschikbaar <input type="checkbox" id="bikesfilteravailable" checked> Beschikbaar <input type="checkbox" id="bikesfilterloans" checked> Ontleend');
 
-	/* Custom filtering function for datatablesr items-table with lowstockcheckbox */
+	/* Custom filtering function for datatables */
 	$.fn.dataTable.ext.search.push(
-		function( settings, data ) {
+		function(settings, searchData, index, rowData, counter) {
 			/* for orders */
 			if (settings.nTable.id == 'bikes_table') {
-				var state = data[2];
-				if (state == "Ontleend") {
+				if (rowData.StatusOnLoan == "1") {
 					if ($('#bikesfilterloans').is(':checked')){
 						return true;
 					} else
 						return false;
 					}
-				else if (state == "Beschikbaar") {
+				else if (rowData.StatusAvailable == "1") {
 					if ($('#bikesfilteravailable').is(':checked')){
 						return true;
 					} else {
 						return false;
 					}
 				} else {
-					return true;
+					if ($('#bikesfilternotavailable').is(':checked')){
+						return true;
+					} else {
+						return false;
+					}
 				}
 			}
 			return true;
 		}
 	);
+
+	bikestatus = $('#bike_status').select2({
+		tags: false
+	});
 
 	$('#bikedatepicker').datetimepicker({
 		//locale: 'nl',
@@ -144,11 +154,24 @@ function setBikeForm(rowdata) {
 	$('#bike_id').val(rowdata.ID);
 	$('#bike_nr').val(parseInt(rowdata.Number));
 	$('#bike_name').val(rowdata.Name);
-	document.getElementById('bike_status').innerHTML = rowdata.Status;
 	$('#bike_frame').val(rowdata.Frame);
 	$('#bike_wheel').val(rowdata.Wheel);
 	$('#bike_date').val(rowdata.InitDate);
 	bikequill.root.innerHTML = rowdata.Notes;
+	bikestatus.empty();
+	if (rowdata.StatusOnLoan == 1) {
+		var newOption = new Option(rowdata.StatusName, rowdata.StatusNr, false, false);
+		bikestatus.append(newOption);
+		bikestatus.trigger('change');
+	} else {
+		var activestatuses = db_bikestatuses.filter(x => x.Active === '1');
+		var statuses = activestatuses.filter(x => x.OnLoan === '0');
+		$.each(statuses, function (index, item) {
+			var newOption = new Option(item.Name, item.ID, false, false);
+			bikestatus.append(newOption);
+			bikestatus.val(rowdata.StatusNr).trigger('change');
+		});
+	}
 	viewTab('Bikes','one');
 }
 
@@ -156,10 +179,14 @@ function emptyBikeForm() {
 	$('#bike_id').val(0);
 	$('#bike_nr').val(0);
 	$('#bike_name').val('');
-	document.getElementById('bike_status').innerHTML = "Beschikbaar";
 	$('#bike_frame').val('');
 	$('#bike_wheel').val('');
 	$('#bike_date').val(myGetDate());
+	bikestatus.empty();
+	var initstatus = db_bikestatuses.filter(x => x.ID === defaultBikeAvailableID.toString());
+	var newOption = new Option(initstatus[0].Name, initstatus[0].ID, false, false);
+	bikestatus.append(newOption);
+	bikestatus.val(defaultBikeAvailableID).trigger('change');
 	bikequill.setContents([]);
 }
 
@@ -183,10 +210,10 @@ function saveBike() {
 	var bikeid = $('#bike_id').val();
 	if (bikeid==0){
 		var succesmsg = 'Fiets aangemaakt';
-		bstatus = "Beschikbaar";
+		bstatus = defaultBikeAvailableID;
 	} else {
 		var succesmsg = 'Fiets aangepast';
-		bstatus = document.getElementById('bike_status').innerHTML;
+		bstatus = $('#bike_status').val();
 	}
     $.ajax({
 		type: 'POST',
@@ -195,12 +222,12 @@ function saveBike() {
 			'ID': bikeid,
 			'Number': $('#bike_nr').val(),
 			'Name': $('#bike_name').val(),
-			'Status':  bstatus,
+			'Status': bstatus,
 			'Frame': $('#bike_frame').val(),
 			'Wheel': $('#bike_wheel').val(),
 			'Source': 'Donatie lid',
 			'InitDate': convertDate($('#bike_date').val()),
-			'Notes': bikequill.root.innerHTML,
+			'Notes': bikequill.root.innerHTML
 		}),
 		contentType: "application/json",
 		success: function () {
