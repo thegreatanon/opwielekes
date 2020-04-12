@@ -9,16 +9,15 @@ class BikesService
 	public static function updateBike($data) {
 
 		global $DBH;
-        if (isset($data->ID) && isset($data->Number) && isset($data->Name) && isset($data->Frame) && isset($data->Wheel) && isset($data->Source) && isset($data->InitDate) && isset($data->Status) && isset($data->Notes) ) {
+        if (isset($data->ID) && isset($data->Number) && isset($data->Name) && isset($data->Frame) && isset($data->Wheel) && isset($data->Source) && isset($data->Date) && isset($data->Notes) ) {
 					try {
-		          $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::BIKES) . " SET Number = :Number, Name = :Name, Frame = :Frame, Wheel = :Wheel, InitDate = :InitDate, Status = :Status, Source = :Source, Notes = :Notes  WHERE ID = :ID");
+		          $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::BIKES) . " SET Number = :Number, Name = :Name, Frame = :Frame, Wheel = :Wheel, InitDate = :InitDate, Source = :Source, Notes = :Notes  WHERE ID = :ID");
 							$STH->bindParam(':ID', $data->ID);
 							$STH->bindParam(':Number', $data->Number);
 							$STH->bindParam(':Name', $data->Name);
 							$STH->bindParam(':Frame', $data->Frame);
 							$STH->bindParam(':Wheel', $data->Wheel);
-							$STH->bindParam(':InitDate', $data->InitDate);
-							$STH->bindParam(':Status', $data->Status);
+							$STH->bindParam(':InitDate', $data->Date);
 							$STH->bindParam(':Source', $data->Source);
 							$STH->bindParam(':Notes', $data->Notes);
 			        $STH->execute();
@@ -33,38 +32,37 @@ class BikesService
     }
 
 	public static function updateBikeStatus($data) {
-
-		global $DBH;
-        if (isset($data->ID) && isset($data->Status) ) {
-			try {
-                $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::BIKES) . " SET Status = :Status WHERE ID = :ID");
-				$STH->bindParam(':ID', $data->ID);
-				$STH->bindParam(':Status', $data->Status);
-                $STH->execute();
-            } catch (Exception $e) {
-               return ["status" => -1, "error" => "Er is iets fout gelopen in update fietsstatus..."];
-            }
-        } else {
-           return ["status" => -1, "error" => "Onvoldoende parameters in update fietsstatus..."];
-
-        }
-
+			global $DBH;
+	  	if (isset($data->ID) && isset($data->Status) ) {
+					try {
+	        		$STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::BIKES) . " SET Status = :Status WHERE ID = :ID");
+							$STH->bindParam(':ID', $data->ID);
+							$STH->bindParam(':Status', $data->Status);
+	            $STH->execute();
+	        } catch (Exception $e) {
+	           	return ["status" => -1, "error" => "Er is iets fout gelopen in update fietsstatus..."];
+	        }
+      } else {
+         	return ["status" => -1, "error" => "Onvoldoende parameters in update fietsstatus..."];
+      }
     }
 
 	public static function newBike($data) {
 		global $DBH;
-        if (isset($data->Number) && isset($data->Name) && isset($data->Status) && isset($data->Frame) && isset($data->Wheel) && isset($data->Source) && isset($data->InitDate) && isset($data->Notes) ) {
+        if (isset($data->Number) && isset($data->Name) && isset($data->Status) && isset($data->Frame) && isset($data->Wheel) && isset($data->Source) && isset($data->Date) && isset($data->Notes) ) {
             try {
                 $STH = $DBH->prepare("INSERT INTO " . TableService::getTable(TableEnum::BIKES) . " (Number, Name, Frame, Wheel, InitDate, Status, Source, Notes) VALUES (:Number, :Name, :Frame, :Wheel, :InitDate, :Status, :Source, :Notes)");
 								$STH->bindParam(':Number', $data->Number);
 								$STH->bindParam(':Name', $data->Name);
 								$STH->bindParam(':Frame', $data->Frame);
 								$STH->bindParam(':Wheel', $data->Wheel);
-								$STH->bindParam(':InitDate', $data->InitDate);
+								$STH->bindParam(':InitDate', $data->Date);
 								$STH->bindParam(':Status', $data->Status);
 								$STH->bindParam(':Source', $data->Source);
 								$STH->bindParam(':Notes', $data->Notes);
                 $STH->execute();
+								$last_id = $DBH->lastInsertId();
+								return ["status" => 0, "lastid" => $last_id];
             } catch (Exception $e) {
                return ["status" => -1, "error" => "Er is iets fout gelopen in nieuwe fiets..."];
             }
@@ -98,4 +96,50 @@ class BikesService
 				return $STH->fetchAll();
 		}
 
+		public static function getBikeStatusLogs() {
+				$mysqldateformat = $GLOBALS['mysqldateformat'];
+				global $DBH;
+				$STH = $DBH->prepare("SELECT l.ID, l.BikeID, l.NewStatusNr StatusNr, s.Name StatusName, l.KidID, DATE_FORMAT(l.Date, '" . $mysqldateformat . "') Date
+				FROM " . TableService::getTable(TableEnum::BIKESTATUSLOGS) . " l
+				LEFT JOIN " . TableService::getTable(TableEnum::BIKESTATUS) . " s
+				ON l.NewStatusNr = s.ID
+				ORDER BY Date");
+				$STH->execute();
+				return $STH->fetchAll();
+		}
+
+		public static function getBikeStatusLogsForID($id) {
+				$mysqldateformat = $GLOBALS['mysqldateformat'];
+				global $DBH;
+				$STH = $DBH->prepare("SELECT l.ID, l.BikeID, l.NewStatusNr StatusNr, s.Name StatusName, l.KidID, DATE_FORMAT(l.Date, '" . $mysqldateformat . "') Date, k.ParentID
+				FROM " . TableService::getTable(TableEnum::BIKESTATUSLOGS) . " l
+				LEFT JOIN " . TableService::getTable(TableEnum::BIKESTATUS) . " s
+				ON l.NewStatusNr = s.ID
+				LEFT JOIN " . TableService::getTable(TableEnum::KIDS) . " k
+				ON l.kidID = k.ID
+				WHERE l.BikeID=:id
+				ORDER BY ID DESC, Date DESC");
+				$STH->bindParam(':id', $id);
+				$STH->execute();
+				return $STH->fetchAll();
+		}
+
+		public static function newBikeStatusLog($data,$bikeid) {
+				global $DBH;
+				if (isset($bikeid) && isset($data->Status) && isset($data->KidID) && isset($data->Date) ) {
+						try {
+								$STH = $DBH->prepare("INSERT INTO " . TableService::getTable(TableEnum::BIKESTATUSLOGS) . " (BikeID, NewStatusNr, KidID, Date) VALUES (:BikeID, :NewStatusNr, :KidID, :Date)");
+								$STH->bindParam(':BikeID', $bikeid);
+								$STH->bindParam(':NewStatusNr', $data->Status);
+								$STH->bindParam(':KidID', $data->KidID);
+								$STH->bindParam(':Date', $data->Date);
+								$STH->execute();
+						} catch (Exception $e) {
+							 return ["status" => -1, "error" => "Er is iets fout gelopen in nieuwe bike status log..."];
+						}
+				} else {
+					 return ["status" => -1, "error" => "Onvoldoende parameters in nieuwe bike status log..."];
+
+				}
+		}
 }

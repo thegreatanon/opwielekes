@@ -3,23 +3,23 @@ $(document).ready(function () {
 	// INIT BIKES TABLE
 	bikestable = $('#bikes_table').DataTable({
         paging: true,
-		pageLength: 25,
-		"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Alle"]],
-		ordering: true,
-		sortable: true,
-		rowId: 'bikeID',
-		dom: '<l<"filterbikes">fr>tip',
-		"order": [[ 0, 'asc' ], [ 1, 'asc' ]],
-		autoWidth: true,
-    columns: [
-			{data: 'Number', name: 'Number'},
-			{data: 'Name', name: 'Name'},
-			{data: 'StatusName', name: 'StatusName'},
-      {data: 'Frame', name: 'Frame'},
-			{data: 'Wheel', name: 'Wheel'},
-			{data: 'InitDate', name: 'InitDate'},
-			{data: 'Notes', name: 'Notes', 'visible': false},
-			{
+				pageLength: 25,
+				"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Alle"]],
+				ordering: true,
+				sortable: true,
+				rowId: 'bikeID',
+				dom: '<l<"filterbikes">fr>tip',
+				"order": [[ 0, 'asc' ], [ 1, 'asc' ]],
+				autoWidth: true,
+		    columns: [
+						{data: 'Number', name: 'Number'},
+						{data: 'Name', name: 'Name'},
+						{data: 'StatusName', name: 'StatusName'},
+			      {data: 'Frame', name: 'Frame'},
+						{data: 'Wheel', name: 'Wheel'},
+						{data: 'InitDate', name: 'InitDate'},
+						{data: 'Notes', name: 'Notes', 'visible': false},
+						{
                 data: {
 										ID: 'ID',
 										StatusOnLoan: 'StatusOnLoan',
@@ -29,13 +29,13 @@ $(document).ready(function () {
                 render: function (data, type) {
                     return '<button type="button" class="btn btn-default editBike">Bewerk</button>';
                 },
-				sortable: false
-            }
-        ],
-		"search": {
-			"regex": true,
-			"smart":false
-		}
+								sortable: false
+			        }
+	        ],
+					"search": {
+						"regex": true,
+						"smart":false
+					}
     });
 
 	/* FILTER BIKES TABLE */
@@ -74,12 +74,41 @@ $(document).ready(function () {
 		}
 	);
 
+	bikestatustable = $('#table_bikestatushistory').DataTable({
+    paging: false,
+		pageLength: 25,
+		ordering: false,
+		sortable: false,
+		dom: 't',
+      columns: [
+				{data: 'Date', name: 'datum'},
+				{
+						data: {
+								'StatusName': 'status',
+								'ParentID': 'ParentID'
+						},
+						render: function (data, type) {
+							if (data.ParentID !== null) {
+								return '<a href="#members" onclick="setMemberFormByID(' + data.ParentID + ')">' + data.StatusName + '</a>';
+							} else {
+								return data.StatusName;
+							}
+						},
+						sortable: false
+					}
+      ],
+			"search": {
+				"regex": true,
+				"smart":false
+			}
+    });
+
 	bikestatus = $('#bike_status').select2({
-		tags: false
+		tags: false,
 	});
 
 	$('#bikedatepicker').datetimepicker({
-		//locale: 'nl',
+		locale: 'nl-be',
 		defaultDate: new Date(),
 		format: 'DD-MM-YYYY'
 	});
@@ -90,6 +119,12 @@ $(document).ready(function () {
 			},
 			theme: 'snow',
 			background: 'white'
+	});
+
+	$('#bikestatusdatepicker').datetimepicker({
+		locale: 'nl-be',
+		defaultDate: new Date(),
+		format: 'DD-MM-YYYY'
 	});
 
 	$(document).on('click', '.editBike', function () {
@@ -131,7 +166,7 @@ $(document).ready(function () {
 });
 
 
-function loadBikes() {
+function loadBikes(bikeid) {
     $.ajax({
         url: 'api/bikes',
         success: function (bikes) {
@@ -140,6 +175,9 @@ function loadBikes() {
 					bikestable.columns.adjust().draw();
 					setActionBikes(bikes);
 					db_bikes = bikes;
+					if (bikeid !== undefined) {
+						setBikeFormByID(bikeid);
+					}
 				}
     });
 }
@@ -151,16 +189,24 @@ function newBike() {
 }
 
 function setBikeForm(rowdata) {
-	$('#bike_id').val(rowdata.ID);
-	$('#bike_nr').val(parseInt(rowdata.Number));
-	$('#bike_name').val(rowdata.Name);
-	$('#bike_frame').val(rowdata.Frame);
-	$('#bike_wheel').val(rowdata.Wheel);
-	$('#bike_date').val(rowdata.InitDate);
-	bikequill.root.innerHTML = rowdata.Notes;
+	setBikeFormByID(rowdata.ID)
+}
+
+function setBikeFormByID(bikeID) {
+	var bikes = db_bikes.filter(x => x.ID === bikeID);
+	bike = bikes[0];
+	$('#bike_id').val(bike.ID);
+	$('#bike_nr').val(parseInt(bike.Number));
+	$('#bike_name').val(bike.Name);
+	$('#bike_frame').val(bike.Frame);
+	$('#bike_wheel').val(bike.Wheel);
+	$('#bike_date').val(bike.InitDate);
+	document.getElementById('bike_status_text').innerHTML = bike.StatusName;
+	$('#bike_statusnr').val(bike.StatusNr);
+	bikequill.root.innerHTML = bike.Notes;
 	bikestatus.empty();
-	if (rowdata.StatusOnLoan == 1) {
-		var newOption = new Option(rowdata.StatusName, rowdata.StatusNr, false, false);
+	if (bike.StatusOnLoan == 1) {
+		var newOption = new Option(bike.StatusName, bike.StatusNr, false, false);
 		bikestatus.append(newOption);
 		bikestatus.trigger('change');
 	} else {
@@ -169,9 +215,11 @@ function setBikeForm(rowdata) {
 		$.each(statuses, function (index, item) {
 			var newOption = new Option(item.Name, item.ID, false, false);
 			bikestatus.append(newOption);
-			bikestatus.val(rowdata.StatusNr).trigger('change');
+			bikestatus.val(bike.StatusNr).trigger('change');
 		});
 	}
+	visibilityBikeStatus(true);
+	loadStatusHistory(bikeID)
 	viewTab('Bikes','one');
 }
 
@@ -182,12 +230,24 @@ function emptyBikeForm() {
 	$('#bike_frame').val('');
 	$('#bike_wheel').val('');
 	$('#bike_date').val(myGetDate());
+	$('#bike_statusnr').val(defaultBikeAvailableID);
 	bikestatus.empty();
 	var initstatus = db_bikestatuses.filter(x => x.ID === defaultBikeAvailableID.toString());
+	document.getElementById('bike_status_text').innerHTML = initstatus[0].Name;
 	var newOption = new Option(initstatus[0].Name, initstatus[0].ID, false, false);
 	bikestatus.append(newOption);
 	bikestatus.val(defaultBikeAvailableID).trigger('change');
 	bikequill.setContents([]);
+	visibilityBikeStatus(false);
+}
+
+
+function visibilityBikeStatus(visible) {
+	if (visible) {
+		$("#bikestatusdiv").show();
+	} else {
+		$("#bikestatusdiv").hide();
+	}
 }
 
 function setNewBikeNr() {
@@ -207,39 +267,55 @@ function cancelBike() {
 }
 
 function saveBike() {
-	var bikeid = $('#bike_id').val();
-	if (bikeid==0){
-		var succesmsg = 'Fiets aangemaakt';
-		bstatus = defaultBikeAvailableID;
-	} else {
-		var succesmsg = 'Fiets aangepast';
-		bstatus = $('#bike_status').val();
-	}
-    $.ajax({
-		type: 'POST',
-		url: 'api/bikes',
-		data: JSON.stringify({
-			'ID': bikeid,
-			'Number': $('#bike_nr').val(),
-			'Name': $('#bike_name').val(),
-			'Status': bstatus,
-			'Frame': $('#bike_frame').val(),
-			'Wheel': $('#bike_wheel').val(),
-			'Source': 'Donatie lid',
-			'InitDate': convertDate($('#bike_date').val()),
-			'Notes': bikequill.root.innerHTML
-		}),
-		contentType: "application/json",
-		success: function () {
-			toastr.success(succesmsg);
-			loadBikes();
-			viewTab('Bikes','all');
-		},
-		error: function (data) {
-			console.error(data);
+		var bikeid = $('#bike_id').val();
+		var newBike;
+		var bikeData;
+		if (bikeid==0){
+			var succesmsg = 'Fiets aangemaakt';
+			newBike = 1;
+			bikeData = {
+				'Number': $('#bike_nr').val(),
+				'Name': $('#bike_name').val(),
+				'Status': defaultBikeAvailableID,
+				'Frame': $('#bike_frame').val(),
+				'Wheel': $('#bike_wheel').val(),
+				'Source': 'Donatie lid',
+				'Date': convertDate($('#bike_date').val()),
+				'Notes': bikequill.root.innerHTML,
+				'KidID': 0
+			};
+		} else {
+			var succesmsg = 'Fiets aangepast';
+			newBike = 0;
+			bikeData = {
+				'ID': bikeid,
+				'Number': $('#bike_nr').val(),
+				'Name': $('#bike_name').val(),
+				'Frame': $('#bike_frame').val(),
+				'Wheel': $('#bike_wheel').val(),
+				'Source': 'Donatie lid',
+				'Date': convertDate($('#bike_date').val()),
+				'Notes': bikequill.root.innerHTML
+			}
 		}
-	});
-}
+    $.ajax({
+			type: 'POST',
+			url: 'api/bikes',
+			data: JSON.stringify({
+				'newBike': newBike,
+				'bikeData': bikeData
+			}),
+			contentType: "application/json",
+			success: function () {
+				toastr.success(succesmsg);
+				loadBikes();
+				viewTab('Bikes','all');
+			},
+			error: function (data) {
+				console.error(data);
+			}
+		});
+	}
 
 function deleteBike() {
 	var bikeid = $('#bike_id').val();
@@ -269,4 +345,50 @@ function deleteBike() {
 			}
 		}
 	}
+}
+
+
+function saveBikeStatus() {
+	var bikeid = $('#bike_id').val();
+	var oldstatusnr = $('#bike_statusnr').val();
+	var newstatusnr = $('#bike_status').val();
+
+	if (bikeid!=0 && oldstatusnr!=newstatusnr) {
+		console.log('updating status')
+		$.ajax({
+			type: 'POST',
+			url: 'api/bikes/bikestatus',
+			data: JSON.stringify({
+				'ID': bikeid,
+				'KidID' : 0,
+				'Status': newstatusnr,
+				'Date': convertDate($('#bikestatusdate').val())
+			}),
+			contentType: "application/json",
+			success: function () {
+				loadBikes(bikeid);
+			},
+			error: function (data) {
+				console.error(data);
+			}
+		});
+	}
+}
+
+//loads the history actions of an order
+function loadStatusHistory(bikeid) {
+	$.ajax({
+		url: 'api/bikes/statuslogs/' + bikeid,
+		success: function (results) {
+			var dt = $('#table_bikestatushistory').dataTable().api();
+			dt.clear();
+			for (var i = 0, len = results.length; i < len; i++) {
+				dt.row.add(results[i]);
+			}
+			dt.columns.adjust().draw();
+		},
+		error: function (data) {
+			//console.error(data);
+		}
+	});
 }

@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
 	$('#actiondatepicker').datetimepicker({
-		//locale: 'nl',
+		locale: 'nl-be',
 		defaultDate: new Date(),
 		format: 'DD-MM-YYYY'
 	});
@@ -467,7 +467,9 @@ function saveTransaction() {
 		if (actionoption.data('requirebikein')=="1"){
 			bikeStatus.push({
 				'ID': bikeInID,
-				'Status': defaultBikeAvailableID
+				'Status': defaultBikeAvailableID,
+				'KidID' : 0,
+				'Date': aDate
 			});
 		} else {
 			bikeInID = "0";
@@ -480,7 +482,9 @@ function saveTransaction() {
 			bikeOutID = actionbikeout.val();
 			bikeStatus.push({
 				'ID': bikeOutID,
-				'Status': defaultBikeOnLoanID
+				'Status': defaultBikeOnLoanID,
+				'KidID' : kidID,
+				'Date': aDate
 			});
 		}
 		// KID STATUS

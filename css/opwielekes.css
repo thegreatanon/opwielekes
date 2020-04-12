@@ -57,6 +57,11 @@ body {
 	margin-right: 20px;
 }
 
+.bikebtns {
+	float: right;
+	padding-right: 20px;
+}
+
 .plabel {
      font-weight: normal !important;
 }
@@ -129,4 +134,28 @@ text-align: center;
 /* select 2 does not automatically show has-error */
 .has-error .select2-selection {
     border-color: rgb(185, 74, 72) !important;
+}
+
+.div_rightline {
+	border-right: 2px solid #ddd;
+}
+
+/* to align with bike_status */
+#bikestatusdatepicker {
+	padding-right: 15px;
+	margin-right: 15px;
+}
+.bikeleft {
+	padding-left: 0;
+	margin-left: 0;
+}
+
+#bikestatusbtn {
+	line-height: 1.1em;
+}
+#bsbdiv {
+	padding-left: 0;
+	padding-right: 0;
+	margin-left: 0;
+	margin-right: 0;
 }

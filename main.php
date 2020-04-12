@@ -17,7 +17,7 @@
 
 	<link href="libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
 	<link href="libs/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
-	<link href="libs/select2/4.0.3/dist/css/select2.css" rel="stylesheet"/>
+  <link href="libs/select2/4.0.13/dist/css/select2.css" rel="stylesheet"/>
 	<link href="libs/datatables/datatables.min.css" rel="stylesheet"/>
 	<link href="libs/daterangepicker/2.1.25/daterangepicker.css" rel="stylesheet"/>
 	<link href="libs/quill/1.3.6/quill.snow.css" rel="stylesheet">
@@ -310,87 +310,117 @@
 
   			<h4 class="inlineh4">Detail Fiets</h4>
 
-  			<div class="container-fluid" width="100%">
-  				<div class="row">
-  					<div class="col-sm-9">
-  						<form id="form_bike" class="form-horizontal">
+        <div class="container-fluid" width="100%">
+  				<form id="form_bike" class="form-horizontal">
+  					<div class="row">
 
-  								<div class="form-group">
-  									<label class="col-sm-2 control-label lb-sm">Nummer</label>
-  									<div class="col-sm-2">
-  										<input type="number" class="form-control input-sm" id="bike_nr" name="bike_nr" value=1>
-  									</div>
-  									<label class="col-sm-1 control-label lb-sm">Naam</label>
-  									<div class="col-sm-3">
-  										<input type="text" class="form-control input-sm" id="bike_name" name="bike_name" placeholder="naam">
-  									</div>
-                    <label class="col-sm-2 control-label">Status</label>
-                    <div class="col-sm-2">
-                      <select style="width : 100%;" class="form-control" id="bike_status" name="bike_status">
-                      </select>
+  					       <div class="col-sm-9 div_rightline">
+      								<div class="form-group">
+      									<label class="col-sm-2 control-label lb-sm">Nummer</label>
+      									<div class="col-sm-2">
+      										<input type="number" class="form-control input-sm" id="bike_nr" name="bike_nr" value=1>
+      									</div>
+      									<label class="col-sm-1 control-label lb-sm">Naam</label>
+      									<div class="col-sm-3">
+      										<input type="text" class="form-control input-sm" id="bike_name" name="bike_name" placeholder="naam">
+      									</div>
+                        <label class="col-sm-2 control-label">Status</label>
+                        <p class="col-sm-2 form-control-static" id="bike_status_text"> </p>
+      								</div>
+
+
+      								<div class="form-group">
+      									<label class="col-sm-2 control-label lb-sm">Frame</label>
+      									<div class="col-sm-4">
+      										<input type="text" class="form-control input-sm" id="bike_frame" name="bike_frame" placeholder="frame">
+      									</div>
+      									<label class="col-sm-2 control-label lb-sm">Wiel</label>
+      									<div class="col-sm-4">
+      										<input type="text" class="form-control input-sm" id="bike_wheel" name="bike_wheel" placeholder="wiel">
+      									</div>
+      								</div>
+
+      								<div class="form-group">
+      									<label class="col-sm-2 control-label lb-sm">Ingebracht</label>
+
+      									<div class='col-sm-4'>
+      										<div class='input-group' id='bikedatepicker'>
+      											<input type='text' class="form-control input-sm" id="bike_date" name="bike_date" >
+      											<span class="input-group-addon">
+      												<span class="glyphicon glyphicon-calendar"></span>
+      											</span>
+      										</div>
+      									</div>
+
+      									<div class="col-sm-6" hidden>
+      										<input type="text" class="form-control input-sm" id="bike_donator" name="bike_donator" placeholder="lid" >
+      									</div>
+  								    </div>
+
+                      <div class="form-group">
+              					<label class="col-sm-2 control-label lb-sm">Notities</label>
+              					<div class="col-sm-10">
+              							<div id="bike_notes">
+              							</div>
+              						</div>
+              				</div>
+
+      								<div class="form-group">
+      									<div class="col-sm-5">
+      									</div>
+      									<div class="input-group col-sm-6" id="bikebtns">
+      										<input type="hidden" id="bike_id" name="bike_id" value="0">
+                          <input type="hidden" id="bike_statusnr" name="bike_statusnr">
+                            <button type="button" onclick="deleteBike()" class="btn btn-danger actbtn">Verwijderen</button>
+      										<button type="button" onclick="cancelBike()" class="btn btn-default actbtn">Annuleren</button>
+      										<button type="button" onclick="saveBike()" class="btn btn-primary actbtn">Opslaan</button>
+      									</div>
+                        <div class="col-sm-1">
+                      	</div>
+      								</div>
+
                     </div>
-  								</div>
 
 
-  								<div class="form-group">
-  									<label class="col-sm-2 control-label lb-sm">Frame</label>
-  									<div class="col-sm-4">
-  										<input type="text" class="form-control input-sm" id="bike_frame" name="bike_frame" placeholder="frame">
-  									</div>
-  									<label class="col-sm-2 control-label lb-sm">Wiel</label>
-  									<div class="col-sm-4">
-  										<input type="text" class="form-control input-sm" id="bike_wheel" name="bike_wheel" placeholder="wiel">
-  									</div>
-  								</div>
+                  <div class="col-sm-3" id="bikestatusdiv">
+                    <div class="form-row">
+      								<div class="form-group">
+                        <label class="col-md-3 control-label">Status</label>
+                        <div class="col-md-6 bikeleft">
+                          <div style="width : 100%;">
+                          <select style="width : 100%;" class="form-control" id="bike_status" name="bike_status">
+                          </select>
+                          </div>
+                        </div>
+                        <div class="col-md-3" id="bsbdiv">
+                          <button type="button" id="bikestatusbtn" onclick="saveBikeStatus()" class="btn btn-primary">Opslaan</button>
+                        </div>
 
-  								<div class="form-group">
-  									<label class="col-sm-2 control-label lb-sm">Ingebracht</label>
+      								</div>
+      							</div>
 
-  									<div class='col-sm-4'>
-  										<div class='input-group' id='bikedatepicker'>
-  											<input type='text' class="form-control input-sm" id="bike_date" name="bike_date" >
-  											<span class="input-group-addon">
-  												<span class="glyphicon glyphicon-calendar"></span>
-  											</span>
-  										</div>
-  									</div>
+                    <div class="form-row">
+      								<div class="form-group">
+      									<label class="col-md-3 control-label">Datum</label>
+      									<div class='input-group col-md-6 bikeleft' id='bikestatusdatepicker'>
+      											<input type='text' class="form-control input-sm" id="bikestatusdate" name="bikestatusdate" />
+      											<span class="input-group-addon">
+      												<span class="glyphicon glyphicon-calendar"></span>
+      											</span>
+      									</div>
+                        <div class='input-group col-md-3'>
+      								  </div>
+      							</div>
 
-  									<div class="col-sm-6" hidden>
-  										<input type="text" class="form-control input-sm" id="bike_donator" name="bike_donator" placeholder="lid" >
-  									</div>
-  								</div>
+                    <div class="form-row">
+      								<table id="table_bikestatushistory" class="table compact" width="100%">
+      								</table>
+      							</div>
+  					     </div>
 
-                  <div class="form-group">
-          					<label class="col-sm-2 control-label lb-sm">Notities</label>
-          					<div class="col-sm-10">
-          							<div id="bike_notes">
-          							</div>
-          						</div>
-          				</div>
+              </div>
+	         </form>
 
-  								<div class="form-group">
-  									<div class="col-sm-6">
-  									</div>
-  									<div class="input-group col-sm-6" id="actbtns">
-  										<input type="hidden" id="bike_id" name="bike_id" value="0">
-                        <button type="button" onclick="deleteBike()" class="btn btn-danger actbtn">Verwijderen</button>
-  										<button type="button" onclick="cancelBike()" class="btn btn-default actbtn">Annuleren</button>
-  										<button type="button" onclick="saveBike()" class="btn btn-primary actbtn">Opslaan</button>
-  									</div>
-  								</div>
-
-
-  						</form>
-  					</div>
-
-
-
-  					<div class="col-sm-3">
-  						<label class="col-sm-2 control-label lb-sm">Historiek</label>
-  						<table id="table_orderstatushistory" class="table compact" width="100%">
-  						</table>
-  					</div>
-  				</div>
   			</div>
 
 
@@ -1098,9 +1128,10 @@
 <script src="js/jquery.js"></script>
 <script src="libs/moment/2.16.0/moment.min.js"></script>
 <script src="libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script src="libs/select2/4.0.3/dist/js/select2.min.js"></script>
+<script src="libs/select2/4.0.13/dist/js/select2.min.js"></script>
 <script src="libs/toastr/2.1.3/toastr.min.js"></script>
 <script src="libs/handlebars/4.0.5/handlebars.js"></script>
+<script src="libs/datetimepicker/nl-be.js"></script>
 <script src="libs/datetimepicker/bootstrap-datetimepicker.min.js"></script>
 <script src="libs/routie/0.3.2/routie.js"></script>
 <script src="libs/daterangepicker/2.1.25/daterangepicker.js"></script>

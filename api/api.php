@@ -77,16 +77,21 @@ $app->group('/bikes', function() use ($app) {
   });
 
 	$app->post('/', function() use ($app) {
-        global $DBH;
+    global $DBH;
 		try {
 			$DBH->beginTransaction();
-			if ($GLOBALS["data"]->ID == 0) {
-				$newi = BikesService::newBike($GLOBALS["data"]);
+			if ($GLOBALS["data"]->newBike == 1) {
+				$newi = BikesService::newBike($GLOBALS["data"]->bikeData);
 				if ($newi["status"] == -1) {
 					throw new Exception($newi["error"]);
 				}
+        $bikeid = $newi["lastid"];
+        $updb = BikesService::newBikeStatusLog($GLOBALS["data"]->bikeData,$bikeid);
+        if ($updb["status"] == -1) {
+          throw new Exception($updb["error"]);
+        }
 			} else {
-				$updi = BikesService::updateBIke($GLOBALS["data"]);
+				$updi = BikesService::updateBike($GLOBALS["data"]->bikeData);
 				if ($updi["status"] == -1) {
 					throw new Exception($updi["error"]);
 				}
@@ -103,6 +108,36 @@ $app->group('/bikes', function() use ($app) {
     $app->post('/delete/:id', function($id) use ($app) {
       generateResponse(BikesService::deleteBike($id));
     });
+
+    $app->get('/statuslogs', function() use ($app) {
+        echo json_encode(BikesService::getBikeStatusLogs());
+    });
+
+    $app->get('/statuslogs/:id', function($id) use ($app) {
+        echo json_encode(BikesService::getBikeStatusLogsForID($id));
+    });
+
+    $app->post('/bikestatus', function() use ($app) {
+      global $DBH;
+      try {
+          $DBH->beginTransaction();
+					$ubsi = BikesService::updateBikeStatus($GLOBALS["data"]);
+					if ($ubsi["status"] == -1) {
+						throw new Exception($ubsi["error"]);
+					}
+          $updb = BikesService::newBikeStatusLog($GLOBALS["data"],$GLOBALS["data"]->ID);
+          if ($updb["status"] == -1) {
+            throw new Exception($updb["error"]);
+          }
+          $DBH->commit();
+        } catch (Exception $e) {
+          $DBH->rollBack();
+          $GLOBALS["error"] = $e->getMessage();
+          $app->error();
+        }
+        echo json_encode(null);
+     });
+
 
 });
 
@@ -304,7 +339,7 @@ $app->group('/transactions', function() use ($app) {
     });
 
 	$app->post('/', function() use ($app) {
-        global $DBH;
+    global $DBH;
 		try {
 			$DBH->beginTransaction();
 			$newt = TransactionsService::newTransaction($GLOBALS["data"]->transactionData);
@@ -342,10 +377,13 @@ $app->group('/transactions', function() use ($app) {
 						if ($ubsi["status"] == -1) {
 							throw new Exception($ubsi["error"]);
 						}
+            $updbl = BikesService::newBikeStatusLog($item,$item->ID);
+            if ($updbl["status"] == -1) {
+              throw new Exception($updbl["error"]);
+            }
 					}
 				}
 			}
-
 
 			$DBH->commit();
 		} catch (Exception $e) {

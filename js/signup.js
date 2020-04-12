@@ -34,8 +34,6 @@ $(document).ready(function () {
 
 function verifyMember() {
 	validInput = validateInput();
-	//validInput = true;
-	console.log('input valid is ' + validInput)
 	if (!validInput) {
 		toastr.error('Vul alle vereiste velden in.');
 		return;
@@ -81,7 +79,6 @@ function registerMember() {
 			});
 		}
 		if ($('#kid2firstname').val().length>0 && $('#kid2lastname').val().length>0){
-			console.log('adding kid 2');
 			kidsdata.push({
 				'ID': "0",
 				'Name': $('#kid2firstname').val(),
@@ -108,20 +105,20 @@ function registerMember() {
 				'CautionAmount': "0",
 				'MembershipID': defaultMembershipID.toString(),
 				'Notes': "",
-			};
-			var logdata = {
-				'Datetime' : moment().utcOffset(60).format('YYYY-MM-DD HH:mm:ss'),
-				'SignPhrase':document.getElementById("signcontact").checked ? 1 : 0,
-				'Phrase': 'Ik teken dat ik op wielekes toestemming geef me te contacteren.',
-				'SignRules': document.getElementById("signrules").checked ? 1 : 0,
-				'RulesDoc': 'ReglementOpwielekes.pdf'
-			}
-			console.log(JSON.stringify({
-				'kidsdata': kidsdata,
-				'parentdata': parentdata,
-				'logdata' : logdata
-			}));
-	    $.ajax({
+		};
+		var logdata = {
+			'Datetime' : moment().format('YYYY-MM-DD HH:mm:ss'),
+			'SignPhrase':document.getElementById("signcontact").checked ? 1 : 0,
+			'Phrase': 'Ik teken dat ik op wielekes toestemming geef me te contacteren.',
+			'SignRules': document.getElementById("signrules").checked ? 1 : 0,
+			'RulesDoc': 'ReglementOpwielekes.pdf'
+		}
+		console.log(JSON.stringify({
+			'kidsdata': kidsdata,
+			'parentdata': parentdata,
+			'logdata' : logdata
+		}));
+    $.ajax({
 			type: 'POST',
 			url: '../api/members/register',
 			data: JSON.stringify({
@@ -283,7 +280,6 @@ function resetSignupForm() {
 }
 
 function convertDate(date) {
-	console.log(date);
 	return date.split("-").reverse().join("-");
 }
 
