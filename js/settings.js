@@ -216,36 +216,42 @@ function loadEmails(lastid) {
     $.ajax({
         url: 'api/settings/emails',
         success: function (emails) {
-			//setPriceTable(prices);
-			db_emails = emails;
-			setSettingsEmailNames(emails, lastid);
-		}
+					//setPriceTable(prices);
+					db_emails = emails;
+					setSettingsEmailNames(emails, lastid);
+				}
     });
 }
 
 function setSettingsEmailNames(emails,lastid){
 	settingsemailname.empty();
 	settingsemaillinktemplate.empty();
-	var newOption = new Option('', '', false, false);
-	settingsemailname.append(newOption);
-	settingsemaillinktemplate.append(newOption);
+	settingsemailname.append(new Option('', '', false, false));
+	settingsemaillinktemplate.append(new Option('', '', false, false));
 	$(emails).each( function (index, item) {
-		var htmlOption = '<option value="' + item.ID + '" data-name="' + item.Name + '" data-subject="' + item.Subject + '" data-text="' + item.Text + '" data-cc="' + item.CC+ '">' + item.Name  + '</option>';
+//var htmlOption = '<option value="' + item.ID + '" data-name="' + item.Name + '" data-subject="' + item.Subject + '" data-text="' + item.Text + '" data-cc="' + item.CC+ '">' + item.Name  + '</option>';
+		var htmlOption = '<option value="' + item.ID + '">' + item.Name  + '</option>';
 		settingsemailname.append(htmlOption);
 		settingsemaillinktemplate.append(htmlOption);
 	});
 	newEmailTemplate = false;
 	if (lastid != 0) {
 		settingsemailname.val(lastid).trigger('change');
+	} else {
+			settingsemailname.trigger('change');
 	}
+	settingsemaillinktemplate.trigger('change');
 }
 
 function setSettingsEmail(){
 	emailoption = settingsemailname.find(':selected');
 	if (emailoption.data('select2-tag')==null) {
-		$('#settings_email_cc').val(emailoption.data('cc'));
-		$('#settings_email_subject').val(emailoption.data('subject'));
-		settingsemailquill.root.innerHTML = emailoption.data('text');
+		emailid = emailoption.val();
+		var emailinfo = db_emails.filter(x => x.ID === emailid)[0];
+		console.log(emailinfo);
+		$('#settings_email_cc').val(emailinfo.CC);
+		$('#settings_email_subject').val(emailinfo.Subject);
+		settingsemailquill.root.innerHTML = emailinfo.Text;
 		newEmailTemplate = false;
 	} else {
 		resetSettingsEmailFields(true)
