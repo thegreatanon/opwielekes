@@ -69,19 +69,11 @@ var quillToolbarOptions = [
 	['clean']                   // remove formatting button
 ];
 
-function sendEmail(mailData, signup) {
-	if (typeof signup !== 'undefined') {
-    mailurl = '../sendEmail.php';
-
-	} else {
-		mailurl = 'sendEmail.php';
-	}
-	console.log('sending in global vars');
-	console.log(mailData);
+function sendEmail(mailData) {
 	$('#saveActionBtn').button('loading');
 	$.ajax({
 		type: 'POST',
-		url: mailurl,
+		url: 'sendEmail.php',
 		data: {
 			'sendto': [mailData.sendto],
 			'sendcc': ccemail,
