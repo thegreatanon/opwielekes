@@ -18,6 +18,7 @@ var db_parents;
 var db_memberships;
 var db_postalcodes;
 var db_bikestatuses;
+var db_preferences;
 
 // selectboxes
 var actiontype;
@@ -34,10 +35,13 @@ var membershipBalance;
 var actionDateIsLocked = 0;
 
 // for database
-var defaultMembershipID = 1;
-var defaultBikeAvailableID = 2;
+var defaultMembershipID;
+var defaultBikeAvailableID;
 var defaultBikeOnLoanID;
-var replyto = 'maarten@bewustverbuiken.be';
+var replytoemail;
+var replytoname;
+var ccemail;
+var sendername;
 
 var kidsToDelete = [];
 
@@ -65,18 +69,25 @@ var quillToolbarOptions = [
 	['clean']                   // remove formatting button
 ];
 
-function sendEmail(mailData) {
-	$('#saveActionBtn').button('loading');
-	console.log(' in email');
+function sendEmail(mailData, signup) {
+	if (typeof signup !== 'undefined') {
+    mailurl = '../sendEmail.php';
+
+	} else {
+		mailurl = 'sendEmail.php';
+	}
+	console.log('sending in global vars');
 	console.log(mailData);
-	console.log(mailData.message);
+	$('#saveActionBtn').button('loading');
 	$.ajax({
 		type: 'POST',
-		url: 'sendEmail.php',
+		url: mailurl,
 		data: {
 			'sendto': [mailData.sendto],
-			'replyto': mailData.replyto,
-			'replytoname': mailData.replytoname,
+			'sendcc': ccemail,
+			'replyto' : replytoemail,
+			'replytoname' : replytoname,
+			'sendername': sendername,
 			'subject': mailData.subject,
 			'message': mailData.message
 		},

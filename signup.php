@@ -1,5 +1,12 @@
 <!DOCTYPE html>
 
+<?php
+// database access
+require_once(__DIR__ . "/api/pdoconnect.php");
+require_once(__DIR__ . "/api/Services/SettingsService.php");
+$preferences = SettingsService::getPreferences()
+?>
+
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -130,10 +137,60 @@
                                 </div>
                               </div>
 
+                              <div class="row">
+                                <label class="col-md-8">Kind 3 (indien van toepassing)</label>
+                                <label class="col-md-4">Geboortedatum</label>
+                              </div>
+                              <div class="row">
+                                <div class="form-group col-md-4">
+                                    <input class="form-control" type="text" name="kid3firstname" id="kid3firstname" placeholder="Voornaam" />
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <input class="form-control" type="text" name="kid3lastname" id="kid3lastname" placeholder="Familienaam"  />
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <div class='input-group' id='kid3birthdatepicker'>
+                                      <input class="form-control" type="text" name="kid3birthdate" id="kid3birthdate" />
+                                      <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                      </span>
+                                    </div>
+                                </div>
+                              </div>
+
+                              <div class="row">
+                                <label class="col-md-8">Kind 4 (indien van toepassing)</label>
+                                <label class="col-md-4">Geboortedatum</label>
+                              </div>
+                              <div class="row">
+                                <div class="form-group col-md-4">
+                                    <input class="form-control" type="text" name="kid4firstname" id="kid4firstname" placeholder="Voornaam" />
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <input class="form-control" type="text" name="kid4lastname" id="kid4lastname" placeholder="Familienaam"  />
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <div class='input-group' id='kid4birthdatepicker'>
+                                      <input class="form-control" type="text" name="kid4birthdate" id="kid4birthdate" />
+                                      <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                      </span>
+                                    </div>
+                                </div>
+                              </div>
+
                               <div>
                               <?php
                               $date_entered = date('dd-mm-Y');
                               echo '<input type="hidden" value="<' . $date_entered . '" name="dateregistered">';
+                              echo '<input type="hidden" id="emailsend" name="emailsend" value ="' . $preferences['SignupSend'] . '">';
+                              echo '<input type="hidden" id="emailmessage" name="emailmessage" value ="' . $preferences['SignupMessage'] . '">';
+                              echo '<input type="hidden" id="emailsubject" name="emailsubject" value="' . $preferences['SignupSubject'] . '">';
+                              echo '<input type="hidden" id="emailcc" name="emailcc" value="' . $preferences['EmailCC'] . '">';
+                              echo '<input type="hidden" id="emailreplyto" name="remailreplyto" value="' . $preferences['EmailReplyTo'] . '">';
+                              echo '<input type="hidden" id="emailreplytoname" name="emailreplytoname" value="' . $preferences['EmailReplyToName'] . '">';
+                              echo '<input type="hidden" id="emailsender" name="emailsender" value="' . $preferences['SenderName'] . '">';
+                              echo '<input type="hidden" id="membershipid" name="membershipid" value="' . $preferences['DefaultMembership'] . '">';
                               echo '<div class="row">';
                               echo '<div class="col-md-12" form-group" id="signcontactdiv">';
                               echo '<input type="checkbox" name="signcontact" id="signcontact"> <label class="control-label" for="signcontact"> Ik teken dat ik op wielekes toestemming geef me te contacteren.<span class="req"> * </span></label>';
@@ -195,7 +252,7 @@
 
           								<div class="col-sm-12 checkbox">
                             <div style="padding-left:15px">
-          										<label><input type="checkbox" checked disabled> Ik teken dat ik op wielekes toestemming geef me te contacteren.</label>
+          										<label><input type="checkbox" checked disabled> Ik teken dat ik Op Wielekes toestemming geef me te contacteren.</label>
                             </div>
                           </div>
 

@@ -4,10 +4,12 @@ if($_POST){
 	include(__DIR__ . '/vars.php');
 
 	$sendto = $_POST['sendto'];
+	$sendcc = $_POST['sendcc'];
 	$replyto = $_POST['replyto'];
 	$replytoname = $_POST['replytoname'];
 	$subject = $_POST['subject'];
 	$message = $_POST['message'];
+	$sendername = $_POST['sendername'];
 
 	require 'libs/phpmailer/5.2.22/PHPMailerAutoload.php';
 	$mail = new PHPMailer;
@@ -23,13 +25,18 @@ if($_POST){
 	$mail->Password = $mailpassword;                        // SMTP password
 	$mail->SMTPSecure = $mailsmtpecure;
 
-	$mail->setFrom($mailfromaddress, $mailfromname);
+	$mail->setFrom($mailfromaddress, $sendername);
 
 	foreach($sendto as $email){
 	   $mail->AddAddress($email);
 	}
 
-//	$mail->addAddress($sendto);     // Add a recipient
+	if (!empty($sendcc)){
+		//foreach($sendcc as $emailcc){
+		$mail->AddCC($sendcc);
+		//}
+	}
+
 	$mail->addReplyTo($replyto, $replytoname);
 
 	$mail->isHTML(true);                                  // Set email format to HTML
@@ -40,7 +47,7 @@ if($_POST){
 	if(!$mail->send()) {
 		echo 'Contact message could not be sent.';
 		echo 'Mailer Error: ' . $mail->ErrorInfo;
-		//echo json_encode(['success' => false, 'jsontext' => $mail->ErrorInfo]);
+		echo json_encode(['success' => false, 'jsontext' => $mail->ErrorInfo]);
 	} else {
 		echo 'Contact message has been sent';
 	}

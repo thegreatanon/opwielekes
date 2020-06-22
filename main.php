@@ -67,14 +67,14 @@
                       <li><a href="#members">Leden</a></li>
                       <!--<li><a href="#transactionhistory">Transacties</a></li>-->
             					<li><a href="#finances">Financiën</a></li>
-            					<!--<li><a href="#stats">Statistieken</a></li>-->
+            					<!--<li><a href="#stats">Dashboard</a></li>-->
   					<li class="dropdown">
   						<a href="#settings" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Instellingen <span class="caret"></span></a>
   						  <ul class="dropdown-menu">
                 <li><a href="#settings_bikes">Fietsen</a></li>
   							<li><a href="#settings_prices">Prijzen</a></li>
   							<li><a href="#settings_emails">Emails</a></li>
-                <li><a href="#settings_memberships">Lidmaatschap</a></li>
+                <li><a href="#settings_memberships">Automatische emails</a></li>
   						  </ul>
   					</li>
                   </ul>
@@ -102,6 +102,10 @@
   						<div class="col-sm-5">
   							<select style="width : 100%;" class="form-control" id="action_member" name="action_member"></select>
   						</div>
+              <div class="col-sm-2">
+  							<a href="#members" onclick="newMember()">Nieuw Lid </a>
+              </div>
+
   					</div>
 
   					<div class="form-group">
@@ -844,11 +848,54 @@
       </section>
 
   	<section id="content_settings_emails" class="content_section">
+    	<h4 class="inlineh4">Email Instellingen</h4>
+
+      <div class="container-fluid" width="100%">
+        <form id="settings_email_preferences" class="form-horizontal">
+
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label lb-sm">Afzender naam</label>
+            <div class="col-sm-4">
+              <input style="width : 100%;" class="form-control" id="settings_email_sendername" name="settings_email_sendername">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label lb-sm">Reply to emailadres</label>
+            <div class="col-sm-4">
+              <input style="width : 100%;" class="form-control" id="settings_email_replytoemail" name="settings_email_replytoemail">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label lb-sm">Reply to naam</label>
+            <div class="col-sm-4">
+              <input style="width : 100%;" class="form-control" id="settings_email_replytoname" name="settings_email_replytoname">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label lb-sm">CC adres</label>
+            <div class='col-sm-4'>
+              <input class="form-control" type="text" value="" id="settings_email_cc" name="settings_email_cc">
+            </div>
+          </div>
+
+          <div class="input-group col-sm-10 actbtns">
+            <button type="button" onclick="cancelEmailPreferences()" class="btn btn-default actbtn">Annuleren</button>
+            <button type="button" onclick="saveEmailPreferences()" class="btn btn-primary actbtn">Opslaan</button>
+          </div>
+
+        </form>
+      </div>
+
+      <hr class="formhr">
+
   		<h4 class="inlineh4">Email Templates</h4>
 
   		<div class="container-fluid" width="100%">
   			<form id="settings_email_form" class="form-horizontal">
-
 
   				<div class="form-group">
   					<label class="col-sm-2 control-label lb-sm">Template</label>
@@ -858,12 +905,7 @@
   					</div>
   				</div>
 
-  				<div class="form-group">
-  					<label class="col-sm-2 control-label lb-sm">CC</label>
-  					<div class='col-sm-4'>
-  						<input class="form-control input-sm" type="text" value="" id="settings_email_cc" name="settings_email_cc">
-  					</div>
-  				</div>
+
 
   				<div class="form-group">
   					<label class="col-sm-2 control-label lb-sm">Onderwerp</label>
@@ -873,7 +915,7 @@
   				</div>
 
   				<div class="form-group">
-  					<label class="col-sm-2 control-label lb-sm">Email</label>
+  					<label class="col-sm-2 control-label lb-sm">Bericht</label>
   					<div class="col-sm-8">
   							<div id="settings_email_message">
   							</div>
@@ -932,20 +974,45 @@
 
       </section>
 
-
-
       <section id="content_settings_memberships" class="content_section">
-        <h4 class="inlineh4">Beheer lidmaatschap</h4>
+
 
         <div class="container-fluid" width="100%">
-          <form id="settings_memberships_form" class="form-horizontal">
+          <form id="settings_email_signuppreferences" class="form-horizontal">
+            <h4 class="inlineh4">Bevestiging van zelf in te schrijven</h4>
+            <div class="form-group form-inline">
+              <label class="col-sm-2 control-label lb-sm"></label>
+              <div class="col-sm-10">
+                <input type="checkbox" required name="settings_membership_signupsend" id="settings_membership_signupsend"> <label for="terms1" class="plabel"> Een automatische bevestiging sturen
+                  dat het lidmaatschap aangemaakt werd.</label>
+              </div>
+            </div>
 
+            <div class="form-group">
+              <label class="col-sm-2 control-label lb-sm"></label>
+                <label class="col-sm-1 control-label lb-sm">Onderwerp</label>
+              <div class='col-sm-6'>
+                <input class="form-control input-sm" type="text" value="" placeholder="Onderwerp" id="settings_membership_signupsubject" name="settings_membership_signupsubject">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-2 control-label lb-sm"></label>
+              <label class="col-sm-1 control-label lb-sm">Bericht</label>
+              <div class="col-sm-6">
+                  <div id="settings_membership_signuptext">
+                  </div>
+                </div>
+            </div>
+
+
+            <h4 class="inlineh4">Herinneringen bij vervallen van lidmaatschap</h4>
 
             <div class="form-group form-inline">
               <label class="col-sm-2 control-label lb-sm">Herinnering 1</label>
               <div class="col-sm-10">
-              <input type="checkbox" required name="terms1" id="field_terms1"> <label for="terms1" class="plabel"> Een automatische herinnering sturen
-                <select class="form-control" name="sort" id="sort">
+              <input type="checkbox" required name="settings_membership_reminder1send" id="settings_membership_reminder1send"> <label for="terms1" class="plabel"> Een automatische herinnering sturen
+                <select class="form-control" name="settings_membership_reminder1days" id="settings_membership_reminder1days">
                     <option value="0">0</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
@@ -985,8 +1052,8 @@
             <div class="form-group form-inline">
               <label class="col-sm-2 control-label lb-sm">Herinnering 2</label>
               <div class="col-sm-10">
-              <input type="checkbox" required name="terms1" id="field_terms1"> <label for="terms1" class="plabel"> Een automatische herinnering sturen
-                <select class="form-control" name="sort" id="sort">
+              <input type="checkbox" required name="settings_membership_reminder2send" id="settings_membership_reminder2send"> <label for="terms1" class="plabel"> Een automatische herinnering sturen
+                <select class="form-control" name="settings_membership_reminder2days" id="settings_membership_reminder2days">
                     <option value="0">0</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
@@ -1025,8 +1092,8 @@
             <div class="form-group form-inline">
               <label class="col-sm-2 control-label lb-sm">Herinnering 3</label>
               <div class="col-sm-10">
-              <input type="checkbox" required name="terms1" id="field_terms1"> <label for="terms1" class="plabel"> Een automatische herinnering sturen
-                <select class="form-control" name="sort" id="sort">
+              <input type="checkbox" required name="settings_membership_reminder3send" id="settings_membership_reminder3send"> <label for="terms1" class="plabel"> Een automatische herinnering sturen
+                <select class="form-control" name="settings_membership_reminder3days" id="settings_membership_reminder3days">
                     <option value="0">0</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
@@ -1063,8 +1130,8 @@
             </div>
 
             <div class="input-group col-sm-9 actbtns">
-              <button type="button" onclick="cancelEmail()" class="btn btn-default actbtn">Annuleren</button>
-              <button type="button" onclick="saveEmail()" class="btn btn-primary actbtn">Opslaan</button>
+              <button type="button" onclick="cancelEmailReminders()" class="btn btn-default actbtn">Annuleren</button>
+              <button type="button" onclick="saveEmailReminders()" class="btn btn-primary actbtn">Opslaan</button>
             </div>
 
           </form>

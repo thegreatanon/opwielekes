@@ -73,6 +73,14 @@ $(document).ready(function () {
     }
 	});
 
+	settingssignupquill = new Quill('#settings_membership_signuptext', {
+			modules: {
+				toolbar: quillToolbarOptions
+			},
+			theme: 'snow',
+			background: 'white'
+	});
+
 	settingsreminder1quill = new Quill('#settings_membership_reminder1text', {
 			modules: {
 				toolbar: quillToolbarOptions
@@ -112,6 +120,7 @@ function loadSettings() {
 	loadBikeStatuses();
 	loadPrices();
 	loadEmails(0);
+	loadPreferences();
 }
 
 // PRICES
@@ -249,7 +258,6 @@ function setSettingsEmail(){
 		emailid = emailoption.val();
 		var emailinfo = db_emails.filter(x => x.ID === emailid)[0];
 		console.log(emailinfo);
-		$('#settings_email_cc').val(emailinfo.CC);
 		$('#settings_email_subject').val(emailinfo.Subject);
 		settingsemailquill.root.innerHTML = emailinfo.Text;
 		newEmailTemplate = false;
@@ -264,7 +272,6 @@ function resetSettingsEmail(isNewEmail){
 }
 
 function resetSettingsEmailFields(isNewEmail){
-	$('#settings_email_cc').val("");
 	$('#settings_email_subject').val("");
 	settingsemailquill.setContents([]);
 	newEmailTemplate = isNewEmail;
@@ -317,8 +324,7 @@ function saveEmail(){
 			'ID': emailid,
 			'Name': emailname,
 			'Subject': $('#settings_email_subject').val(),
-			'Text':  settingsemailquill.root.innerHTML,
-			'CC': $('#settings_email_cc').val()
+			'Text':  settingsemailquill.root.innerHTML
 		}),
 		contentType: "application/json",
 		success: function (lastid) {
@@ -477,6 +483,117 @@ function saveBikeSettings(){
 		},
 		error: function() {
 			toastr.error('Statussen niet opgeslagen','Er liep iets fout');
+		}
+	});
+}
+
+	// PREFERENCES
+
+function loadPreferences() {
+    $.ajax({
+        url: 'api/settings/preferences',
+        success: function (preferences) {
+					setEmailGlobalVars(preferences);
+					setSettingsEmailPreferences(preferences);
+					setSettingsEmailReminders(preferences);
+					db_preferences = preferences;
+				}
+    });
+}
+
+function setEmailGlobalVars(preferences) {
+		defaultMembershipID = preferences.DefaultMembership;
+		defaultBikeAvailableID = preferences.DefaultBikestatusOnReturn;
+		defaultBikeOnLoanID = preferences.DefaultBikestatusOnLoan;
+		ccemail = preferences.EmailCC;
+		replytoemail = preferences.EmailReplyTo;
+		replytoname = preferences.EmailReplyToName;
+		sendername = preferences.SenderName;
+}
+
+function setSettingsEmailPreferences(preferences) {
+		$('#settings_email_replytoname').val(preferences.EmailReplyToName);
+		$('#settings_email_replytoemail').val(preferences.EmailReplyTo);
+		$('#settings_email_cc').val(preferences.EmailCC);
+		$('#settings_email_sendername').val(preferences.SenderName);
+	}
+
+function cancelEmailPreferences(){
+	setSettingsEmailPreferences(db_preferences);
+}
+
+function saveEmailPreferences(){
+	$.ajax({
+		type: 'POST',
+		url: 'api/settings/preferences/emails',
+		dataType: 'json',
+		data: JSON.stringify({
+			'replytoemail': $('#settings_email_replytoemail').val(),
+			'replytoname': $('#settings_email_replytoname').val(),
+			'ccemail': $('#settings_email_cc').val(),
+			'sendername': $('#settings_email_sendername').val()
+		}),
+		success: function (result) {
+			toastr.success('Email instellingen opgeslagen');
+			loadPreferences();
+		},
+		error: function() {
+			toastr.error('Email instellingen niet opgeslagen','Er liep iets fout');
+		}
+	});
+}
+
+function setSettingsEmailReminders(preferences) {		// Membership reminders
+		$('#settings_membership_signupsend').prop('checked', (preferences.SignupSend=="1") ? true : false);
+		$('#settings_membership_signupsubject').val(preferences.SignupSubject);
+		settingssignupquill.root.innerHTML = preferences.SignupMessage;
+		$('#settings_membership_reminder1send').prop('checked', (preferences.Reminder1Send=="1") ? true : false);
+		$('#settings_membership_reminder1days').val(preferences.Reminder1Days).trigger('change');
+		$('#settings_membership_reminder1subject').val(preferences.Reminder1Subject);
+		settingsreminder1quill.root.innerHTML = preferences.Reminder1Message;
+		$('#settings_membership_reminder2send').prop('checked', (preferences.Reminder2Send=="1") ? true : false);
+		$('#settings_membership_reminder2days').val(preferences.Reminder2Days).trigger('change');
+		$('#settings_membership_reminder2subject').val(preferences.Reminder2Subject);
+		settingsreminder2quill.root.innerHTML = preferences.Reminder2Message;
+		$('#settings_membership_reminder3send').prop('checked', (preferences.Reminder3Send=="1") ? true : false);
+		$('#settings_membership_reminder3days').val(preferences.Reminder3Days).trigger('change');
+		$('#settings_membership_reminder3subject').val(preferences.Reminder3Subject);
+		settingsreminder3quill.root.innerHTML = preferences.Reminder3Message;
+
+}
+
+function cancelEmailReminders(){
+	setSettingsEmailReminders(db_preferences)
+}
+
+function saveEmailReminders(){
+	$.ajax({
+		type: 'POST',
+		url: 'api/settings/preferences/reminders',
+		dataType: 'json',
+		data: JSON.stringify({
+			'signupsend': $('#settings_membership_signupsend').is(':checked'),
+			'signupsubject' : $('#settings_membership_signupsubject').val(),
+			'signupmessage' : settingssignupquill.root.innerHTML,
+			'reminder1send': $('#settings_membership_reminder1send').is(':checked'),
+			'reminder1days': $('#settings_membership_reminder1days').val(),
+			'reminder1subject' : $('#settings_membership_reminder1subject').val(),
+			'reminder1message' : settingsreminder1quill.root.innerHTML,
+			'reminder2send': $('#settings_membership_reminder2send').is(':checked'),
+			'reminder2days': $('#settings_membership_reminder2days').val(),
+			'reminder2subject' : $('#settings_membership_reminder2subject').val(),
+			'reminder2message' : settingsreminder2quill.root.innerHTML,
+			'reminder3send': $('#settings_membership_reminder3send').is(':checked'),
+			'reminder3days': $('#settings_membership_reminder3days').val(),
+			'reminder3subject' : $('#settings_membership_reminder3subject').val(),
+			'reminder3message' : settingsreminder3quill.root.innerHTML
+		}),
+		success: function (result) {
+			toastr.success('Automatische emails opgeslagen');
+			loadPreferences();
+		},
+		error: function() {
+			toastr.error('Automatische emails niet opgeslagen','Er liep iets fout');
 		}
 	});
 }

@@ -10,6 +10,16 @@ $(document).ready(function () {
 		format: 'DD-MM-YYYY'
 	});
 
+	$('#kid3birthdatepicker').datetimepicker({
+		defaultDate: new Date(),
+		format: 'DD-MM-YYYY'
+	});
+
+	$('#kid4birthdatepicker').datetimepicker({
+		defaultDate: new Date(),
+		format: 'DD-MM-YYYY'
+	});
+
 	$("a.iframe").fancybox({
 		'type': 'iframe',
 		iframe: {
@@ -49,6 +59,12 @@ function verifyMember() {
 	if ($('#kid2firstname').val().length>0 && $('#kid2lastname').val().length>0){
 		kidstxt += '<br>'+ $('#kid2firstname').val() + ' ' + $('#kid2lastname').val() + ', ° ' + $('#kid2birthdate').val();
 	}
+	if ($('#kid3firstname').val().length>0 && $('#kid3lastname').val().length>0){
+		kidstxt += '<br>'+ $('#kid3firstname').val() + ' ' + $('#kid3lastname').val() + ', ° ' + $('#kid3birthdate').val();
+	}
+	if ($('#kid4firstname').val().length>0 && $('#kid4lastname').val().length>0){
+		kidstxt += '<br>'+ $('#kid4firstname').val() + ' ' + $('#kid4lastname').val() + ', ° ' + $('#kid4birthdate').val();
+	}
 	document.getElementById("sumkids").innerHTML =  kidstxt;
 	document.getElementById('showinput').style.display = 'none';
 	document.getElementById('showsummary').style.display = 'block';
@@ -63,6 +79,8 @@ function editMember() {
 
 function registerMember() {
 		var parentid = "0";
+		var parentemail = $('#parentemail').val();
+		var defaultMembershipID = $('#membershipid').val();
 		var kidsdata = [];
 		if ($('#kid1firstname').val().length>0 && $('#kid1lastname').val().length>0){
 			console.log('adding kid 1');
@@ -84,6 +102,32 @@ function registerMember() {
 				'Name': $('#kid2firstname').val(),
 				'Surname': $('#kid2lastname').val(),
 				'BirthDate': convertDate($('#kid2birthdate').val()),
+				'Caution': "0",
+				'ExpiryDate': "0000-00-00",
+				'Active': "0",
+				'BikeID': "0",
+				'KidNr': "0"
+			});
+		}
+		if ($('#kid3firstname').val().length>0 && $('#kid3lastname').val().length>0){
+			kidsdata.push({
+				'ID': "0",
+				'Name': $('#kid3firstname').val(),
+				'Surname': $('#kid3lastname').val(),
+				'BirthDate': convertDate($('#kid3birthdate').val()),
+				'Caution': "0",
+				'ExpiryDate': "0000-00-00",
+				'Active': "0",
+				'BikeID': "0",
+				'KidNr': "0"
+			});
+		}
+		if ($('#kid4firstname').val().length>0 && $('#kid4lastname').val().length>0){
+			kidsdata.push({
+				'ID': "0",
+				'Name': $('#kid4firstname').val(),
+				'Surname': $('#kid4lastname').val(),
+				'BirthDate': convertDate($('#kid4birthdate').val()),
 				'Caution': "0",
 				'ExpiryDate': "0000-00-00",
 				'Active': "0",
@@ -135,7 +179,8 @@ function registerMember() {
 				console.error(data);
 			},
 			complete: function () {
-				//mailRegistration();
+				console.log(parentemail);
+				mailRegistration(parentemail);
 				document.getElementById('showinput').style.display = 'none';
 				document.getElementById('showsummary').style.display = 'none';
 				document.getElementById('showsuccess').style.display = 'block';
@@ -143,15 +188,28 @@ function registerMember() {
 		});
 }
 
-function mailRegistration() {
-	mailData = {
-		'sendto' : $('#parentemail').val(),
-		'replyto' : replyto,
-		'replytoname' : 'Opwielekes',
-		'message' : 'Beste,<br><br>Je bent geregistreerd voor opwielekes',
-		'subject': 'Op wielekes registratie'
-	};
-	sendEmail(mailData);
+function mailRegistration(parentemail) {
+	if ($('#emailsend').val() == '1' ) {
+		$.ajax({
+			type: 'POST',
+			url: '../sendEmail.php',
+			data: {
+				'sendto': [parentemail],
+				'sendcc': $('#emailcc').val(),
+				'replyto' : $('#emailreplyto').val(),
+				'replytoname' : $('#emailreplytoname').val(),
+				'sendername': $('#emailsender').val(),
+				'subject': $('#emailsubject').val(),
+				'message': $('#emailmessage').val()
+			},
+			success: function (result) {
+				toastr.success('Email verzonden');
+			},
+			error: function() {
+				toastr.error('Kon email niet verzenden');
+			}
+		});
+	}
 }
 
 function validateInput() {
@@ -272,6 +330,12 @@ function resetSignupForm() {
 	$('#kid2firstname').val('');
 	$('#kid2lastname').val('');
 	$('#kid2birthdatepicker').data("DateTimePicker").date(moment().format('DD-MM-YYYY'));
+	$('#kid3firstname').val('');
+	$('#kid3lastname').val('');
+	$('#kid3birthdatepicker').data("DateTimePicker").date(moment().format('DD-MM-YYYY'));
+	$('#kid4firstname').val('');
+	$('#kid4lastname').val('');
+	$('#kid4birthdatepicker').data("DateTimePicker").date(moment().format('DD-MM-YYYY'));
 	$('#signcontact').prop("checked", false);
 	$('#signrules').prop("checked", false);
 	document.getElementById('showinput').style.display = 'block';

@@ -560,8 +560,6 @@ function saveTransaction() {
 		if (sendmail) {
 			mailData = {
 				'sendto' : document.getElementById("action_emailaddress").value,
-				'replyto' : 'maarten@bewustverbuiken.be',
-				'replytoname' : 'Opwielekes Webmaster',
 				'message' : actionquill.root.innerHTML,
 				'subject': document.getElementById("action_emailsubject").value
 			};

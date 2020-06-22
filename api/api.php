@@ -148,7 +148,7 @@ $app->group('/parents', function() use ($app) {
     });
 
 	$app->post('/', function() use ($app) {
-        global $DBH;
+    global $DBH;
 		try {
 			$DBH->beginTransaction();
 			if ($GLOBALS["data"]->ID == 0) {
@@ -161,8 +161,8 @@ $app->group('/parents', function() use ($app) {
 				if ($updk["status"] == -1) {
 					throw new Exception($updk["error"]);
 				}
-			}
-			$DBH->commit();
+	    }
+	    $DBH->commit();
 		} catch (Exception $e) {
 			$DBH->rollBack();
 			$GLOBALS["error"] = $e->getMessage();
@@ -170,7 +170,6 @@ $app->group('/parents', function() use ($app) {
 		}
 		echo json_encode(null);
     });
-
 });
 
 $app->group('/kids', function() use ($app) {
@@ -470,11 +469,49 @@ $app->group('/settings', function() use ($app) {
          echo json_encode(null);
       });
 
-    $app->get('/postalcodes', function() use ($app) {
+     $app->get('/postalcodes', function() use ($app) {
           global $DBH;
           $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::POSTALCODES) . " order by City");
           echo json_encode($STH->fetchAll());
-    });
+     });
+
+     $app->get('/preferences', function() use ($app) {
+ 		    	echo json_encode(SettingsService::getPreferences());
+     });
+
+     $app->post('/preferences/emails', function() use ($app) {
+        global $DBH;
+        try {
+          $DBH->beginTransaction();
+          $upde = SettingsService::updateEmailPreferences($GLOBALS["data"]);
+          if ($upde["status"] == -1) {
+            throw new Exception($upde["error"]);
+          }
+          $DBH->commit();
+        } catch (Exception $e) {
+          $DBH->rollBack();
+          $GLOBALS["error"] = $e->getMessage();
+          $app->error();
+        }
+        echo json_encode(null);
+     });
+
+     $app->post('/preferences/reminders', function() use ($app) {
+        global $DBH;
+        try {
+          $DBH->beginTransaction();
+          $upde = SettingsService::updateEmailReminders($GLOBALS["data"]);
+          if ($upde["status"] == -1) {
+            throw new Exception($upde["error"]);
+          }
+          $DBH->commit();
+        } catch (Exception $e) {
+          $DBH->rollBack();
+          $GLOBALS["error"] = $e->getMessage();
+          $app->error();
+        }
+        echo json_encode(null);
+     });
 
   	$app->get('/memberships', function() use ($app) {
   		    global $DBH;
