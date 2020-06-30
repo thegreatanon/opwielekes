@@ -27,6 +27,7 @@ var actionbikeout;
 var actionbikeall;
 var defaultmembership;
 var parentmembership;
+var actionmembershipsel;
 
 // finance variables
 var cautionBalance;

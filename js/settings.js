@@ -11,6 +11,15 @@ $(document).ready(function () {
 		tags: false
 	});
 
+		// this one is in the action section but is loaded earlier
+	actionmembershipsel = $('#action_membershipsel').select2({
+		allowClear: false,
+		tags: false,
+		dropdownAutoWidth: true
+	}).on('select2:select', function() {
+		setActionMembershipType();
+	});
+
 	settingsemailaction = $('#settings_email_action').select2({
 		placeholder: "Kies",
 		allowClear: true,
@@ -130,7 +139,9 @@ function loadPrices() {
         url: 'api/settings/memberships',
         success: function (memberships) {
 					setPriceTable(memberships);
+					setDefaultMembership(memberships, actionmembershipsel);
 					setDefaultMembership(memberships, parentmembership);
+
 					//setDefaultMembership(memberships, defaultmembership);
 					db_memberships = memberships;
 				}
@@ -344,7 +355,7 @@ function setSettingsEmailActions(actions){
 	var newOption = new Option('', '', false, false);
 	settingsemailaction.append(newOption);
 	$(actions).each( function (index, item) {
-		var htmlOption = '<option value="' + item.ID + '" data-updatebike="' + item.UpdateBike + '" data-updatekid="' + item.UpdateKid + '" data-updatekidfin="' + item.UpdateKidFin + '" data-updatefin="' + item.UpdateFin + '" data-requirebikein="' + item.RequireBikeIn + '" data-requirebikeout ="' + item.RequireBikeOut + '" data-requirebikeall="' + item.RequireBikeAll + '" data-requiremembership="' + item.RequireMembership + '" data-requirecaution="' + item.RequireCaution + '" data-resultchangeactive="' + item.ResultChangeActive + '" data-resultkidactive="' + item.ResultKidActive + '" data-enablesave="' + item.EnableSave + '" data-donationreceived="' + item.DonationReceived + '" data-demandcaution="' + item.DemandCaution + '" data-returncaution="' + item.ReturnCaution + '" data-emailsend="' + item.EmailSend + '" data-emailid="' + item.EmailID + '">' + item.Name  + '</option>';
+		var htmlOption = '<option value="' + item.ID + '" data-updatebike="' + item.UpdateBike + '" data-updatekid="' + item.UpdateKid + '" data-updatekidfin="' + item.UpdateKidFin + '" data-updatefin="' + item.UpdateFin + '" data-requirebikein="' + item.RequireBikeIn + '" data-requirebikeout ="' + item.RequireBikeOut + '" data-requirebikeall="' + item.RequireBikeAll + '" data-requiremembership="' + item.RequireMembership + '" data-requirecaution="' + item.RequireCaution + '" data-resultchangeactive="' + item.ResultChangeActive + '" data-resultkidactive="' + item.ResultKidActive + '" data-enablesave="' + item.EnableSave + '" data-checkmembership="' + item.CheckMembership + '" data-demandcaution="' + item.DemandCaution + '" data-returncaution="' + item.ReturnCaution + '" data-emailsend="' + item.EmailSend + '" data-emailid="' + item.EmailID + '">' + item.Name  + '</option>';
 		settingsemailaction.append(htmlOption);
 	});
 }

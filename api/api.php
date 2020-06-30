@@ -345,6 +345,12 @@ $app->group('/transactions', function() use ($app) {
 			if ($newt["status"] == -1) {
 				throw new Exception($newt["error"]);
 			}
+      $transid = $newt["lastid"];
+
+      $uex = MembersService::updateKidExpiryDate($GLOBALS["data"]->expiryData);
+      if ($uex["status"] == -1) {
+        throw new Exception($uex["error"]);
+      }
 
 			if ($GLOBALS["data"]->updateKid != 0) {
 				$uks = MembersService::updateKidStatus($GLOBALS["data"]->kidStatus);
@@ -360,9 +366,16 @@ $app->group('/transactions', function() use ($app) {
 				}
 			}
 
+      if ($GLOBALS["data"]->updateDonor != 0) {
+				$upc = BikesService::updateDonor($GLOBALS["data"]->donorData);
+				if ($upd["status"] == -1) {
+					throw new Exception($upd["error"]);
+				}
+			}
+
 			if ($GLOBALS["data"]->updateFin != 0) {
 				foreach ($GLOBALS["data"]->finTransactions as $item) {
-					$newf = FinancesService::newTransaction($item);
+					$newf = FinancesService::newTransaction($item, $transid);
 					if ($newf["status"] == -1) {
 						throw new Exception($newf["error"]);
 					}

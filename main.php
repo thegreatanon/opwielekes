@@ -98,7 +98,7 @@
 
 
   					<div class="form-group">
-  						<label for="action_member" class="col-sm-1 control-label">Lid</label>
+  						<label for="action_member" class="col-sm-2 control-label">Lid</label>
   						<div class="col-sm-5">
   							<select style="width : 100%;" class="form-control" id="action_member" name="action_member"></select>
   						</div>
@@ -109,7 +109,7 @@
   					</div>
 
   					<div class="form-group">
-  						<label class="col-sm-1 control-label lb-sm">Actie</label>
+  						<label class="col-sm-2 control-label lb-sm">Actie</label>
   						<div class="col-sm-3">
   							<select style="width : 100%;" class="form-control" id="action_type" name="action_type">
   								<!--<option></option>
@@ -145,7 +145,7 @@
 
   					<div class="form-group">
 
-  						<label class="col-sm-1 control-label lb-sm">Fiets IN</label>
+  						<label class="col-sm-2 control-label lb-sm">Fiets IN</label>
   						<div id="action_allbikes" hidden>
   							<div class="col-sm-3">
   								<select style="width : 100%;" class="form-control input-sm" id="action_bike_all" name="action_bike_all"></select>
@@ -169,48 +169,109 @@
 
   					</div>
 
+            <div class="form-group">
 
-
-  					<div class="form-group">
-
-  						<label class="col-sm-1 control-label lb-sm">Waarborg</label>
-  						<div class='col-sm-2' id="action_cautioninfo">
-  							<p class="form-control-static" id="action_cautioninfotext"></p>
-  						</div>
-  						<div class='col-sm-2' id="action_cautioninput" hidden>
-  							<input class="form-control input-sm" type="number" step="0.01" value="0" id="amount_caution">
-  						</div>
   						<label class="col-sm-2 control-label lb-sm">Lidmaatschap</label>
-  						<div class='col-sm-2' id="action_membershipinfo">
-  							<p class="form-control-static" id="action_membershipinfotext"></p>
-  						</div>
-  						<div class='col-sm-2' id="action_membershipinput" hidden>
-  							<input class="form-control input-sm" type="number" step="0.01" value="0" id="amount_membership">
-  						</div>
+              <div class="action_memberdiv" hidden>
+                <div class="col-sm-2">
+                  <select style="width : 100%;" class="form-control" id="action_membershipsel" name="action_membershipsel">
+                  </select>
+                </div>
 
+                <label class="col-sm-1 control-label lb-sm">Vervaldag</label>
+                <div class='input-group col-sm-2' id='actionexpirydatepicker'>
+                    <input type='text' class="form-control input-sm" id="action_expirydate" name="action_expirydate" />
+                    <span class="input-group-addon">
+                      <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+
+              </div>
   					</div>
 
             <div class="form-group">
-              <label class="col-sm-1 control-label lb-sm">Email</label>
+
+    				  <label class="col-sm-2 control-label lb-sm">Betaling</label>
+              <div class="action_actiondiv" hidden>
+                <div class='col-sm-2' id="action_membershipinfo" hidden>
+    							<p class="form-control-static" id="action_membershipinfotext"></p>
+    						</div>
+    						<div class='col-sm-2' id="action_membershipinput">
+    							<input style="width : 100%;" class="form-control input-sm" type="number" step="0.01" value="0" id="amount_membership">
+    						</div>
+
+                <div id="action_paymentmethodselector">
+    							<div class="col-sm-2">
+    								<select style="width : 100%;" class="form-control" id="action_paymentmethod" name="action_paymentmethod">
+                      <option value="1">Cash</option>
+                      <option value="2">Overschrijving</option>
+                      <option value="3">Donatie</option>
+                    </select>
+    							</div>
+  						        </div>
+
+                <div id="action_donationbikes" hidden>
+                  <div class="col-sm-3">
+                    <select style="width : 100%;" class="form-control" id="action_bike_donate" name="action_bike_donate"></select>
+                  </div>
+                </div>
+    					</div>
+            </div>
+
+  					<div class="form-group">
+              <label class="col-sm-2 control-label lb-sm">Waarborg</label>
+              <div class="action_actiondiv" hidden>
+    						<div class='col-sm-2' id="action_cautioninfo" hidden>
+    							<p class="form-control-static" id="action_cautioninfotext"></p>
+    						</div>
+    						<div class='col-sm-2' id="action_cautioninput">
+    							<input style="width : 100%;" class="form-control input-sm" type="number" step="0.01" value="0" id="amount_caution">
+    						</div>
+                <div id="action_waarborgpaymentselector">
+    							<div class="col-sm-2">
+    								<select style="width : 100%;" class="form-control" id="action_waarborgpaymentmethod" name="action_waarborgpaymentmethod">
+                    <option value="1">Cash</option>
+    								<option value="2">Overschrijving</option>
+    								</select>
+                  </div>
+    						</div>
+                <label class="col-sm-2 control-label lb-sm">Huidig saldo</label>
+                <p class="col-sm-1 form-control-static" id="action_parentcaution">0</p>
+              </div>
+  					</div>
+
+
+            <div class="form-group">
+              <label class="col-sm-2 control-label lb-sm">Totaal</label>
+              <div class="action_actiondiv" hidden>
+                <p class="col-sm-2 form-control-static" id="action_totalpayment"></p>
+                <div class='col-sm-5' id="action_paymentnoteinput">
+                  <input class="form-control input-sm" type="text" value="" placeholder="Boodschap bij transactie" id="amount_paymentnote">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-2 control-label lb-sm">Email</label>
 
               <div class='col-sm-2' >
                 <div class="checkbox">
                       <label><input type="checkbox" class="test" id="action_sendemail" name="action_sendemail" value="send" disabled> Verstuur</label>
                   </div>
               </div>
+
               <div class="actbtns">
                 <input type="hidden" id="action_bikeinid" name="bikeinid" value="0">
                 <button type="button" onclick="cancelTransaction()" class="btn btn-default actbtn">Annuleren</button>
                 <button type="submit" id="saveActionBtn" class="btn btn-primary actbtn" disabled>Opslaan</button>
               </div>
-
             </div>
 
   					<div id="action_emaildiv" hidden>
 
 
   						<div class="form-group">
-  							<label class="col-sm-1 control-label lb-sm"></label>
+  							<label class="col-sm-2 control-label lb-sm"></label>
 
   							<label class="col-sm-1 control-label lb-sm">Onderwerp</label>
   							<div class='col-sm-3'>
@@ -224,7 +285,7 @@
   						</div>
 
   						<div class="form-group">
-  							<label class="col-sm-1 control-label lb-sm"></label>
+  							<label class="col-sm-2 control-label lb-sm"></label>
   							<div class="col-sm-8">
   									<div id="actionemail">
   									</div>
@@ -244,8 +305,8 @@
   							<p class="col-sm-1 form-control-static" id="action_membership"></p>
   							<label class="col-sm-2 control-label lb-sm">Actieve kids</label>
   							<p class="col-sm-1 form-control-static" id="action_parentactivekids">0</p>
-  							<label class="col-sm-1 control-label lb-sm">Waarborg</label>
-  							<p class="col-sm-1 form-control-static" id="action_parentcaution">0</p>
+  							<label class="col-sm-1 control-label lb-sm" hidden>Waarborg</label>
+  							<p class="col-sm-1 form-control-static" id="action_parentcaution" hidden>0</p>
                 <input type="hidden" id="action_parentid" name="action_parentid">
   							<!-- hidden temp -->
   						</div>
@@ -488,10 +549,10 @@
   							<div class="col-sm-4">
   								<input type="text" class="form-control input-md" id="parent_surname" name="parent_surname" placeholder="Familienaam">
   							</div>
-  							<label class="col-sm-1 control-label">Email</label>
-  							<div class="col-sm-3">
-  								<input type="text" class="form-control input-md" id="parent_email" name="parent_email" placeholder="email">
-  							</div>
+                <label class="col-sm-1 control-label">Tel</label>
+                <div class="col-sm-3">
+                  <input type="text" class="form-control input-md" id="parent_phone" name="parent_phone" placeholder="Tel">
+                </div>
   						</div>
 
   						<div class="form-group">
@@ -502,9 +563,9 @@
   							<div class="col-sm-2">
   								<input type="text" class="form-control input-md" id="parent_streetnr" name="parent_streetnr" placeholder="Nr">
   							</div>
-  							<label class="col-sm-1 control-label">Tel</label>
+                <label class="col-sm-1 control-label">Email</label>
   							<div class="col-sm-3">
-  								<input type="text" class="form-control input-md" id="parent_phone" name="parent_phone" placeholder="Tel">
+  								<input type="text" class="form-control input-md" id="parent_email" name="parent_email" placeholder="email">
   							</div>
   						</div>
 
@@ -516,6 +577,7 @@
   							<div class="col-sm-3">
   								<input type="text" class="form-control input-md" id="parent_town" name="parent_town" placeholder="Stad">
   							</div>
+                <label class="col-sm-2 control-label">Rekeningnr</label>
   						</div>
 
               <div class="form-group">
@@ -565,8 +627,8 @@
   								<table class="table table-condensed" id="kids_table">
   									<thead>
   										<tr>
-  											<th>Voornaam</th>
   											<th>Achternaam</th>
+                        <th>Voornaam</th>
   											<th>Geboortedatum</th>
                         <th>Fiets</th>
                         <th>Lid tot</th>
@@ -1156,11 +1218,11 @@
 <!-- Row in kids table -->
 <script id="kidsrow" type="text/x-handlebars-template">
     <tr data-id="{{ID}}" data-name="{{name}}" data-surname="{{surname}}" data-active="{{active}}" data-expirydate="{{expirydate}}">
-    		<td class="kids_name">
-            <input type="text" class="form-control kids_name_input" value="{{name}}">
-        </td>
-    		<td class="kids_surname">
+        <td class="kids_surname">
             <input type="text" class="form-control kids_surname_input" value="{{surname}}">
+        </td>
+        <td class="kids_name">
+            <input type="text" class="form-control kids_name_input" value="{{name}}">
         </td>
 		     <td class="kids_birthdate">
             <input type="text" class="form-control kids_birthdate_input" value="{{birthdate}}">

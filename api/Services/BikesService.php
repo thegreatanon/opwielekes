@@ -47,6 +47,24 @@ class BikesService
       }
     }
 
+		public static function updateDonor($data) {
+				global $DBH;
+				if (isset($data->ID) && isset($data->Donated)  && isset($data->Donor)  && isset($data->DonationDate)) {
+						try {
+								$STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::BIKES) . " SET Donated = :Donated, Donor = :Donor, DonationDate = :DonationDate WHERE ID = :ID");
+								$STH->bindParam(':ID', $data->ID);
+								$STH->bindParam(':Donated', $data->Donated);
+								$STH->bindParam(':Donor', $data->Donor);
+								$STH->bindParam(':DonationDate', $data->DonationDate);
+								$STH->execute();
+						} catch (Exception $e) {
+								return ["status" => -1, "error" => "Er is iets fout gelopen in update fietsdonor..."];
+						}
+				} else {
+						return ["status" => -1, "error" => "Onvoldoende parameters in update fietsdonor..."];
+				}
+			}
+
 	public static function newBike($data) {
 		global $DBH;
         if (isset($data->Number) && isset($data->Name) && isset($data->Status) && isset($data->Frame) && isset($data->Wheel) && isset($data->Source) && isset($data->Date) && isset($data->Notes) ) {
@@ -87,7 +105,7 @@ class BikesService
 		public static function getBikes() {
 				$mysqldateformat = $GLOBALS['mysqldateformat'];
 				global $DBH;
-				$STH = $DBH->prepare("SELECT b.ID, b.Number, b.Name, b.Frame, b.Wheel, DATE_FORMAT(b.InitDate, '" . $mysqldateformat . "') InitDate, b.Status StatusNr, b.Source, b.Notes, s.Name StatusName, s.OnLoan StatusOnLoan, s.Available StatusAvailable
+				$STH = $DBH->prepare("SELECT b.ID, b.Number, b.Name, b.Frame, b.Wheel, DATE_FORMAT(b.InitDate, '" . $mysqldateformat . "') InitDate, b.Status StatusNr, b.Donated, b.Donor, b.Source, b.Notes, s.Name StatusName, s.OnLoan StatusOnLoan, s.Available StatusAvailable
 				FROM " . TableService::getTable(TableEnum::BIKES) . " b
 				LEFT JOIN " . TableService::getTable(TableEnum::BIKESTATUS) . " s
 				ON b.Status = s.ID

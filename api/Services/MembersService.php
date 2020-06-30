@@ -122,14 +122,13 @@ class MembersService
 	public static function updateKidStatus($data) {
 
 		global $DBH;
-        if (isset($data->ID) && isset($data->Active) && isset($data->BikeID) && isset($data->KidNr) && isset($data->ExpiryDate)) {
+        if (isset($data->ID) && isset($data->Active) && isset($data->BikeID) && isset($data->KidNr) ) {
 			try {
-                $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::KIDS) . " SET Active = :Active, BikeID = :BikeID, KidNr = :KidNr, ExpiryDate = :ExpiryDate WHERE ID = :ID");
+                $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::KIDS) . " SET Active = :Active, BikeID = :BikeID, KidNr = :KidNr WHERE ID = :ID");
 				$STH->bindParam(':ID', $data->ID);
 				$STH->bindParam(':Active', $data->Active);
 				$STH->bindParam(':BikeID', $data->BikeID);
 				$STH->bindParam(':KidNr', $data->KidNr);
-				$STH->bindParam(':ExpiryDate', $data->ExpiryDate);
                 $STH->execute();
             } catch (Exception $e) {
                return ["status" => -1, "error" => "Er is iets fout gelopen in update kind status..."];

@@ -9,7 +9,7 @@ class FinancesService
 	public static function getTransactions() {
 		$mysqldateformat = $GLOBALS['mysqldateformat'];
     global $DBH;
-		$STH = $DBH->prepare("SELECT f.ID, DATE_FORMAT(f.TransactionDate, '" . $mysqldateformat . "') TransactionDate, f.ParentID, f.KidID, f.Amount, f.Membership, f.Caution, f.Received, p.Name ParentName, p.Surname ParentSurname, k.Name KidName, k.Surname KidSurname
+		$STH = $DBH->prepare("SELECT f.ID, DATE_FORMAT(f.TransactionDate, '" . $mysqldateformat . "') TransactionDate, f.ParentID, f.KidID, f.Amount, f.Membership, f.Caution, f.Received, f.Method, p.Name ParentName, p.Surname ParentSurname, k.Name KidName, k.Surname KidSurname
 			FROM " . TableService::getTable(TableEnum::FINANCES) . " f
 			LEFT JOIN " . TableService::getTable(TableEnum::PARENTS) . " p
 			ON f.ParentID = p.ID
@@ -21,18 +21,20 @@ class FinancesService
 
     }
 
-	public static function newTransaction($data) {
+	public static function newTransaction($data, $transactionID) {
 		global $DBH;
-        if (isset($data->TransactionDate) && isset($data->ParentID) && isset($data->KidID) && isset($data->Amount) && isset($data->Membership) && isset($data->Caution) && isset($data->Received)) {
+        if (isset($transactionID) && isset($data->TransactionDate) && isset($data->ParentID) && isset($data->KidID) && isset($data->Amount) && isset($data->Membership) && isset($data->Caution) && isset($data->Received) && isset($data->Method)) {
             try {
-                $STH = $DBH->prepare("INSERT INTO " . TableService::getTable(TableEnum::FINANCES) . " (TransactionDate, ParentID, KidID, Amount, Membership, Caution, Received) VALUES (:TransactionDate, :ParentID, :KidID, :Amount, :Membership, :Caution, :Received)");
-				$STH->bindParam(':TransactionDate', $data->TransactionDate);
-				$STH->bindParam(':ParentID', $data->ParentID);
-				$STH->bindParam(':KidID', $data->KidID);
-				$STH->bindParam(':Amount', $data->Amount);
-				$STH->bindParam(':Membership', $data->Membership);
-				$STH->bindParam(':Caution', $data->Caution);
-				$STH->bindParam(':Received', $data->Received);
+                $STH = $DBH->prepare("INSERT INTO " . TableService::getTable(TableEnum::FINANCES) . " (TransactionID, TransactionDate, ParentID, KidID, Amount, Membership, Caution, Received, Method) VALUES (:TransactionID, :TransactionDate, :ParentID, :KidID, :Amount, :Membership, :Caution, :Received, :Method)");
+								$STH->bindParam(':TransactionID', $transactionID);
+								$STH->bindParam(':TransactionDate', $data->TransactionDate);
+								$STH->bindParam(':ParentID', $data->ParentID);
+								$STH->bindParam(':KidID', $data->KidID);
+								$STH->bindParam(':Amount', $data->Amount);
+								$STH->bindParam(':Membership', $data->Membership);
+								$STH->bindParam(':Caution', $data->Caution);
+								$STH->bindParam(':Received', $data->Received);
+								$STH->bindParam(':Method', $data->Method);
                 $STH->execute();
             } catch (Exception $e) {
                return ["status" => -1, "error" => "Er is iets fout gelopen in nieuwe financiele transactie..."];

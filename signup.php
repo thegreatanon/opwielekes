@@ -22,12 +22,12 @@ $preferences = SettingsService::getPreferences()
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    <link href="../libs/toastr/2.1.3/toastr.min.css" rel="stylesheet"/>
-    <link href="../libs/select2/4.0.3/dist/css/select2.css" rel="stylesheet"/>
+    <link href="../libs/toastr/2.1.3/toastr.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../libs/select2/4.0.3/dist/css/select2.css" rel="stylesheet" type="text/css"/>
     <link href="../libs/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css"/>
 
-    <link href="../css/signup.css" rel="stylesheet">
+    <link href="../css/signup.css" rel="stylesheet" type="text/css"/>
   </head>
 
   <body>
@@ -193,7 +193,7 @@ $preferences = SettingsService::getPreferences()
                               echo '<input type="hidden" id="membershipid" name="membershipid" value="' . $preferences['DefaultMembership'] . '">';
                               echo '<div class="row">';
                               echo '<div class="col-md-12" form-group" id="signcontactdiv">';
-                              echo '<input type="checkbox" name="signcontact" id="signcontact"> <label class="control-label" for="signcontact"> Ik teken dat ik op wielekes toestemming geef me te contacteren.<span class="req"> * </span></label>';
+                              echo '<input type="checkbox" name="signcontact" id="signcontact"> <label class="control-label" for="signcontact"> Ik teken dat ik Op Wielekes toestemming geef me te contacteren.<span class="req"> * </span></label>';
                               echo '</div>';
                               echo '</div>';
                               echo '<div class="row">';
