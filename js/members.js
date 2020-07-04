@@ -364,7 +364,7 @@ function addKidItem(data) {
 		if (data.BikeID==0) {
 			bikenr = "";
 		} else {
-			bikenr = data.BikeID;
+			bikenr = data.BikeNr;
 		}
     $('#kids_table_tbody').append(template_kidsrow({ID: data.ID, name: data.Name, surname: data.Surname, birthdate: data.BirthDate, active: data.Active, expirydate:data.ExpiryDate, bike:bikenr}));
 }

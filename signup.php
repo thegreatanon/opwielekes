@@ -198,7 +198,12 @@ $preferences = SettingsService::getPreferences()
                               echo '</div>';
                               echo '<div class="row">';
                               echo '<div class="col-md-12 form-group" id="signrulesdiv">';
-                              echo '<input type="checkbox" name="signrules" id="signrules">  <label class="control-label" for="signrules"> Ik teken het <a data-fancybox data-type="iframe" href="https://admin.opwielekes.be/pdf/ReglementOpwielekes.pdf" title="Je kan het intern reglement lezen door op deze link te klikken">intern reglement</a>.<span class="req"> * </span></label>';
+                              if ( $_SESSION["urlaccount"]["AccountCode"] == "has" ) {
+                                  $termsfile = "https://admin.opwielekes.be/pdf/ReglementHasselt.pdf";
+                              } else {
+                                  $termsfile = "https://admin.opwielekes.be/pdf/ReglementOpwielekes.pdf";
+                              }
+                              echo '<input type="checkbox" name="signrules" id="signrules">  <label class="control-label" for="signrules"> Ik teken het <a data-fancybox data-type="iframe" href="' . $termsfile . '" title="Je kan het intern reglement lezen door op deze link te klikken">intern reglement</a>.<span class="req"> * </span></label>';
                               echo '</div>';
                               echo '</div>';
                               //echo '<input type="checkbox" required name="terms" onchange="this.setCustomValidity(validity.valueMissing ? 'Ik ga akkoord met het intern reglement' : '');" id="field_terms">   <label for="terms">Ik ga akkoord met het <a href="terms.php" title="Je kan de algemene voorwaarden lezen door op deze link te klikken">intern reglement</a>.<span class="req"> * </span></label>';

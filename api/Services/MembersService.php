@@ -204,6 +204,7 @@ class MembersService
         }
     }
 
+		/*
 	public static function getKids() {
 			$mysqldateformat = $GLOBALS['mysqldateformat'];
       global $DBH;
@@ -211,6 +212,18 @@ class MembersService
 			$STH->execute();
 			return $STH->fetchAll();
     }
+		*/
+
+		public static function getKids() {
+			$mysqldateformat = $GLOBALS['mysqldateformat'];
+	    global $DBH;
+			$STH = $DBH->prepare("SELECT k.ID, k.ParentID, k.Name, k.Surname, DATE_FORMAT(k.BirthDate, '" . $mysqldateformat . "') BirthDate, k.Caution, DATE_FORMAT(k.ExpiryDate, '" . $mysqldateformat . "') ExpiryDate, k.Active, k.BikeID, k.KidNr, b.Number BikeNr
+				FROM " . TableService::getTable(TableEnum::KIDS) . " k
+				LEFT JOIN " . TableService::getTable(TableEnum::BIKES) . " b
+				ON k.BikeID = b.ID");
+			$STH->execute();
+			return $STH->fetchAll();
+	  }
 
 	/*
 	// DOES NOT WORK, MISSING FIELDS FOR KIDS WITH USED PARENTID
