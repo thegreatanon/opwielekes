@@ -46,8 +46,14 @@ var sendername;
 
 var kidsToDelete = [];
 
+var defaultPaymentMethod = 1;
+
 // email variables
 var newEmailTemplate;
+
+$(document).ready(function () {
+	$.fn.dataTable.moment('DD-MM-YYYY');
+});
 
 /* organise tabs */
 function viewTab(section, amount) {
@@ -102,4 +108,43 @@ function sendEmail(mailData) {
 			$('#saveActionBtn').button('reset');
 		}
 	});
+}
+
+// HELP FUNCTIONS
+
+$.fn.dataTable.moment = function ( format, locale ) {
+	var types = $.fn.dataTable.ext.type;
+
+	// Add type detection
+	types.detect.unshift( function ( d ) {
+			return moment( d, format, locale, true ).isValid() ?
+					'moment-'+format :
+					null;
+	} );
+
+	// Add sorting method - use an integer for the sorting
+	types.order[ 'moment-'+format+'-pre' ] = function ( d ) {
+			return moment( d, format, locale, true ).unix();
+	};
+};
+
+
+function isEmptyString(mystring) {
+	return !mystring.trim().length;
+}
+
+function myGetDate() {
+    return moment().format('DD-MM-YYYY');
+}
+
+function convertDate(date) {
+	return date.split("-").reverse().join("-");
+}
+
+function extendExpiryDate(expirydate) {
+	if (!moment(expirydate, 'DD-MM-YYYY', true).isValid()) {
+		actiondate = $('#action_date').val();
+		expirydate = moment(actiondate, 'DD-MM-YYYY').subtract(1, 'day').format('DD-MM-YYYY');
+	}
+  return moment(expirydate, 'DD-MM-YYYY').add(1, 'year').format('DD-MM-YYYY');
 }

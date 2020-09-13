@@ -89,25 +89,3 @@ function setPageActive(page) {
     $('.content_section.active').removeClass('active');
     $('#content_' + page).addClass('active');
 }
-
-// HELP FUNCTIONS
-
-function isEmptyString(mystring) {
-	return !mystring.trim().length;
-}
-
-function myGetDate() {
-    return moment().format('DD-MM-YYYY');
-}
-
-function convertDate(date) {
-	return date.split("-").reverse().join("-");
-}
-
-function extendExpiryDate(expirydate) {
-	if (!moment(expirydate, 'DD-MM-YYYY', true).isValid()) {
-		actiondate = $('#action_date').val();
-		expirydate = moment(actiondate, 'DD-MM-YYYY').subtract(1, 'day').format('DD-MM-YYYY');
-	}
-  return moment(expirydate, 'DD-MM-YYYY').add(1, 'year').format('DD-MM-YYYY');
-}

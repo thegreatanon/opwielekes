@@ -167,11 +167,11 @@ function setDefaultMembership(memberships, selectbox) {
 	selectbox.trigger('change');
 }
 
-function cancelPrices() {
+function cancelMembershipPrices() {
 	setPriceTable(db_memberships)
 }
 
-function savePrices() {
+function saveMembershipPrices() {
 	if (document.getElementById("settings_prices_form").checkValidity()) {
 		var updateMembershipData = [];
 		$('#settings_prices_table_tbody').find('tr').each(function () {
@@ -192,7 +192,6 @@ function savePrices() {
 				'CautionK4': row.find('.price_ckid4 input')[0].value
 			});
 		});
-
 		// check if prices are if (!$.isNumeric(price)){ ??
 		$.ajax({
 			type: 'POST',
@@ -218,14 +217,14 @@ function getPriceRowHTML(item) {
 	myhtml += '<td class="price_years"><input type="number" value="' + item.YearsValid + '" step="1" min="0"></td>';
 	myhtml += '<td class="price_months"><input type="number" value="' + item.MonthsValid + '" step="1" min="0"></td>';
 	myhtml += '<td class="price_days"><input type="number" value="' + item.DaysValid + '" step="1" min="0"></td>';
-	myhtml += '<td class="price_mkid1"><input type="number" value="' + item.MembershipK1 + '" step=".01" min="0"</td>';
-	myhtml += '<td class="price_mkid2"><input type="number" value="' + item.MembershipK2 + '" step=".01" min="0"</td>';
-	myhtml += '<td class="price_mkid3"><input type="number" value="' + item.MembershipK3 + '" step=".01" min="0"</td>';
-	myhtml += '<td class="price_mkid4"><input type="number" value="' + item.MembershipK4 + '" step=".01" min="0"</td>';
-	myhtml += '<td class="price_ckid1"><input type="number" value="' + item.CautionK1 + '" step=".01" min="0"></td>';
-	myhtml += '<td class="price_ckid2"><input type="number" value="' + item.CautionK2 + '" step=".01" min="0"></td>';
-	myhtml += '<td class="price_ckid3"><input type="number" value="' + item.CautionK3 + '" step=".01" min="0"></td>';
-	myhtml += '<td class="price_ckid4"><input type="number" value="' + item.CautionK4 + '" step=".01" min="0"></td>';
+	myhtml += '<td class="price_mkid1"><input type="number" value="' + item.MembershipK1 + '" step="0.01" min="0"</td>';
+	myhtml += '<td class="price_mkid2"><input type="number" value="' + item.MembershipK2 + '" step="0.01" min="0"</td>';
+	myhtml += '<td class="price_mkid3"><input type="number" value="' + item.MembershipK3 + '" step="0.01" min="0"</td>';
+	myhtml += '<td class="price_mkid4"><input type="number" value="' + item.MembershipK4 + '" step="0.01" min="0"</td>';
+	myhtml += '<td class="price_ckid1"><input type="number" value="' + item.CautionK1 + '" step="0.01" min="0"></td>';
+	myhtml += '<td class="price_ckid2"><input type="number" value="' + item.CautionK2 + '" step="0.01" min="0"></td>';
+	myhtml += '<td class="price_ckid3"><input type="number" value="' + item.CautionK3 + '" step="0.01" min="0"></td>';
+	myhtml += '<td class="price_ckid4"><input type="number" value="' + item.CautionK4 + '" step="0.01" min="0"></td>';
 	myhtml += '</tr>';
 	return myhtml;
 }
@@ -467,6 +466,11 @@ function getBikestatusHtmlRow(){
 
 }
 
+
+function cancelBikeSettings(){
+	setBikeStatusTable(db_bikestatuses)
+}
+
 function saveBikeSettings(){
 	var updateStatusData = [];
 	var row;
@@ -479,7 +483,6 @@ function saveBikeSettings(){
 			'Active': row.find('.status_active').is(":checked")
 		});
 	});
-	console.log(updateStatusData);
 	$.ajax({
 		type: 'POST',
 		url: 'api/settings/bikestatuses',

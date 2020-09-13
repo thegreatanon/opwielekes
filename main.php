@@ -199,6 +199,7 @@
     						<div class='col-sm-2' id="action_membershipinput">
     							<input style="width : 100%;" class="form-control input-sm" type="number" step="0.01" value="0" id="amount_membership">
     						</div>
+                <input type="hidden" id="amount_membership_hidden" name="amount_membership_hidden" value="0">
 
                 <div id="action_paymentmethodselector">
     							<div class="col-sm-2">
@@ -226,7 +227,8 @@
     						</div>
     						<div class='col-sm-2' id="action_cautioninput">
     							<input style="width : 100%;" class="form-control input-sm" type="number" step="0.01" value="0" id="amount_caution">
-    						</div>
+                </div>
+                <input type="hidden" id="amount_caution_hidden" name="amount_caution_hidden" value="0">
                 <div id="action_waarborgpaymentselector">
     							<div class="col-sm-2">
     								<select style="width : 100%;" class="form-control" id="action_waarborgpaymentmethod" name="action_waarborgpaymentmethod">
@@ -352,6 +354,7 @@
   						<th>Frame</th>
   						<th>Wiel</th>
   						<th>Ingebracht</th>
+              <th>Ontlener</th>
               <th>Notities</th>
   						<th></th>
   					</tr>
@@ -364,6 +367,7 @@
   						<th>Frame</th>
   						<th>Wiel</th>
   						<th>Ingebracht</th>
+              <th>Ontlener</th>
               <th>Notities</th>
   						<th></th>
   					</tr>
@@ -850,7 +854,7 @@
 
             <div class="input-group col-sm-9" id="actbtns">
               <button type="button" onclick="cancelBikeSettings()" class="btn btn-default actbtn">Annuleren</button>
-              <button type="submit" onclick="saveBikeSettings()" class="btn btn-primary actbtn">Opslaan</button>
+              <button type="button" onclick="saveBikeSettings()" class="btn btn-primary actbtn">Opslaan</button>
             </div>
           </form>
         </div>
@@ -901,8 +905,8 @@
         -->
 
   				<div class="input-group col-sm-6" id="actbtns">
-  					<button type="button" onclick="cancelPrices()" class="btn btn-default actbtn">Annuleren</button>
-  					<button type="submit" onclick="savePrices()" class="btn btn-primary actbtn">Opslaan</button>
+  					<button type="button" onclick="cancelMembershipPrices()" class="btn btn-default actbtn">Annuleren</button>
+  					<button type="button" onclick="saveMembershipPrices()" class="btn btn-primary actbtn">Opslaan</button>
   				</div>
   			</form>
   		</div>
@@ -1255,7 +1259,8 @@
 
 <!-- js libs -->
 <script src="js/jquery.js"></script>
-<script src="libs/moment/2.16.0/moment.min.js"></script>
+<!--<script src="libs/moment/2.16.0/moment.min.js"></script>-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
 <script src="libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="libs/select2/4.0.13/dist/js/select2.min.js"></script>
 <script src="libs/toastr/2.1.3/toastr.min.js"></script>
@@ -1265,16 +1270,17 @@
 <script src="libs/routie/0.3.2/routie.js"></script>
 <script src="libs/daterangepicker/2.1.25/daterangepicker.js"></script>
 <script src="libs/datatables/datatables.min.js"></script>
+<script src="https://cdn.datatables.net/plug-ins/1.10.21/sorting/datetime-moment.js"></script>
 <script src="libs/quill/1.3.6/quill.min.js"></script>
 
 <!-- own js -->
 <script src="js/globalvars.js"></script>
 <script src="js/finances.js"></script>
 <script src="js/settings.js"></script>
-<script src="js/main.js"></script>
 <script src="js/members.js"></script>
 <script src="js/bikes.js"></script>
 <script src="js/transactions.js"></script>
+<script src="js/main.js"></script>
 
 
 </body>

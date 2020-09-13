@@ -18,6 +18,7 @@ $(document).ready(function () {
 			      {data: 'Frame', name: 'Frame'},
 						{data: 'Wheel', name: 'Wheel'},
 						{data: 'InitDate', name: 'InitDate'},
+						{data: 'KidName', name: 'KidName'},
 						{data: 'Notes', name: 'Notes', 'visible': false},
 						{
                 data: {

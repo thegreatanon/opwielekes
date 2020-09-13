@@ -1,5 +1,6 @@
 $(document).ready(function () {
 
+
 	$('#actiondatepicker').datetimepicker({
 		locale: 'nl-be',
 		defaultDate: new Date(),
@@ -75,13 +76,14 @@ $(document).ready(function () {
 		allowClear: false,
 		dropdownAutoWidth: true
 	}).on('select2:select', function() {
-		showBikeDonations($(this).val());
-		computeTotalPayment();
+		membershipPaymentChanged($(this).val());
 	});
 
 	actionpaymentcaution = $('#action_waarborgpaymentmethod').select2({
 		allowClear: false,
 		dropdownAutoWidth: true
+	}).on('select2:unselect', function() {
+		computeTotalPayment();
 	}).on('select2:select', function() {
 		computeTotalPayment();
 	});
@@ -357,11 +359,13 @@ function setActionInfo() {
 	memberoption = actionmember.find('option:selected');
 	cautionBalance = checkCaution(actionoption, memberoption);
 	$("#amount_caution").val(cautionBalance);
+	$("#amount_caution_hidden").val(cautionBalance);
 	// MEMBERSHIP
 	var memvals = checkMembership(actionoption, memberoption);
 	var membershipBalance = memvals[0];
 	var newexpirydate = memvals[1];
 	$("#amount_membership").val(membershipBalance);
+	$("#amount_membership_hidden").val(membershipBalance);
 	$("#action_expirydate").val(newexpirydate);
 	// general updates
 	computeTotalPayment();
@@ -386,7 +390,7 @@ function checkMembership(actionoption, memberoption) {
 			expirydate = extendExpiryDate(expirydate);
 		}
 	}
-	return [balance, expirydate];
+	return [balance.toFixed(2), expirydate];
 }
 
 function checkCaution(actionoption, memberoption) {
@@ -401,7 +405,7 @@ function checkCaution(actionoption, memberoption) {
 	}
 	desiredCautionAmount = computeCaution(activeKids, actionmembershipsel.val());
 	var balance = desiredCautionAmount - cautionAmount;
-	return balance;
+	return balance.toFixed(2);
 }
 
 function computeCaution(activeKids,membershipID) {
@@ -410,15 +414,28 @@ function computeCaution(activeKids,membershipID) {
 	for (var i = 1; i < activeKids+1; i++) {
 		caution = caution + parseFloat(thismembership['CautionK'+i]);
 	}
-	return caution;
+	return caution.toFixed(2);
 }
 
 function setActionMembershipType() {
 	setActionInfo();
 }
 
-function showBikeDonations(paymentmethod) {
+function membershipPaymentChanged(paymentmethod){
 	if (paymentmethod == "3") {
+		showBikeDonations(true);
+		$("#amount_membership").val(0);
+		$("#amount_membership").prop("disabled", true);
+	} else {
+		showBikeDonations(false);
+		$("#amount_membership").val($("#amount_membership_hidden").val());
+		$("#amount_membership").prop("disabled", false);
+	}
+	computeTotalPayment();
+}
+
+function showBikeDonations(show) {
+	if (show) {
 		$("#action_donationbikes").show();
 	} else {
 		$("#action_donationbikes").hide();
@@ -426,10 +443,7 @@ function showBikeDonations(paymentmethod) {
 }
 
 function computeTotalPayment() {
-	totalsum = parseFloat($("#amount_caution").val());
-	if (actionpaymentmembership.val() != "3") {
-		totalsum = totalsum + parseFloat($("#amount_membership").val());
-	}
+	totalsum = parseFloat($("#amount_caution").val()) + parseFloat($("#amount_membership").val());
 	totalsum = parseFloat(totalsum).toFixed(2);
 	if (totalsum<0) {
 		sumstring = (-1*totalsum) + " terug te storten";
@@ -465,7 +479,12 @@ function resetActionInfo() {
 	document.getElementById('action_membershipinfotext').innerHTML = '';
 	membershipBalance = 0;
 	$("#amount_caution").val(0);
+	actionpaymentcaution.val(defaultPaymentMethod).trigger('change');
 	$("#amount_membership").val(0);
+	actionpaymentmembership.val(defaultPaymentMethod).trigger('change');
+	$("#amount_membership").prop("disabled", false);
+	$("#action_donationbikes").hide();
+	actionbikedonate.val('').trigger('change');
 	$("#amount_paymentnote").val("");
 	$(".action_actiondiv").hide();
 }
@@ -587,8 +606,10 @@ function saveTransaction() {
 					'Donor': kidID,
 					'DonationDate': aDate
 				};
-			}
-		} else if (amountmembership == 0) {
+			};
+		};
+		// membership and caution should be recorded regardless of donation
+	 if (amountmembership == 0) {
 				if (amountcaution != 0) {
 					updateFin = "1";
 					finTransactions.push({
