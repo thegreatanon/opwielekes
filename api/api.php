@@ -526,6 +526,48 @@ $app->group('/settings', function() use ($app) {
         echo json_encode(null);
      });
 
+     $app->post('/preferences/defaultpayment', function() use ($app) {
+        global $DBH;
+        try {
+          $DBH->beginTransaction();
+          $upde = SettingsService::updateDefaultPaymentInfo($GLOBALS["data"]);
+          if ($upde["status"] == -1) {
+            throw new Exception($upde["error"]);
+          }
+          $DBH->commit();
+        } catch (Exception $e) {
+          $DBH->rollBack();
+          $GLOBALS["error"] = $e->getMessage();
+          $app->error();
+        }
+        echo json_encode(null);
+     });
+
+     $app->get('/paymentmethods', function() use ($app) {
+   		    global $DBH;
+           $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::PAYMENTMETHODS));
+           echo json_encode($STH->fetchAll());
+     });
+
+     $app->post('/paymentmethods', function() use ($app) {
+         global $DBH;
+        try {
+          $DBH->beginTransaction();
+          foreach ($GLOBALS["data"]->updateData as $item) {
+            $updpm = SettingsService::updatePaymentMethods($item);
+            if ($updpm["status"] == -1) {
+              throw new Exception($updpm["error"]);
+            }
+          }
+        $DBH->commit();
+        } catch (Exception $e) {
+          $DBH->rollBack();
+          $GLOBALS["error"] = $e->getMessage();
+          $app->error();
+        }
+        echo json_encode(null);
+     });
+
   	$app->get('/memberships', function() use ($app) {
   		    global $DBH;
           $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::MEMBERSHIPS));
@@ -604,28 +646,6 @@ $app->group('/settings', function() use ($app) {
      		  echo json_encode(null);
        });
 });
-
-/*
-
-$app->group('/prefs', function() use ($app) {
-
-    $app->get('/', function() use ($app) {
-		global $DBH;
-        $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::PREFERENCES)  . " WHERE prefID = 1");
-        echo json_encode($STH->fetchAll());
-    });
-
-	$app->get('/vars', function() use ($app) {
-		global $DBH;
-        $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::VARIABLES));
-        echo json_encode($STH->fetchAll());
-    });
-
-	$app->post('/', function() use ($app) {
-        generateResponse(PreferencesService::updateColumns($GLOBALS["data"]));
-    });
-});
-*/
 
 function generateResponse($response) {
     global $app;

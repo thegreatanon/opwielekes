@@ -8,8 +8,40 @@ $(document).ready(function () {
 				ordering: true,
 				sortable: true,
 				rowId: 'bikeID',
-				dom: '<l<"filterbikes">fr>tip',
+				"language": {
+					"url": "libs/datatables/lang/dutch.json",
+					buttons: {
+						 copyTitle: 'Kopiëer',
+						 copyKeys: 'Druk op <i>ctrl</i> of <i>\u2318</i> + <i>C</i> om de rijen te kopiëren naar je klembord. <br><br>Om te annuleren, klik op deze boodscap of op ESC.',
+						 copySuccess: {
+								 _: '%d rijen gekopiëerd',
+								 1: '1 rij gekopiëerd'
+						 }
+					 }
+				},
+				dom: '<l<"filterbikes">fr>t<iBp>',
 				"order": [[ 0, 'asc' ], [ 1, 'asc' ]],
+				buttons: [
+						'copyHtml5',
+						{
+								extend: 'csv',
+								filename: 'Opwielekes fietsjes',
+								title: '',
+								exportOptions: { columns: [ 0, 1, 2, 3, 4, 6, 7]}
+						},
+						{
+								extend: 'excel',
+								filename: 'Opwielekes fietsjes',
+								title: '',
+								exportOptions: { columns: [ 0, 1, 2, 3, 4, 6, 7]}
+						},
+						{
+								extend: 'pdf',
+								filename: 'Opwielekes fietsjes',
+								title: '',
+								exportOptions: { columns: [ 0, 1, 2, 3, 4, 6, 7]}
+						}
+				],
 				autoWidth: true,
 		    columns: [
 						{data: 'Number', name: 'Number'},
@@ -36,15 +68,16 @@ $(document).ready(function () {
 					"search": {
 						"regex": true,
 						"smart":false
+					},
+					"initComplete": function( settings, json ) {
+							$("div.filterbikes").html('<input type="checkbox" id="bikesfilternotavailable" checked> Niet beschikbaar <input type="checkbox" id="bikesfilteravailable" checked> Beschikbaar <input type="checkbox" id="bikesfilterloans" checked> Ontleend');
+							/* FILTER BIKES TABLE */
+							$('.filterbikes').on('change', function() {
+						        bikestable.draw();
+						   });
 					}
     });
 
-	/* FILTER BIKES TABLE */
-	$('.filterbikes').on('change', function() {
-        bikestable.draw();
-    });
-
-	$("div.filterbikes").html('<input type="checkbox" id="bikesfilternotavailable" checked> Niet beschikbaar <input type="checkbox" id="bikesfilteravailable" checked> Beschikbaar <input type="checkbox" id="bikesfilterloans" checked> Ontleend');
 
 	/* Custom filtering function for datatables */
 	$.fn.dataTable.ext.search.push(

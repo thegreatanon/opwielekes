@@ -46,6 +46,14 @@ body {
 	float: right;
 }
 
+.filterfinances{
+	display: inline;
+	font-weight: bold;
+	margin-left: 10px;
+	margin-right: 10px;
+	float: right;
+}
+
 .actbtn {
 	float: right;
 	margin-left: 10px;
@@ -57,10 +65,15 @@ body {
 	margin-right: 20px;
 }
 
+.centerbtns {
+
+}
+
 .bikebtns {
 	float: right;
 	padding-right: 20px;
 }
+
 
 .plabel {
      font-weight: normal !important;
@@ -72,12 +85,6 @@ body {
 
 #action_kids_table th {
    text-align: center;
-}
-
-.financerangediv{
-	margin-left: 10px;
-	margin-right: 10px;
-	float: right;
 }
 
 

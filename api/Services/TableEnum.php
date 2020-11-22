@@ -13,6 +13,7 @@ abstract class TableEnum extends BasicEnum {
 	const KIDS = 'kids';
 	const MEMBERSHIPS = 'memberships';
   const PARENTS = 'parents';
+	const PAYMENTMETHODS = 'paymethods';
 	const POSTALCODES = 'postalcodes';
 	const PREFERENCES = 'preferences';
 	const REGISTRATIONS = 'registrations';

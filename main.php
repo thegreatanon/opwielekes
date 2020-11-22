@@ -18,7 +18,8 @@
 	<link href="libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
 	<link href="libs/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
   <link href="libs/select2/4.0.13/dist/css/select2.css" rel="stylesheet"/>
-	<link href="libs/datatables/datatables.min.css" rel="stylesheet"/>
+	<!-- <link href="libs/datatables/datatables.min.css" rel="stylesheet"/> -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.22/b-1.6.5/b-html5-1.6.5/datatables.min.css"/>
 	<link href="libs/daterangepicker/2.1.25/daterangepicker.css" rel="stylesheet"/>
 	<link href="libs/quill/1.3.6/quill.snow.css" rel="stylesheet">
 
@@ -72,7 +73,7 @@
   						<a href="#settings" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Instellingen <span class="caret"></span></a>
   						  <ul class="dropdown-menu">
                 <li><a href="#settings_bikes">Fietsen</a></li>
-  							<li><a href="#settings_prices">Prijzen</a></li>
+  							<li><a href="#settings_prices">Financiëel</a></li>
   							<li><a href="#settings_emails">Emails</a></li>
                 <li><a href="#settings_memberships">Automatische emails</a></li>
   						  </ul>
@@ -204,9 +205,6 @@
                 <div id="action_paymentmethodselector">
     							<div class="col-sm-2">
     								<select style="width : 100%;" class="form-control" id="action_paymentmethod" name="action_paymentmethod">
-                      <option value="1">Cash</option>
-                      <option value="2">Overschrijving</option>
-                      <option value="3">Donatie</option>
                     </select>
     							</div>
   						        </div>
@@ -232,8 +230,6 @@
                 <div id="action_waarborgpaymentselector">
     							<div class="col-sm-2">
     								<select style="width : 100%;" class="form-control" id="action_waarborgpaymentmethod" name="action_waarborgpaymentmethod">
-                    <option value="1">Cash</option>
-    								<option value="2">Overschrijving</option>
     								</select>
                   </div>
     						</div>
@@ -500,178 +496,182 @@
       </section>
 
       <section id="content_members" class="content_section">
-  		<div id="tabMembersAll" class="tabContent">
+  		    <div id="tabMembersAll" class="tabContent">
 
-  			<h4 class="inlineh4">Overzicht Leden</h4>
-        <button onclick="newMember()" class="btn btn-default bikebtns compact">Nieuw lid</button>
-        <?php if (isset($_SESSION["baseurl"])) {
-          echo '<a class="button btn btn-default bikebtns compact" href="' . $_SESSION["baseurl"] . '/signup" target="_blank">Zelf inschrijven</a>';
-        } ?>
-        <button onclick="loadMembers()" class="btn btn-default bikebtns compact">Tabel herladen</button>
+  			    <h4 class="inlineh4">Overzicht Leden</h4>
+            <button onclick="newMember()" class="btn btn-default bikebtns">Nieuw lid</button>
+            <?php if (isset($_SESSION["baseurl"])) {
+              echo '<a class="button btn btn-default bikebtns compact" href="' . $_SESSION["baseurl"] . '/signup" target="_blank">Zelf inschrijven</a>';
+            } ?>
+            <button onclick="loadMembers()" class="btn btn-default bikebtns compact" style="margin-bottom:20px;">Tabel herladen</button>
 
-  			<table id="members_table" class="table table-striped" width="100%">
-  				<thead>
-  					<tr>
-  						<th>Voornaam</th>
-  						<th>Achternaam</th>
-  						<th>Straat</th>
-  						<th>Lidmaatschap</th>
-  						<th>Actieve kids</th>
-  						<th>Waarborg</th>
-  						<th>Donaties</th>
-              <th>Notities</th>
-  						<th></th>
-  					</tr>
-  				</thead>
-  				<tfoot>
-  					<tr>
-  						<th>Voornaam</th>
-  						<th>Achternaam</th>
-  						<th>Straat</th>
-  						<th>Lidmaatschap</th>
-  						<th>Actieve kids</th>
-  						<th>Waarborg</th>
-  						<th>Donaties</th>
-              <th>Notities</th>
-  						<th></th>
-  					</tr>
-  				</tfoot>
-  			</table>
-  		</div>
+      			<table id="members_table" class="table table-striped" width="100%">
+      				<thead>
+      					<tr>
+      						<th>Voornaam</th>
+      						<th>Achternaam</th>
+      						<th>Straat</th>
+      						<th>Lidmaatschap</th>
+      						<th>Actieve kids</th>
+      						<th>Waarborg</th>
+      						<th>Donaties</th>
+                  <th>Notities</th>
+                  <th>Email</th>
+                  <th>Telefoon</th>
+                  <th>Lid sinds</th>
+      						<th></th>
+      					</tr>
+      				</thead>
+      				<tfoot>
+      					<tr>
+      						<th>Voornaam</th>
+      						<th>Achternaam</th>
+      						<th>Straat</th>
+      						<th>Lidmaatschap</th>
+      						<th>Actieve kids</th>
+      						<th>Waarborg</th>
+      						<th>Donaties</th>
+                  <th>Notities</th>
+                  <th>Email</th>
+                  <th>Telefoon</th>
+                  <th>Lid sinds</th>
+      						<th></th>
+      					</tr>
+      				</tfoot>
+      			</table>
 
-  		<div id="tabMembersOne" style="display: none;" class="tabContent">
+          </div>
 
-  			<h4 class="inlineh4">Detail gebruiker</h4>
-  			<div class="container-fluid" width="100%">
-  				<div class="col-sm-10">
-  					<form id="klant_form" class="form-horizontal">
-  						<div class="form-group">
-  							<label class="col-sm-2 control-label">Ouder</label>
-  							<div class="col-sm-2">
-  								<input type="text" class="form-control input-md" id="parent_name" name="parent_name" placeholder="Voornaam">
-  							</div>
-  							<div class="col-sm-4">
-  								<input type="text" class="form-control input-md" id="parent_surname" name="parent_surname" placeholder="Familienaam">
-  							</div>
-                <label class="col-sm-1 control-label">Tel</label>
-                <div class="col-sm-3">
-                  <input type="text" class="form-control input-md" id="parent_phone" name="parent_phone" placeholder="Tel">
-                </div>
-  						</div>
+  		    <div id="tabMembersOne" style="display: none;" class="tabContent">
 
-  						<div class="form-group">
-  							<label class="col-sm-2 control-label">Adres</label>
-  							<div class="col-sm-4">
-  								<input type="text" class="form-control input-md" id="parent_street" name="parent_street" placeholder="Straat">
-  							</div>
-  							<div class="col-sm-2">
-  								<input type="text" class="form-control input-md" id="parent_streetnr" name="parent_streetnr" placeholder="Nr">
-  							</div>
-                <label class="col-sm-1 control-label">Email</label>
-  							<div class="col-sm-3">
-  								<input type="text" class="form-control input-md" id="parent_email" name="parent_email" placeholder="email">
-  							</div>
-  						</div>
+  			      <h4 class="inlineh4">Detail gebruiker</h4>
+        			<div class="container-fluid" width="100%">
+        				<div class="col-sm-10">
+        					<form id="klant_form" class="form-horizontal">
+        						<div class="form-group">
+        							<label class="col-sm-2 control-label">Ouder</label>
+        							<div class="col-sm-2">
+        								<input type="text" class="form-control input-md" id="parent_name" name="parent_name" placeholder="Voornaam">
+        							</div>
+        							<div class="col-sm-4">
+        								<input type="text" class="form-control input-md" id="parent_surname" name="parent_surname" placeholder="Familienaam">
+        							</div>
+                      <label class="col-sm-1 control-label">Tel</label>
+                      <div class="col-sm-3">
+                        <input type="text" class="form-control input-md" id="parent_phone" name="parent_phone" placeholder="Tel">
+                      </div>
+        						</div>
 
-  						<div class="form-group">
-  							<label class="col-sm-2 control-label"></label>
-  							<div class="col-sm-2">
-  								<input type="text" class="form-control input-md" id="parent_postal" name="parent_postal" placeholder="Postcode">
-  							</div>
-  							<div class="col-sm-3">
-  								<input type="text" class="form-control input-md" id="parent_town" name="parent_town" placeholder="Stad">
-  							</div>
-                <label class="col-sm-2 control-label">Rekeningnr</label>
-  						</div>
+        						<div class="form-group">
+        							<label class="col-sm-2 control-label">Adres</label>
+        							<div class="col-sm-4">
+        								<input type="text" class="form-control input-md" id="parent_street" name="parent_street" placeholder="Straat">
+        							</div>
+        							<div class="col-sm-2">
+        								<input type="text" class="form-control input-md" id="parent_streetnr" name="parent_streetnr" placeholder="Nr">
+        							</div>
+                      <label class="col-sm-1 control-label">Email</label>
+        							<div class="col-sm-3">
+        								<input type="text" class="form-control input-md" id="parent_email" name="parent_email" placeholder="email">
+        							</div>
+        						</div>
 
-              <div class="form-group">
-  							<label class="col-sm-2 control-label">Lidmaatschap</label>
-  							<div class="col-sm-4">
-                  <select style="width : 100%;" class="form-control" id="parent_membership" name="parent_membership">
-                  </select>
-                </div>
-                <label class="col-sm-3 control-label lb-sm">Lid sinds</label>
-                <div class='col-sm-3'>
-                  <div class='input-group' id='parentdatepicker'>
-                    <input type='text' class="form-control input-md" id="parent_date" name="parent_date" >
-                    <span class="input-group-addon">
-                      <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
-                  </div>
-                </div>
-  						</div>
+        						<div class="form-group">
+        							<label class="col-sm-2 control-label"></label>
+        							<div class="col-sm-2">
+        								<input type="text" class="form-control input-md" id="parent_postal" name="parent_postal" placeholder="Postcode">
+        							</div>
+        							<div class="col-sm-3">
+        								<input type="text" class="form-control input-md" id="parent_town" name="parent_town" placeholder="Stad">
+        							</div>
+                      <label class="col-sm-2 control-label">Rekeningnr</label>
+                      <div class="col-sm-3">
+        								<input type="text" class="form-control input-md" id="parent_iban" name="parent_iban" placeholder="IBAN">
+        							</div>
+        						</div>
 
-              <div class="form-group">
-                <label class="col-sm-2 control-label lb-sm">Notities</label>
-                <div class="col-sm-10">
-                    <div id="parent_notes">
+                    <div class="form-group">
+        							<label class="col-sm-2 control-label">Lidmaatschap</label>
+        							<div class="col-sm-4">
+                        <select style="width : 100%;" class="form-control" id="parent_membership" name="parent_membership">
+                        </select>
+                      </div>
+                      <label class="col-sm-3 control-label lb-sm">Lid sinds</label>
+                      <div class='col-sm-3'>
+                        <div class='input-group' id='parentdatepicker'>
+                          <input type='text' class="form-control input-md" id="parent_date" name="parent_date" >
+                          <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                          </span>
+                        </div>
+                      </div>
+        						</div>
+
+                    <div class="form-group">
+                      <label class="col-sm-2 control-label lb-sm">Notities</label>
+                      <div class="col-sm-10">
+                          <div id="parent_notes">
+                          </div>
+                        </div>
                     </div>
-                  </div>
-              </div>
 
-  						<hr class="formhr">
+  						     <hr class="formhr">
 
-  					    <div class="row">
-  							<div class="col-sm-2">
+  					       <div class="row">
+  							       <div class="col-sm-2">
+          								<div class="form-row">
+          									<div class="form-group">
+          										<label class="col-sm-2 control-label">Kinderen</label>
+          									</div>
+          								</div>
+          								<div class="form-row">
+          									<div class="form-group">
+          										<button type="button" class="btn btn-default" onclick="addNewKidRow()"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+  									        </div>
+  								        </div>
+  							        </div>
 
-  								<div class="form-row">
-  									<div class="form-group">
-  										<label class="col-sm-2 control-label">Kinderen</label>
-  									</div>
-  								</div>
-  								<div class="form-row">
-  									<div class="form-group">
-  										<button type="button" class="btn btn-default" onclick="addNewKidRow()"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+          							<div class="col-sm-10">
+          								<table class="table table-condensed" id="kids_table">
+          									<thead>
+          										<tr>
+          											<th>Achternaam</th>
+                                <th>Voornaam</th>
+          											<th>Geboortedatum</th>
+                                <th>Fiets</th>
+                                <th>Lid tot</th>
+          											<th></th>
+          										</tr>
+          									</thead>
+          									<tbody id="kids_table_tbody">
+          									</tbody>
+          								</table>
+          							</div>
+  						     </div>
 
-  									</div>
-  								</div>
-  							</div>
+        						<div class="form-group">
+        							<div class="col-sm-6">
+        							</div>
+        							<div class="input-group col-sm-6" id="actbtns">
+        								<input type="hidden" id="parent_id" name="parent_id" value="0">
+                        <button type="button" onclick="deleteMember()" class="btn btn-danger actbtn">Verwijderen</button>
+        								<button type="button" onclick="cancelMember()" class="btn btn-default actbtn">Annuleren</button>
+        								<button type="button" onclick="saveMember()" class="btn btn-primary actbtn">Opslaan</button>
+        							</div>
+        						</div>
 
-  							<div class="col-sm-10">
-  								<table class="table table-condensed" id="kids_table">
-  									<thead>
-  										<tr>
-  											<th>Achternaam</th>
-                        <th>Voornaam</th>
-  											<th>Geboortedatum</th>
-                        <th>Fiets</th>
-                        <th>Lid tot</th>
-  											<th></th>
-  										</tr>
-  									</thead>
-  									<tbody id="kids_table_tbody">
-  									</tbody>
-  								</table>
-  							</div>
-  						</div>
+  					     </form>
+  				    </div>
 
-
-
-  						<div class="form-group">
-  							<div class="col-sm-6">
-  							</div>
-  							<div class="input-group col-sm-6" id="actbtns">
-  								<input type="hidden" id="parent_id" name="parent_id" value="0">
-                  <button type="button" onclick="deleteMember()" class="btn btn-danger actbtn">Verwijderen</button>
-  								<button type="button" onclick="cancelMember()" class="btn btn-default actbtn">Annuleren</button>
-  								<button type="button" onclick="saveMember()" class="btn btn-primary actbtn">Opslaan</button>
-  							</div>
-  						</div>
-
-  					</form>
-  				</div>
-
-  				<div class="col-sm-2">
-  					<!--
-  					<label class="col-sm-2 control-label lb-sm">Historiek</label>
-  					<table id="table_orderstatushistory" class="table compact" width="100%">
-  					</table>
-  					-->
-  				</div>
-  			</div>
-
-
-  		</div>
+  				    <div class="col-sm-2">
+    					<!--
+    					<label class="col-sm-2 control-label lb-sm">Historiek</label>
+    					<table id="table_orderstatushistory" class="table compact" width="100%">
+    					</table>
+    					-->
+  				    </div>
+  			   </div>
+  		  </div>
       </section>
 
       <section id="content_transactionhistory" class="content_section">
@@ -862,52 +862,139 @@
     </section>
 
   	<section id="content_settings_prices" class="content_section">
-  		<h4 class="inlineh4">Instellingen: Prijzen</h4>
+  		<h4 class="inlineh4">Instellingen: Financiëel</h4>
 
   		<div class="container-fluid" width="100%">
+
+
   			<form id="settings_prices_form">
 
-  				<table id="settings_prices_table" class="table" >
-  					<thead>
-              <tr>
-                <th colspan="1" scope='colgroup'></th>
-                <th colspan="3" scope='colgroup' class="outlined">Geldig</th>
-                <th colspan="4" scope='colgroup' class="outlined">Prijs lidmaatschap</th>
-                <th colspan="4" scope='colgroup' class="outlined">Prijs waarborg</th>
-              </tr>
-    					<tr>
-    						<th scope='col'>Type</th>
-                <th scope='col'>Jaren</th>
-                <th scope='col'>Maanden</th>
-    						<th scope='col'>Dagen</th>
-    						<th scope='col'>Kind 1</th>
-    						<th scope='col'>Kind 2</th>
-    						<th scope='col'>Kind 3</th>
-    						<th scope='col'>Kind 4+</th>
-                <th scope='col'>Kind 1</th>
-                <th scope='col'>Kind 2</th>
-                <th scope='col'>Kind 3</th>
-                <th scope='col'>Kind 4+</th>
-    					</tr>
-  					</thead>
-  					<tbody id="settings_prices_table_tbody">
-  					</tbody>
-  				</table>
+          <div id="pricesformtarieven" class="container-fluid" width="100%">
+            <h4 class="inlineh4">Tarieven</h4>
+    				<table id="settings_prices_table" class="table" >
+    					<thead>
+                <tr>
+                  <th colspan="1" scope='colgroup'></th>
+                  <th colspan="3" scope='colgroup' class="outlined">Geldig</th>
+                  <th colspan="4" scope='colgroup' class="outlined">Prijs lidmaatschap</th>
+                  <th colspan="4" scope='colgroup' class="outlined">Prijs waarborg</th>
+                </tr>
+      					<tr>
+      						<th scope='col'>Type</th>
+                  <th scope='col'>Jaren</th>
+                  <th scope='col'>Maanden</th>
+      						<th scope='col'>Dagen</th>
+      						<th scope='col'>Kind 1</th>
+      						<th scope='col'>Kind 2</th>
+      						<th scope='col'>Kind 3</th>
+      						<th scope='col'>Kind 4+</th>
+                  <th scope='col'>Kind 1</th>
+                  <th scope='col'>Kind 2</th>
+                  <th scope='col'>Kind 3</th>
+                  <th scope='col'>Kind 4+</th>
+      					</tr>
+    					</thead>
+    					<tbody id="settings_prices_table_tbody">
+    					</tbody>
+    				</table>
 
-          <!-- set default membership
-          <div class="form-group">
-              <label class="col-sm-3 control-label lb-sm">Standaard lidmaatschapstype</label>
-              <div class="col-sm-3">
-                <select style="width : 100%;" class="form-control" id="default_membership" name="default_membership">
-                </select>
-              </div>
+
+    				<div class="col-md-12 text-center">
+    					<button type="button" onclick="cancelMembershipPrices()" class="btn btn-default">Annuleren</button>
+    					<button type="button" onclick="saveMembershipPrices()" class="btn btn-primary">Opslaan</button>
+    				</div>
           </div>
-        -->
 
-  				<div class="input-group col-sm-6" id="actbtns">
-  					<button type="button" onclick="cancelMembershipPrices()" class="btn btn-default actbtn">Annuleren</button>
-  					<button type="button" onclick="saveMembershipPrices()" class="btn btn-primary actbtn">Opslaan</button>
-  				</div>
+          <hr />
+
+
+
+          <div id="pricesformstandaarbetaalinfo" class="container-fluid" width="100%">
+              <h4 class="inlineh4">Betaalgegevens</h4>
+
+              <div class="container">
+                <div class="row">
+                  <div class="col-md-2">
+                  </div>
+                  <div class="col-md-8">
+                    <div class="form-group">
+                      <label for="settings_defaultpaymentmethod" class="col-md-7 control-label">De voorkeursbetaalmethode in de ontleningen tab</label>
+                      <div class="col-md-5">
+                        <select style="width : 100%;" class="form-control" id="settings_defaultpaymentmethod" name="settings_defaultpaymentmethod"></select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                  </div>
+
+                </div>
+
+                <div class="row" style="padding-top:10px;">
+                  <div class="col-md-2">
+                  </div>
+                  <div class="col-md-8">
+                    <div class="form-group">
+                      <label for="settings_defaultIBAN" class="col-md-7 control-label">IBAN nr van het depot te gebruiken in emails</label>
+                      <div class="col-md-5">
+                        <input style="width : 100%;" class="form-control" id="settings_defaultIBAN" name="settings_defaultIBAN">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="col-md-12 text-center" style="padding-top:20px;">
+                <button type="button" onclick="cancelDefaultPaymentInfo()" class="btn btn-default">Annuleren</button>
+                <button type="button" onclick="saveDefaultPaymentInfo()" class="btn btn-primary">Opslaan</button>
+              </div>
+
+          </div>
+
+
+          <hr />
+
+          <div id="pricesformbetaalmethodes" class="container-fluid" width="100%">
+            <h4 class="inlineh4">Betaalmethodes</h4>
+
+            <div>
+              <div class="col-md-2">
+              </div>
+
+              <div class="col-md-8">
+                <table id="settings_paymentmethods_table" class="table">
+                  <thead>
+                    <tr>
+                      <th scope='col'>Omschrijving</th>
+                      <th scope='col'>Actief</th>
+                      <th scope='col'>Onmiddelijke inning *</th>
+                      <th scope='col'>Donatie</th>
+                    </tr>
+                  </thead>
+                  <tbody id="settings_paymentmethods_table_tbody">
+                  </tbody>
+                  <tfoot style="text-align:center">
+                     <tr>
+                         <td colspan="4" scope='colgroup' class="outlined">* Geen bevestiging nodig dat dit ontvangen is in het financiën tabblad. <br/> Je kan de standaardbetaalmethode niet deactiveren.</td>
+                     </tr>
+                   </tfoot>
+                </table>
+              </div>
+
+              <div class="col-md-2">
+              </div>
+
+
+            </div>
+
+            <div class="col-md-12 text-center">
+              <button type="button" onclick="cancelPaymentMethods()" class="btn btn-default">Annuleren</button>
+              <button type="button" onclick="savePaymentMethods()" class="btn btn-primary">Opslaan</button>
+            </div>
+
+          </div>
   			</form>
   		</div>
 
@@ -987,6 +1074,16 @@
   							</div>
   						</div>
   				</div>
+
+          <div class="form-group">
+							<label for="emailmsg" class="col-md-2 control-label"></label>
+							<div class="col-sm-8">
+								<p>Volgende codes in het onderwerp en de tekst worden ingevuld door de echte waarden:<br>
+								{{voornaam_ouder}},{{achternaam_ouder}},{{voornaam_kind}},{{achternaam_kind}},{{IBAN_ouder}},{{IBAN_depot}},
+                {{bedrag_totaal}},{{bedrag_waarborg}},{{bedrag_lidmaatschap}}
+								</p>
+							</div>
+					</div>
 
           <div class="input-group col-sm-10 actbtns">
             <button type="button" onclick="deleteEmail()" class="btn btn-danger actbtn">Verwijderen</button>
@@ -1269,7 +1366,10 @@
 <script src="libs/datetimepicker/bootstrap-datetimepicker.min.js"></script>
 <script src="libs/routie/0.3.2/routie.js"></script>
 <script src="libs/daterangepicker/2.1.25/daterangepicker.js"></script>
-<script src="libs/datatables/datatables.min.js"></script>
+<!-- <script src="libs/datatables/datatables.min.js"></script> -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.22/b-1.6.5/b-html5-1.6.5/datatables.min.js"></script>
 <script src="https://cdn.datatables.net/plug-ins/1.10.21/sorting/datetime-moment.js"></script>
 <script src="libs/quill/1.3.6/quill.min.js"></script>
 

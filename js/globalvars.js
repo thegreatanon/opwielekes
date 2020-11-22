@@ -19,6 +19,7 @@ var db_memberships;
 var db_postalcodes;
 var db_bikestatuses;
 var db_preferences;
+var db_paymentmethods;
 
 // selectboxes
 var actiontype;
@@ -32,13 +33,14 @@ var actionmembershipsel;
 // finance variables
 var cautionBalance;
 var membershipBalance;
-
+var findateformat = 'DD-MM-YYYY';
 var actionDateIsLocked = 0;
 
 // for database
 var defaultMembershipID;
 var defaultBikeAvailableID;
 var defaultBikeOnLoanID;
+var defaultPaymentMethod;
 var replytoemail;
 var replytoname;
 var ccemail;
@@ -46,7 +48,6 @@ var sendername;
 
 var kidsToDelete = [];
 
-var defaultPaymentMethod = 1;
 
 // email variables
 var newEmailTemplate;

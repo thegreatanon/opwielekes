@@ -20,6 +20,12 @@ $(document).ready(function () {
 		setActionMembershipType();
 	});
 
+	settingsdefaultpaymentselect = $('#settings_defaultpaymentmethod').select2({
+		allowClear: false,
+		tags: false,
+		dropdownAutoWidth: true
+	});
+
 	settingsemailaction = $('#settings_email_action').select2({
 		placeholder: "Kies",
 		allowClear: true,
@@ -130,6 +136,8 @@ function loadSettings() {
 	loadPrices();
 	loadEmails(0);
 	loadPreferences();
+	// loadSettingsPaymentMethods() called in loadPreferences;
+	//loadDefaultPaymentInfo() called in loadPreferences;
 }
 
 // PRICES
@@ -501,6 +509,133 @@ function saveBikeSettings(){
 	});
 }
 
+
+// PAYMENT METHODS
+
+function loadPaymentMethods() {
+    $.ajax({
+        url: 'api/settings/paymentmethods',
+        success: function (paymentmethods) {
+					db_paymentmethods = paymentmethods;
+					loadSettingsPayments();
+					loadActionPaymentMethods();
+				}
+    });
+}
+
+function loadSettingsPayments() {
+	setSettingsPaymentMethodsTable();
+	setSettingsdDefaultPaymentInfo();
+}
+
+
+function setSettingsdDefaultPaymentInfo(){
+	settingsdefaultpaymentselect.empty();
+	$.each(db_paymentmethods, function (index, item) {
+		if (item.PaymentMethodActive == 1) {
+			var newOption = new Option(item.PaymentMethodName, item.PaymentMethodID, false, false);
+			settingsdefaultpaymentselect.append(newOption).trigger('change');
+		}
+	});
+	settingsdefaultpaymentselect.val(defaultPaymentMethod).trigger('change');
+	$('#settings_defaultIBAN').val(db_preferences.DefaultIBAN);
+}
+
+function cancelDefaultPaymentInfo(){
+	setSettingsdDefaultPaymentInfo();
+}
+
+function saveDefaultPaymentInfo(){
+	$.ajax({
+		type: 'POST',
+		url: 'api/settings/preferences/defaultpayment',
+		dataType: 'json',
+		data: JSON.stringify({
+			'DefaultPaymentMethod': settingsdefaultpaymentselect.val(),
+			'DefaultIBAN':	$('#settings_defaultIBAN').val()
+		}),
+		success: function (result) {
+			toastr.success('Standaard betaalgegevens opgeslagen');
+			loadPreferences();
+		},
+		error: function() {
+			toastr.error('Standaard betaalgegevens niet opgeslagen','Er liep iets fout');
+		}
+	});
+}
+
+
+function setSettingsPaymentMethodsTable() {
+	$('#settings_paymentmethods_table_tbody').empty();
+	var myhtml = '';
+	$.each(db_paymentmethods, function (index, item) {
+		//if it is the default, you can not deactivate it
+		if (item.PaymentMethodID == defaultPaymentMethod) {
+			acttext = ' disabled';
+		} else {
+			acttext = '';
+		}
+		myhtml = '<tr data-paymentmethodid="' + item.PaymentMethodID + '" style="height:100%">';
+		myhtml += '<td class="paymentmethod_name"><input type="text" value="' + item.PaymentMethodName + '"' + '></td>';
+		myhtml += '<td><input type="checkbox" class="paymentmethod_active"' + acttext;
+		if  (item.PaymentMethodActive == 1) {
+			myhtml += ' checked></td>';
+		} else {
+			myhtml += '></td>';
+		}
+		myhtml += '<td><input type="checkbox" class="paymentmethod_immediate"';
+		if (item.PaymentMethodImmediate == 1) {
+			myhtml += ' checked></td>';
+		} else {
+			myhtml += '></td>';
+		}
+		myhtml += '<td><input type="checkbox" class="paymentmethod_donation"';
+		if  (item.PaymentMethodDonation == 1) {
+			myhtml += ' checked></td>';
+		} else {
+			myhtml += '></td>';
+		}
+		//myhtml += '<td><button type="button" class="btn btn-default addStatusRowBtn"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></td>';
+		myhtml += '</tr>';
+		$('#settings_paymentmethods_table_tbody').append(myhtml);
+	});
+}
+
+
+function cancelPaymentMethods(){
+	setPaymentMethodsTable(db_paymentmethods)
+}
+
+function savePaymentMethods(){
+	var updatePaymentMethodsData = [];
+	var row;
+	$('#settings_paymentmethods_table_tbody').find('tr').each(function () {
+		row = $(this);
+		updatePaymentMethodsData.push({
+			'PaymentMethodID': parseFloat(row.data('paymentmethodid')),
+			'PaymentMethodName': row.find('.paymentmethod_name input')[0].value,
+			'PaymentMethodActive': row.find('.paymentmethod_active').is(":checked"),
+			'PaymentMethodImmediate': row.find('.paymentmethod_immediate').is(":checked"),
+			'PaymentMethodDonation': row.find('.paymentmethod_donation').is(":checked")
+		});
+	});
+	$.ajax({
+		type: 'POST',
+		url: 'api/settings/paymentmethods',
+		dataType: 'json',
+		data: JSON.stringify({
+			'updateData': updatePaymentMethodsData
+		}),
+		success: function (result) {
+			toastr.success('Betaalmethoden opgeslagen');
+			loadPreferences();
+		},
+		error: function() {
+			toastr.error('Betaalmethoden niet opgeslagen','Er liep iets fout');
+		}
+	});
+}
+
 	// PREFERENCES
 
 function loadPreferences() {
@@ -511,6 +646,8 @@ function loadPreferences() {
 					setSettingsEmailPreferences(preferences);
 					setSettingsEmailReminders(preferences);
 					db_preferences = preferences;
+					defaultPaymentMethod = preferences.DefaultPaymentMethod;
+					loadPaymentMethods();
 				}
     });
 }

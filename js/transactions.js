@@ -197,7 +197,7 @@ function setActionMembers(members) {
 	for (var i = 0, len = members.length; i < len; i++) {
 		var m = members[i];
 		var p = db_parents.find(x => x.ID === m.ParentID.toString());
-		var htmlOption = '<option value="' + m.KidID + '" data-parentid="' + m.ParentID +'" data-parentname="' + m.ParentName + ' ' + m.ParentSurname + '" data-parentdate="' + m.ParentInitDate + '" data-parentnrkids="' + p.NrKids + '" data-parentactivekids="' + p.ActiveKids + '" data-parentdonations="' + p.Donations + '" data-parentcautionamount="' + m.ParentCautionAmount + '" data-parentmembershipid="' + m.ParentMembershipID + '" data-parentmembershipname="' + m.ParentMembershipName + '" data-kidactive="' + m.KidActive + '" data-cautionamount="' + m.KidCautionAmount + '" data-expirydate="' + m.KidExpiryDate + '" data-bikeid="' + m.KidBikeID + '" data-kidnr="' + m.KidNr + '" data-email="' + p.Email + '">' + m.KidName + ' ' + m.KidSurname + ' - ' +  m.ParentName + ' ' + m.ParentSurname  + '</option>';
+		var htmlOption = '<option value="' + m.KidID + '" data-parentid="' + m.ParentID +'" data-parentname="' + m.ParentName + ' ' + m.ParentSurname + '" data-parentdate="' + m.ParentInitDate + '" data-parentsurname="' + m.ParentSurname + '" data-parentfirstname="' + m.ParentName + '" data-kidfirstname="' + m.KidName + '" data-kidsurname="' + m.KidSurname + '" data-parentiban="' + p.IBAN + '" data-parentnrkids="' + p.NrKids + '" data-parentactivekids="' + p.ActiveKids + '" data-parentdonations="' + p.Donations + '" data-parentcautionamount="' + m.ParentCautionAmount + '" data-parentmembershipid="' + m.ParentMembershipID + '" data-parentmembershipname="' + m.ParentMembershipName + '" data-kidactive="' + m.KidActive + '" data-cautionamount="' + m.KidCautionAmount + '" data-expirydate="' + m.KidExpiryDate + '" data-bikeid="' + m.KidBikeID + '" data-kidnr="' + m.KidNr + '" data-email="' + p.Email + '">' + m.KidName + ' ' + m.KidSurname + ' - ' +  m.ParentName + ' ' + m.ParentSurname  + '</option>';
 		actionmember.append(htmlOption);
 	}
 	actionmember.trigger('change');
@@ -340,21 +340,6 @@ function setActionInfo() {
 	} /*else {
 		setSaveDisabled(true);
 	}*/
-	// EMAIL
-	if (actionoption.data('emailsend')=="1") {
-		emailID = actionoption.data('emailid');
-		var e = db_emails.find(x => x.ID === emailID.toString());
-		$('#action_emailsubject').val(e.Subject);
-		actionquill.root.innerHTML = e.Text;
-		$("#action_emaildiv").show();
-		$("#action_sendemail").prop('checked', true);
-		$("#action_sendemail").prop('disabled', false);
-
-	} else {
-		$("#action_emaildiv").hide();
-		$("#action_sendemail").prop('checked', false);
-		$("#action_sendemail").prop('disabled', true);
-	}
 	// CAUTION
 	memberoption = actionmember.find('option:selected');
 	cautionBalance = checkCaution(actionoption, memberoption);
@@ -369,6 +354,23 @@ function setActionInfo() {
 	$("#action_expirydate").val(newexpirydate);
 	// general updates
 	computeTotalPayment();
+
+	// EMAIL
+	if (actionoption.data('emailsend')=="1") {
+		emailID = actionoption.data('emailid');
+		var e = db_emails.find(x => x.ID === emailID.toString());
+		$('#action_emailsubject').val(parseEmail(e.Subject));
+		actionquill.root.innerHTML = parseEmail(e.Text);
+		$("#action_emaildiv").show();
+		$("#action_sendemail").prop('checked', true);
+		$("#action_sendemail").prop('disabled', false);
+
+	} else {
+		$("#action_emaildiv").hide();
+		$("#action_sendemail").prop('checked', false);
+		$("#action_sendemail").prop('disabled', true);
+	}
+	// SHOW
 	$(".action_actiondiv").show();
 }
 
@@ -421,8 +423,38 @@ function setActionMembershipType() {
 	setActionInfo();
 }
 
+
+function loadActionPaymentMethods() {
+	loadMembershipPaymentMethod();
+	loadCautionPaymentMethod();
+}
+
+function loadMembershipPaymentMethod(){
+	actionpaymentmembership.empty();
+	$.each(db_paymentmethods, function (index, item) {
+		if (item.PaymentMethodActive == 1) {
+			var newOption = new Option(item.PaymentMethodName, item.PaymentMethodID, false, false);
+			actionpaymentmembership.append(newOption).trigger('change');
+		}
+	});
+	actionpaymentmembership.val(defaultPaymentMethod).trigger('change');
+}
+
+function loadCautionPaymentMethod(){
+	actionpaymentcaution.empty();
+	$.each(db_paymentmethods, function (index, item) {
+		if (item.PaymentMethodActive == 1 && item.PaymentMethodDonation == 0) {
+			var newOption = new Option(item.PaymentMethodName, item.PaymentMethodID, false, false);
+			actionpaymentcaution.append(newOption).trigger('change');
+		}
+	});
+	// if default is donation, then nothing is automatically selected here, not a problem
+	actionpaymentcaution.val(defaultPaymentMethod).trigger('change');
+}
+
 function membershipPaymentChanged(paymentmethod){
-	if (paymentmethod == "3") {
+	var method = db_paymentmethods.filter(x => x.PaymentMethodID === paymentmethod)[0];
+	if (method.PaymentMethodDonation == "1") {
 		showBikeDonations(true);
 		$("#amount_membership").val(0);
 		$("#amount_membership").prop("disabled", true);
@@ -593,8 +625,9 @@ function saveTransaction() {
 		updateFin = "0";
 		amountcaution =  $('#amount_caution').val();
 		amountmembership = $('#amount_membership').val();
-		// 1 = cash, 2 = transfer, 3 = donation
-		if (actionpaymentmembership.val() == "3") {
+ 		methodmembership = db_paymentmethods.filter(x => x.PaymentMethodID === actionpaymentmembership.val())[0];
+		methodcaution = db_paymentmethods.filter(x => x.PaymentMethodID === actionpaymentcaution.val())[0];
+		if (methodmembership.PaymentMethodDonation == "1") {
 			if (actionbikedonate.val()==''){
 				toastr.error('Kies een fiets om te doneren');
 				return;
@@ -619,12 +652,12 @@ function saveTransaction() {
 						'Amount': parseFloat(amountcaution),
 						'Membership': 0,
 						'Caution': parseFloat(amountcaution),
-						'Received': (actionpaymentcaution.val()==1) ? "1" : "0",
-						'Method' : actionpaymentcaution.val()
+						'Received': methodcaution.PaymentMethodImmediate,
+						'Method' : methodcaution.PaymentMethodID
 					});
 				}
 		} else {
-			if (actionpaymentcaution.val() == actionpaymentmembership.val()) {
+			if (methodmembership.PaymentMethodID == methodcaution.PaymentMethodID) {
 				updateFin = "1";
 				finTransactions.push({
 					'TransactionDate': aDate,
@@ -633,8 +666,8 @@ function saveTransaction() {
 					'Amount': parseFloat(amountcaution)+parseFloat(amountmembership),
 					'Membership': parseFloat(amountmembership),
 					'Caution': parseFloat(amountcaution),
-					'Received': (actionpaymentcaution.val()==1) ? "1" : "0",
-					'Method' : actionpaymentcaution.val()
+					'Received': methodcaution.PaymentMethodImmediate,
+					'Method' : methodcaution.PaymentMethodID
 				});
 			} else {
 				updateFin = "1";
@@ -645,8 +678,8 @@ function saveTransaction() {
 					'Amount': parseFloat(amountmembership),
 					'Membership': parseFloat(amountmembership),
 					'Caution': 0,
-					'Received': (actionpaymentmembership.val()==1) ? "1" : "0",
-					'Method' : actionpaymentmembership.val()
+					'Received': methodmembership.PaymentMethodImmediate,
+					'Method' : methodmembership.PaymentMethodID
 				});
 				if (amountcaution != 0) {
 					finTransactions.push({
@@ -656,8 +689,8 @@ function saveTransaction() {
 						'Amount': parseFloat(amountcaution),
 						'Membership': 0,
 						'Caution': parseFloat(amountcaution),
-						'Received': (actionpaymentcaution.val()==1) ? "1" : "0",
-						'Method' : actionpaymentcaution.val()
+						'Received': methodcaution.PaymentMethodImmediate,
+						'Method' : methodcaution.PaymentMethodID
 					});
 				}
 			}
@@ -682,7 +715,7 @@ function saveTransaction() {
 			'ActionID': actionoption.val(),
 			'BikeInID': bikeInID,
 			'BikeOutID': bikeOutID,
-			'BikeDonatedID': (actionpaymentmembership.val() == "3") ? actionbikedonate.val() : "0",
+			'BikeDonatedID': (methodmembership.PaymentMethodDonation == "1") ? actionbikedonate.val() : "0",
 			'MembershipID': actionmembershipsel.val(),
 			'ExpiryDate': expirydate,
 			'Note': $('#amount_paymentnote').val(),
@@ -699,7 +732,7 @@ function saveTransaction() {
 				'subject': document.getElementById("action_emailsubject").value
 			};
 		}
-		console.log('API data: ' + JSON.stringify({
+		console.log('Transaction API data: ' + JSON.stringify({
 					'transactionData': transactionData,
 					'updateKid': updateKid,
 					'kidStatus': kidStatus,
@@ -804,4 +837,18 @@ function verifyActionInput(actionoption, kidID, bikeOutID, bikeInID, aDate) {
 			validInput = false;
 	}
 	return validInput;
+}
+
+function parseEmail(email) {
+	memberoption = actionmember.find('option:selected');
+	email = email.replace('{{voornaam_ouder}}', memberoption.data('parentfirstname'));
+	email = email.replace('{{achternaam_ouder}}', memberoption.data('parentsurname'));
+	email = email.replace('{{voornaam_kind}}', memberoption.data('kidfirstname'));
+	email = email.replace('{{achternaam_kind}}', memberoption.data('kidsurname'));
+	email = email.replace('{{IBAN_ouder}}', memberoption.data('parentiban'));
+	email = email.replace('{{IBAN_depot}}', $('#settings_defaultIBAN').val());
+	email = email.replace('{{bedrag_totaal}}', document.getElementById('action_totalpayment').innerHTML);
+	email = email.replace('{{bedrag_waarborg}}', parseFloat($('#amount_caution').val()));
+	email = email.replace('{{bedrag_lidmaatschap}}', parseFloat($('#amount_membership').val()));
+	return email;
 }

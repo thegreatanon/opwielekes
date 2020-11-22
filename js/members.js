@@ -8,12 +8,45 @@ $(document).ready(function () {
 				ordering: true,
 				sortable: true,
 				rowId: 'parentID',
-				dom: '<l<"filtermembers">fr>tip',
+				"language": {
+					"url": "libs/datatables/lang/dutch.json",
+					buttons: {
+						 copyTitle: 'Kopiëer',
+						 copyKeys: 'Druk op <i>ctrl</i> of <i>\u2318</i> + <i>C</i> om de rijen te kopiëren naar je klembord. <br><br>Om te annuleren, klik op deze boodscap of op ESC.',
+						 copySuccess: {
+								 _: '%d rijen gekopiëerd',
+								 1: '1 rij gekopiëerd'
+						 }
+					 }
+				},
+				dom: '<l<"filtermembers">fr>t<iBp>',
 				"order": [[ 0, 'asc' ], [ 1, 'asc' ]],
+				buttons: [
+						'copyHtml5',
+						{
+								extend: 'csv',
+								filename: 'Opwielekes leden',
+								title: '',
+								exportOptions: { columns: [ 0, 1, 8, 9, 3, 10, 4, 5, 6, 7]}
+						},
+            {
+                extend: 'excel',
+								filename: 'Opwielekes leden',
+								title: '',
+								exportOptions: { columns: [ 0, 1, 8, 9, 3, 10, 4, 5, 6, 7]}
+            },
+            {
+                extend: 'pdf',
+								filename: 'Opwielekes leden',
+								title: '',
+								exportOptions: { columns: [ 0, 1, 8, 9, 3, 10, 4, 5, 6, 7]},
+								orientation: 'landscape'
+            }
+        ],
 				autoWidth: true,
 	        columns: [
-						{data: 'Name', name: 'Number'},
-						{data: 'Surname', name: 'Name'},
+						{data: 'Name', name: 'Name'},
+						{data: 'Surname', name: 'Surname'},
 						{data: 'Street', name: 'Street'},
 						{ data: {
 								MembershipID: 'MembershipID',
@@ -28,6 +61,9 @@ $(document).ready(function () {
 						{data: 'CautionAmount', name: 'CautionAmount'},
 						{data: 'Donations', name: 'Donations'},
 						{data: 'Notes', name: 'Notes', 'visible': false},
+						{data: 'Email', name: 'Email', 'visible': false},
+						{data: 'Phone', name: 'Phone', 'visible': false},
+						{data: 'InitDate', name: 'InitDate', 'visible': false},
 						{ data: {
 								ID: 'ID',
 								InitDate: 'InitDate'
@@ -41,15 +77,19 @@ $(document).ready(function () {
 				"search": {
 					"regex": true,
 					"smart":false
+				},
+				"initComplete": function( settings, json ) {
+					$("div.filtermembers").html('<input type="checkbox" name="membersfilteractive" id="membersfilteractive" checked > Actief <input type="checkbox" id="membersfilterinactive" checked> Inactief');
+					/* FILTER MEMBERS TABLE */
+					$('.filtermembers').on('change', function() {
+								memberstable.draw();
+					});
 				}
     });
 
-	/* FILTER MEMBERS TABLE */
-	$('.filtermembers').on('change', function() {
-        memberstable.draw();
-    });
 
-	$("div.filtermembers").html('<input type="checkbox" id="membersfilteractive" checked > Actief <input type="checkbox" id="membersfilterinactive" checked> Inactief');
+
+
 
 	/* Custom filtering function for datatablesr items-table with lowstockcheckbox */
 	$.fn.dataTable.ext.search.push(
@@ -190,6 +230,7 @@ function setMemberFormByID(parentID){
 	$('#parent_town').val(p.Town);
 	$('#parent_email').val(p.Email);
 	$('#parent_phone').val(p.Phone);
+	$('#parent_iban').val(p.IBAN);
 	$('#parent_date').val(p.InitDate);
 	$('#parent_membership').val(p.MembershipID);
 	$('#parent_membership').trigger('change');
@@ -224,6 +265,7 @@ function emptyMemberForm() {
 	$('#parent_town').val('');
 	$('#parent_email').val('');
 	$('#parent_phone').val('');
+	$('#parent_iban').val('');
 	$('#parent_date').val(myGetDate());
 	$('#parent_membership').val(defaultMembershipID);
 	$('#parent_membership').trigger('change');
@@ -270,6 +312,7 @@ function saveMember() {
 			'Town': $('#parent_town').val(),
 			'Email': $('#parent_email').val(),
 			'Phone': $('#parent_phone').val(),
+			'IBAN': $('#parent_iban').val(),
 			'InitDate': convertDate($('#parent_date').val()),
 			'CautionAmount': "0",
 			'MembershipID':  $('#parent_membership').val(),

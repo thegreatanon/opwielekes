@@ -36,6 +36,43 @@ class SettingsService
 
     }
 
+		public static function updatePaymentMethods($data) {
+					global $DBH;
+	        if (isset($data->PaymentMethodID) && isset($data->PaymentMethodName) && isset($data->PaymentMethodActive) && isset($data->PaymentMethodImmediate) && isset($data->PaymentMethodDonation) ) {
+							try {
+					        $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::PAYMENTMETHODS) . " SET PaymentMethodName = :PaymentMethodName, PaymentMethodActive = :PaymentMethodActive, PaymentMethodImmediate = :PaymentMethodImmediate, PaymentMethodDonation = :PaymentMethodDonation WHERE PaymentMethodID = :PaymentMethodID");
+									$STH->bindParam(':PaymentMethodID', $data->PaymentMethodID);
+									$STH->bindParam(':PaymentMethodName', $data->PaymentMethodName);
+									$STH->bindParam(':PaymentMethodActive', $data->PaymentMethodActive);
+									$STH->bindParam(':PaymentMethodImmediate', $data->PaymentMethodImmediate);
+									$STH->bindParam(':PaymentMethodDonation', $data->PaymentMethodDonation);
+	                $STH->execute();
+	            } catch (Exception $e) {
+	               return ["status" => -1, "error" => "Er is iets fout gelopen in update paymentmethods data..."];
+	            }
+	        } else {
+	           return ["status" => -1, "error" => "Onvoldoende parameters in update paymentmethods data..."];
+
+	        }
+	    }
+
+			public static function updateDefaultPaymentInfo($data) {
+					global $DBH;
+					if (isset($data->DefaultPaymentMethod) && isset($data->DefaultIBAN)) {
+							try {
+									$STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::PREFERENCES) . " SET DefaultPaymentMethod = :DefaultPaymentMethod, DefaultIBAN = :DefaultIBAN WHERE ID=1");
+									$STH->bindParam(':DefaultPaymentMethod', $data->DefaultPaymentMethod);
+									$STH->bindParam(':DefaultIBAN', $data->DefaultIBAN);
+									$STH->execute();
+									return ["status" => 0];
+							} catch (Exception $e) {
+									return ["status" => -1, "error" => "Er is iets fout gelopen in update default payment..."];
+							}
+					} else {
+							return ["status" => -1, "error" => "Onvoldoende parameters in update default payment..."];
+					}
+			}
+
 		public static function getAccounts() {
 			global $DBH;
 			$STH = $DBH->query("SELECT * FROM " . 'accounts');
