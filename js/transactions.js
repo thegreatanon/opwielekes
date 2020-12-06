@@ -443,7 +443,7 @@ function loadMembershipPaymentMethod(){
 function loadCautionPaymentMethod(){
 	actionpaymentcaution.empty();
 	$.each(db_paymentmethods, function (index, item) {
-		if (item.PaymentMethodActive == 1 && item.PaymentMethodDonation == 0) {
+		if (item.PaymentMethodActive == 1 && item.PaymentMethodDonation == 0 && item.PaymentMethodWaiveMembership == 0) {
 			var newOption = new Option(item.PaymentMethodName, item.PaymentMethodID, false, false);
 			actionpaymentcaution.append(newOption).trigger('change');
 		}
@@ -456,10 +456,13 @@ function membershipPaymentChanged(paymentmethod){
 	var method = db_paymentmethods.filter(x => x.PaymentMethodID === paymentmethod)[0];
 	if (method.PaymentMethodDonation == "1") {
 		showBikeDonations(true);
+	} else {
+		showBikeDonations(false);
+	}
+	if (method.PaymentMethodWaiveMembership == "1") {
 		$("#amount_membership").val(0);
 		$("#amount_membership").prop("disabled", true);
 	} else {
-		showBikeDonations(false);
 		$("#amount_membership").val($("#amount_membership_hidden").val());
 		$("#amount_membership").prop("disabled", false);
 	}
@@ -618,85 +621,42 @@ function saveTransaction() {
 			'ID': kidID,
 			'ExpiryDate': expirydate
 		};
-		// Donation?
-		updateDonor = "0";
-		donorData = [];
+		// FINANCES
+		updateFin = "1";
 		finTransactions = [];
-		updateFin = "0";
 		amountcaution =  $('#amount_caution').val();
 		amountmembership = $('#amount_membership').val();
- 		methodmembership = db_paymentmethods.filter(x => x.PaymentMethodID === actionpaymentmembership.val())[0];
+		methodmembership = db_paymentmethods.filter(x => x.PaymentMethodID === actionpaymentmembership.val())[0];
 		methodcaution = db_paymentmethods.filter(x => x.PaymentMethodID === actionpaymentcaution.val())[0];
+		finTransactions.push({
+			'TransactionDate': aDate,
+			'ParentID': parentID,
+			'KidID': kidID,
+			'Amount': parseFloat(amountcaution)+parseFloat(amountmembership),
+			'Membership': parseFloat(amountmembership),
+			'MembershipReceived': methodmembership.PaymentMethodImmediate,
+			'MembershipMethod' : methodmembership.PaymentMethodID,
+			'Caution': parseFloat(amountcaution),
+			'CautionReceived': methodcaution.PaymentMethodImmediate,
+			'CautionMethod' : methodcaution.PaymentMethodID
+		});
+		// BIKE DONATION
+		updateDonor = "0";
+		donorData = [];
 		if (methodmembership.PaymentMethodDonation == "1") {
-			if (actionbikedonate.val()==''){
-				toastr.error('Kies een fiets om te doneren');
-				return;
-			} else {
-				updateDonor = "1";
-				donorData = {
-					'ID': actionbikedonate.val(),
-					'Donated': "1",
-					'Donor': kidID,
-					'DonationDate': aDate
+				if (actionbikedonate.val()==''){
+					toastr.error('Kies een fiets om te doneren');
+					return;
+				} else {
+					updateDonor = "1";
+					donorData = {
+						'ID': actionbikedonate.val(),
+						'Donated': "1",
+						'Donor': kidID,
+						'DonationDate': aDate
+					};
 				};
 			};
-		};
-		// membership and caution should be recorded regardless of donation
-	 if (amountmembership == 0) {
-				if (amountcaution != 0) {
-					updateFin = "1";
-					finTransactions.push({
-						'TransactionDate': aDate,
-						'ParentID': parentID,
-						'KidID': kidID,
-						'Amount': parseFloat(amountcaution),
-						'Membership': 0,
-						'Caution': parseFloat(amountcaution),
-						'Received': methodcaution.PaymentMethodImmediate,
-						'Method' : methodcaution.PaymentMethodID
-					});
-				}
-		} else {
-			if (methodmembership.PaymentMethodID == methodcaution.PaymentMethodID) {
-				updateFin = "1";
-				finTransactions.push({
-					'TransactionDate': aDate,
-					'ParentID': parentID,
-					'KidID': kidID,
-					'Amount': parseFloat(amountcaution)+parseFloat(amountmembership),
-					'Membership': parseFloat(amountmembership),
-					'Caution': parseFloat(amountcaution),
-					'Received': methodcaution.PaymentMethodImmediate,
-					'Method' : methodcaution.PaymentMethodID
-				});
-			} else {
-				updateFin = "1";
-				finTransactions.push({
-					'TransactionDate': aDate,
-					'ParentID': parentID,
-					'KidID': kidID,
-					'Amount': parseFloat(amountmembership),
-					'Membership': parseFloat(amountmembership),
-					'Caution': 0,
-					'Received': methodmembership.PaymentMethodImmediate,
-					'Method' : methodmembership.PaymentMethodID
-				});
-				if (amountcaution != 0) {
-					finTransactions.push({
-						'TransactionDate': aDate,
-						'ParentID': parentID,
-						'KidID': kidID,
-						'Amount': parseFloat(amountcaution),
-						'Membership': 0,
-						'Caution': parseFloat(amountcaution),
-						'Received': methodcaution.PaymentMethodImmediate,
-						'Method' : methodcaution.PaymentMethodID
-					});
-				}
-			}
-		}
-
-
 		// Caution
 		var updateCaution = "0";
 		var cautionData = [];

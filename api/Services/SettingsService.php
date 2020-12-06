@@ -38,14 +38,15 @@ class SettingsService
 
 		public static function updatePaymentMethods($data) {
 					global $DBH;
-	        if (isset($data->PaymentMethodID) && isset($data->PaymentMethodName) && isset($data->PaymentMethodActive) && isset($data->PaymentMethodImmediate) && isset($data->PaymentMethodDonation) ) {
+	        if (isset($data->PaymentMethodID) && isset($data->PaymentMethodName) && isset($data->PaymentMethodActive) && isset($data->PaymentMethodImmediate) && isset($data->PaymentMethodDonation) && isset($data->PaymentMethodWaiveMembership) ) {
 							try {
-					        $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::PAYMENTMETHODS) . " SET PaymentMethodName = :PaymentMethodName, PaymentMethodActive = :PaymentMethodActive, PaymentMethodImmediate = :PaymentMethodImmediate, PaymentMethodDonation = :PaymentMethodDonation WHERE PaymentMethodID = :PaymentMethodID");
+					        $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::PAYMENTMETHODS) . " SET PaymentMethodName = :PaymentMethodName, PaymentMethodActive = :PaymentMethodActive, PaymentMethodImmediate = :PaymentMethodImmediate, PaymentMethodDonation = :PaymentMethodDonation, PaymentMethodWaiveMembership = :PaymentMethodWaiveMembership WHERE PaymentMethodID = :PaymentMethodID");
 									$STH->bindParam(':PaymentMethodID', $data->PaymentMethodID);
 									$STH->bindParam(':PaymentMethodName', $data->PaymentMethodName);
 									$STH->bindParam(':PaymentMethodActive', $data->PaymentMethodActive);
 									$STH->bindParam(':PaymentMethodImmediate', $data->PaymentMethodImmediate);
 									$STH->bindParam(':PaymentMethodDonation', $data->PaymentMethodDonation);
+									$STH->bindParam(':PaymentMethodWaiveMembership', $data->PaymentMethodWaiveMembership);
 	                $STH->execute();
 	            } catch (Exception $e) {
 	               return ["status" => -1, "error" => "Er is iets fout gelopen in update paymentmethods data..."];

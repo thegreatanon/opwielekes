@@ -714,13 +714,24 @@
   			<table id="finances_table" class="table table-striped" width="100%">
   				<thead>
   					<tr>
-  						<th>Datum</th>
+              <th>Datum</th>
   						<th>Ouder</th>
+              <th>Straat</th>
+              <th>Straatnr</th>
+              <th>Postcode</th>
+              <th>Stad</th>
+              <th>Email</th>
+              <th>Tel</th>
   						<th>Kind</th>
-  						<th>Waarborg</th>
-  						<th>Lidmaatschap</th>
+              <th>Actie</th>
+              <th>Waarborg</th>
+              <th>Wb wijze</th>
+              <th>Wb betaald</th>
+              <th>Abonnement</th>
+              <th>Ab wijze</th>
+              <th>Ab betaald</th>
   						<th>Totaal</th>
-  						<th>Status</th>
+  						<th>Notities</th>
   						<th></th>
   					</tr>
   				</thead>
@@ -728,11 +739,22 @@
   					<tr>
   						<th>Datum</th>
   						<th>Ouder</th>
+              <th>Straat</th>
+              <th>Straatnr</th>
+              <th>Postcode</th>
+              <th>Stad</th>
+              <th>Email</th>
+              <th>Tel</th>
   						<th>Kind</th>
-  						<th>Waarborg</th>
-  						<th>Lidmaatschap</th>
+              <th>Actie</th>
+              <th>Waarborg</th>
+              <th>Wb wijze</th>
+              <th>Wb betaald</th>
+              <th>Abonnement</th>
+              <th>Ab wijze</th>
+              <th>Ab betaald</th>
   						<th>Totaal</th>
-  						<th>Status</th>
+  						<th>Notities</th>
   						<th></th>
   					</tr>
   				</tfoot>
@@ -758,9 +780,28 @@
                                   </span>
                                 </div>
                             </div>
+
                             <div class="form-group">
-                                <label for="fin_status" class="control-label">Status:</label>
-                                <select style="width : 100%;" id="fin_status">
+                                <label for="fin_membershipinfo" class="control-label">Lidmaatschap:</label>
+                                <p class="form-control-static" id="fin_membershipinfo"> </p>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="fin_membershipstatus" class="control-label">Status lidmaatschap:</label>
+                                <select style="width : 100%;" id="fin_membershipstatus">
+                                    <option value="1">Voldaan</option>
+                                    <option value="0">In afwachting</option>
+                                  </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="fin_cautioninfo" class="control-label">Waarborg:</label>
+                                <p class="form-control-static" id="fin_cautioninfo"> </p>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="fin_cautionstatus" class="control-label">Status waarborg:</label>
+                                <select style="width : 100%;" id="fin_cautionstatus">
                                     <option value="1">Voldaan</option>
                                     <option value="0">In afwachting</option>
                                   </select>
@@ -970,14 +1011,15 @@
                       <th scope='col'>Omschrijving</th>
                       <th scope='col'>Actief</th>
                       <th scope='col'>Onmiddelijke inning *</th>
-                      <th scope='col'>Donatie</th>
+                      <th scope='col'>Lidmaatschap gratis °</th>
+                      <th scope='col'>Fiets selecteren</th>
                     </tr>
                   </thead>
                   <tbody id="settings_paymentmethods_table_tbody">
                   </tbody>
                   <tfoot style="text-align:center">
                      <tr>
-                         <td colspan="4" scope='colgroup' class="outlined">* Geen bevestiging nodig dat dit ontvangen is in het financiën tabblad. <br/> Je kan de standaardbetaalmethode niet deactiveren.</td>
+                         <td colspan="5" scope='colgroup' class="outlined">* Geen bevestiging nodig dat dit ontvangen is (in het financiën tabblad). <br/> ° De bijdrage voor het lidmaatschap wordt kwijtgescholden. <br/> Je kan de standaardbetaalmethode niet deactiveren.</td>
                      </tr>
                    </tfoot>
                 </table>

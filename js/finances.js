@@ -19,21 +19,25 @@ $(document).ready(function () {
 		},
 		dom: '<l<"filterfinances">fr>t<iBp>',
 		buttons: [
-				'copyHtml5',
-				{
-						extend: 'csv',
-						filename: 'Opwielekes financien',
-						title: ''
-				},
 				{
 						extend: 'excel',
 						filename: 'Opwielekes financien',
+						exportOptions: { columns: [ 0,1, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]},
 						title: ''
 				},
 				{
 						extend: 'pdf',
 						filename: 'Opwielekes financien',
-						title: ''
+						title: '',
+						exportOptions: { columns: [ 0, 1, 8, 9, 10, 11, 12,  13, 14, 15, 16, 17]},
+						orientation: 'landscape'
+				},
+				{
+						extend: 'excel',
+						filename: 'Opwielekes facturen',
+						title: '',
+						text: 'Facturatie',
+						exportOptions: { columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]}
 				}
 		],
 		rowId: 'finID',
@@ -54,6 +58,12 @@ $(document).ready(function () {
 						//}
         }
 			},
+			{data: 'Street', 'visible': false, 'searchable': false},
+			{data: 'StreetNumber', 'visible': false, 'searchable': false},
+			{data: 'Postal', 'visible': false, 'searchable': false},
+			{data: 'Town', 'visible': false, 'searchable': false},
+			{data: 'Email', 'visible': false, 'searchable': false},
+			{data: 'Phone', 'visible': false, 'searchable': false},
       {
 				data: {
             KidName: 'KidName',
@@ -63,19 +73,51 @@ $(document).ready(function () {
 					return data.KidName + " " + data.KidSurname;
         }
 			},
+			{data: 'ActionName'},
       {data: 'Caution'},
+			{data: 'CautionMethodName'},
+			{
+				data: {
+						CautionReceived : 'CautionReceived'
+        },
+        render: function (data, type) {
+						if (data.CautionReceived == "1"){
+	           		return 'Ja';
+	          } else {
+								return 'Nee';
+						}
+        },
+				visible: false,
+				searchable: false
+			},
       {data: 'Membership'},
+			{data: 'MembershipMethodName'},
+			{
+				data: {
+						MembershipReceived : 'MembershipReceived'
+				},
+				render: function (data, type) {
+						if (data.MembershipReceived == "1"){
+								return 'Ja';
+						} else {
+								return 'Nee';
+						}
+				},
+				visible: false,
+				searchable: false
+			},
 			{data: 'Amount'},
-			{data: 'ReceivedFull'},
+			{data: 'Note'},
 			{
         data: {
 					ID: 'ID',
-					Received : 'Received',
+					CautionReceived : 'CautionReceived',
+					MembershipReceived : 'MembershipReceived',
 					Amount: 'Amount'
         },
 				width: '80px',
         render: function (data, type) {
-					if (data.Received == "0") {
+					if (data.CautionReceived == "0" || data.MembershipReceived == "0") {
 						btnok = '<button type="button" class="btn btn-default editFin"><span class="glyphicon glyphicon-ok" style="color:gray" aria-hidden="true"></span></button>';
 						btndel = '<button type="button" class="btn btn-default delete_openfin"><span class="glyphicon glyphicon-remove" style="color:red" aria-hidden="true"></span></button>';
 						return btnok + btndel;
@@ -86,6 +128,12 @@ $(document).ready(function () {
 				sortable: false
       }
     ],
+		columnDefs: [
+	    {
+	        targets:  [ 10,12, 13, 15, 16],
+	        className: 'dt-body-right'
+	    }
+	  ],
 		"search": {
 			"regex": true,
 			"smart":false
@@ -128,7 +176,7 @@ $(document).ready(function () {
 											var enddate = moment($('#financerange').data('daterangepicker').endDate,findateformat);
 											var validDate = (moment(datetime).isSameOrAfter(startdate) && moment(datetime).isSameOrBefore(enddate));
 											var validfilters = false;
-											if (rowData.Received == "1") {
+											if (rowData.MembershipReceived == "1" && rowData.CautionReceived == "1") {
 													if ($('#finfilterreceived').is(':checked')){
 														validfilters = true;
 													}
@@ -200,7 +248,11 @@ $(document).ready(function () {
 		format: 'DD-MM-YYYY'
 	});
 
-	$('#fin_status').select2({
+	$('#fin_membershipstatus').select2({
+		tags: false
+	});
+
+	$('#fin_cautionstatus').select2({
 		tags: false
 	});
 
@@ -209,7 +261,10 @@ $(document).ready(function () {
 		console.log('row: ' + rowdata.ID)
 		$('#fin_date').val(rowdata.TransactionDate);
 		$('#fin_id').val(rowdata.ID);
-		$('#fin_status').val(rowdata.Received).trigger('change');;
+		document.getElementById('fin_membershipinfo').innerHTML = rowdata.Membership + "€ " + rowdata.MembershipMethodName;
+		$('#fin_membershipstatus').val(rowdata.MembershipReceived).trigger('change');
+		document.getElementById('fin_cautioninfo').innerHTML = rowdata.Caution + "€ " + rowdata.CautionMethodName;
+		$('#fin_cautionstatus').val(rowdata.CautionReceived).trigger('change');
 		$('#editFinanceModal').modal('show');
         //processPayment(rowdata);
   });
@@ -229,7 +284,8 @@ $(document).ready(function () {
 					url: 'api/finances/update/' + $('#fin_id').val(),
 					data: JSON.stringify({
 							'TransactionDate': convertDate($('#fin_date').val()),
-							'Received': parseInt($('#fin_status').val())
+							'MembershipReceived': parseInt($('#fin_membershipstatus').val()),
+							'CautionReceived': parseInt($('#fin_cautionstatus').val())
 					}),
 					contentType: "application/json",
 					success: function () {
@@ -253,7 +309,7 @@ function loadFinances() {
         url: 'api/finances',
         success: function (finances) {
 					jQuery.each(finances, function(index, item) {
-						if (item.Received=="1") {
+						if (item.MembershipReceived=="1" && item.CautionReceived == "1") {
 							item["ReceivedFull"] = "Voldaan";
 						} else {
 							item["ReceivedFull"] = "In afwachting";

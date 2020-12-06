@@ -1,10 +1,5 @@
 $(document).ready(function () {
 
-	// TO ADD: set default membership
-	//defaultmembership = $('#default_membership').select2({
-	//	tags: false,
-	//	dropdownAutoWidth: true
-	//});
 
 	// this one is in the members section but is loaded earlier
 	parentmembership = $('#parent_membership').select2({
@@ -589,6 +584,12 @@ function setSettingsPaymentMethodsTable() {
 		} else {
 			myhtml += '></td>';
 		}
+		myhtml += '<td><input type="checkbox" class="paymentmethod_waivemembership"';
+		if  (item.PaymentMethodWaiveMembership == 1) {
+			myhtml += ' checked></td>';
+		} else {
+			myhtml += '></td>';
+		}
 		myhtml += '<td><input type="checkbox" class="paymentmethod_donation"';
 		if  (item.PaymentMethodDonation == 1) {
 			myhtml += ' checked></td>';
@@ -616,6 +617,7 @@ function savePaymentMethods(){
 			'PaymentMethodName': row.find('.paymentmethod_name input')[0].value,
 			'PaymentMethodActive': row.find('.paymentmethod_active').is(":checked"),
 			'PaymentMethodImmediate': row.find('.paymentmethod_immediate').is(":checked"),
+			'PaymentMethodWaiveMembership': row.find('.paymentmethod_waivemembership').is(":checked"),
 			'PaymentMethodDonation': row.find('.paymentmethod_donation').is(":checked")
 		});
 	});
