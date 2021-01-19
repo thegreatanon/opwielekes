@@ -60,7 +60,7 @@ $(document).ready(function () {
 						{data: 'ActiveKids', name: 'ActiveKids'},
 						{data: 'CautionAmount', name: 'CautionAmount'},
 						{data: 'Donations', name: 'Donations'},
-						{data: 'Notes', name: 'Notes', 'visible': false},
+						{data: 'Notes', name: 'Notes'},
 						{data: 'Email', name: 'Email', 'visible': false},
 						{data: 'Phone', name: 'Phone', 'visible': false},
 						{data: 'InitDate', name: 'InitDate', 'visible': false},
@@ -74,6 +74,10 @@ $(document).ready(function () {
 								sortable: false
 			      }
 	        ],
+				columnDefs: [ {
+							targets: 7,
+							render: $.fn.dataTable.render.ellipsis(75)
+				} ],
 				"search": {
 					"regex": true,
 					"smart":false

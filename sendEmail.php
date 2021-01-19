@@ -13,7 +13,7 @@ if($_POST){
 
 	require 'libs/phpmailer/5.2.22/PHPMailerAutoload.php';
 	$mail = new PHPMailer;
-
+  $mail->CharSet = 'UTF-8';
 	$mail->SMTPDebug = 3;                               // Enable verbose debug output
 
 	$mail->isSMTP();     								  // Set mailer to use SMTP

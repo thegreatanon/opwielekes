@@ -51,7 +51,7 @@ $(document).ready(function () {
 						{data: 'Wheel', name: 'Wheel'},
 						{data: 'InitDate', name: 'InitDate'},
 						{data: 'KidName', name: 'KidName'},
-						{data: 'Notes', name: 'Notes', 'visible': false},
+						{data: 'Notes', name: 'Notes'},
 						{
                 data: {
 										ID: 'ID',
@@ -65,6 +65,10 @@ $(document).ready(function () {
 								sortable: false
 			        }
 	        ],
+					columnDefs: [ {
+			        targets: 7,
+			        render: $.fn.dataTable.render.ellipsis(75)
+			    } ],
 					"search": {
 						"regex": true,
 						"smart":false

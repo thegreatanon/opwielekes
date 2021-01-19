@@ -270,7 +270,7 @@ function setSettingsEmail(){
 	if (emailoption.data('select2-tag')==null) {
 		emailid = emailoption.val();
 		var emailinfo = db_emails.filter(x => x.ID === emailid)[0];
-		console.log(emailinfo);
+		//console.log(emailinfo);
 		$('#settings_email_subject').val(emailinfo.Subject);
 		settingsemailquill.root.innerHTML = emailinfo.Text;
 		newEmailTemplate = false;

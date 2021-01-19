@@ -111,6 +111,12 @@ function sendEmail(mailData) {
 	});
 }
 
+// Quill setting to avoid double newlines in emailSend
+// see https://github.com/quilljs/quill/issues/1074
+var Block = Quill.import('blots/block');
+Block.tagName = 'DIV';
+Quill.register(Block, true);
+
 // HELP FUNCTIONS
 
 $.fn.dataTable.moment = function ( format, locale ) {
