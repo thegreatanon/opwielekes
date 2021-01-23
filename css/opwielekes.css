@@ -46,6 +46,13 @@ body {
 	float: right;
 }
 
+.filterkids{
+	font-weight: bold;
+	margin-left: 10px;
+	margin-right: 10px;
+	float: right;
+}
+
 .filterfinances{
 	display: inline;
 	font-weight: bold;

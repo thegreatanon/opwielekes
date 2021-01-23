@@ -375,7 +375,7 @@ function setActionInfo() {
 }
 
 function checkMembership(actionoption, memberoption) {
-	var today =  moment();
+	//var today =  moment();
 	var expirydate = memberoption.data('expirydate');
 	//membershipid = memberoption.data('parentmembershipid');
 	membershipid = 	actionmembershipsel.val();
@@ -393,6 +393,15 @@ function checkMembership(actionoption, memberoption) {
 		}
 	}
 	return [balance.toFixed(2), expirydate];
+}
+
+function getMembershipFee(expirydate, kidnr, membershipid) {
+	if (!moment(expirydate, 'DD-MM-YYYY').isValid() || moment(expirydate, 'DD-MM-YYYY').isBefore(today)) {
+		membership = db_memberships.find(x => x.ID === membershipid.toString());
+		return parseFloat(membership['MembershipK'+kidnr]).toFixed(2);
+	} else {
+		return parseFloat(0).toFixed(2);
+	}
 }
 
 function checkCaution(actionoption, memberoption) {
@@ -599,24 +608,33 @@ function saveTransaction() {
 		}
 		// KID STATUS
 		kidStatus = [];
-		kidActive = actionoption.data('resultkidactive');
+		if (actionoption.data('resultchangeactive')=="1") {
+			kidResultActive = actionoption.data('resultkidactive');
+		} else {
+			kidResultActive = memberoption.data('kidactive');
+		}
 		updateKid = actionoption.data('updatekid');
 		var kidNr = memberoption.data('kidnr');
-		if (kidNr=="0" && kidActive=="1") {
+		if (kidNr=="0" && kidResultActive=="1") {
 			kidNr = parseInt(memberoption.data('parentactivekids'))+1;
 		}
-		if (kidActive=="0") {
+		if (kidResultActive=="0") {
 			kidNr = 0;
 		}
-		var expirydate = convertDate($('#action_expirydate').val());
+		if (updateBike=="1") {
+			kidBikeID = bikeOutID;
+		} else {
+			kidBikeID = memberoption.data('bikeid')
+		}
 		if (updateKid == "1") {
 			kidStatus = {
 				'ID': kidID,
-				'Active': kidActive,
+				'Active': kidResultActive,
 				'KidNr': kidNr,
-				'BikeID': bikeOutID
+				'BikeID': kidBikeID
 			};
 		}
+		var expirydate = convertDate($('#action_expirydate').val());
 		expiryData = {
 			'ID': kidID,
 			'ExpiryDate': expirydate

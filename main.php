@@ -66,6 +66,7 @@
                       <li class="active"><a href="#transactions">Ontleningen</a></li>
                       <li><a href="#bikes">Fietsen</a></li>
                       <li><a href="#members">Leden</a></li>
+                      <li><a href="#kids">Lidmaatschappen</a></li>
                       <!--<li><a href="#transactionhistory">Transacties</a></li>-->
             					<li><a href="#finances">Financiën</a></li>
             					<!--<li><a href="#stats">Dashboard</a></li>-->
@@ -673,6 +674,43 @@
   			   </div>
   		  </div>
       </section>
+
+      <section id="content_kids" class="content_section">
+       <h4 class="inlineh4">Opvolging lidmaatschap</h4>
+
+       <div class="container-fluid" width="100%">
+         <table id="kidsexpiry_table" class="table table-striped" width="100%">
+           <thead>
+             <tr>
+               <th>Kind</th>
+               <th>Ouder</th>
+               <th>Email</th>
+               <th>Actief</th>
+               <th>Actieve kids</th>
+               <th>Kind Nr</th>
+               <th>Vervaldatum</th>
+               <th>Vernieuwen</th>
+               <th>Te betalen</th>
+             </tr>
+           </thead>
+           <tfoot>
+             <tr>
+               <th>Kind</th>
+               <th>Ouder</th>
+               <th>Email</th>
+               <th>Actief</th>
+               <th>Actieve kids</th>
+               <th>Kind Nr</th>
+               <th>Vervaldatum</th>
+               <th>Vernieuwen</th>
+               <th>Te betalen</th>
+             </tr>
+           </tfoot>
+         </table>
+       </div>
+
+     </section>
+
 
       <section id="content_transactionhistory" class="content_section">
        <h4 class="inlineh4">Transacties</h4>

@@ -269,7 +269,8 @@ class MembersService
 		$mysqldateformat = $GLOBALS['mysqldateformat'];
         global $DBH;
 		$STH = $DBH->prepare("SELECT k.ID KidID, k.Name KidName, k.Surname KidSurname, DATE_FORMAT(k.BirthDate, '" . $mysqldateformat . "') KidBirthDate, DATE_FORMAT(k.ExpiryDate, '" . $mysqldateformat . "') KidExpiryDate, k.Active KidActive, k.BikeID KidBikeID, k.KidNr KidNr, p.ID ParentID, p.Name ParentName, p.Surname ParentSurname,
-		DATE_FORMAT(p.InitDate, '" . $mysqldateformat . "') ParentInitDate, p.CautionAmount ParentCautionAmount, p.MembershipID ParentMembershipID, m.MembershipName ParentMembershipName
+		DATE_FORMAT(p.InitDate, '" . $mysqldateformat . "') ParentInitDate, p.CautionAmount ParentCautionAmount, p.MembershipID ParentMembershipID, m.MembershipName ParentMembershipName, p.Email ParentEmail,
+		 (SELECT COUNT(*) FROM " . TableService::getTable(TableEnum::KIDS) . " l WHERE l.ParentID = k.ParentID AND l.Active = 1) ParentActiveKids
 			FROM " . TableService::getTable(TableEnum::KIDS) . " k
 			LEFT JOIN " . TableService::getTable(TableEnum::PARENTS) . " p
 			ON k.ParentID = p.ID

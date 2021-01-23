@@ -47,6 +47,9 @@ routie({
 	'members': function () {
         setPageActive('members');
     },
+	'kids': function () {
+					setPageActive('kids');
+			},
 	'transactionhistory': function () {
 	        setPageActive('transactionhistory');
 	    },

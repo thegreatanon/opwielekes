@@ -91,10 +91,6 @@ $(document).ready(function () {
 				}
     });
 
-
-
-
-
 	/* Custom filtering function for datatablesr items-table with lowstockcheckbox */
 	$.fn.dataTable.ext.search.push(
 		function( settings, data ) {
@@ -117,9 +113,160 @@ $(document).ready(function () {
 					return true;
 				}
 			}
+			if (settings.nTable.id == 'kidsexpiry_table') {
+				var state = data[3];
+				if (state >= 1) {
+					if ($('#kidsfilteractive').is(':checked')){
+					return true;
+					} else
+					return false;
+					}
+				else if (state == 0) {
+					if ($('#kidsfilterinactive').is(':checked')){
+					return true;
+					} else {
+					return false;
+					}
+				} else {
+					return true;
+				}
+			}
 			return true;
 		}
 	);
+
+
+	// INIT KIDS TABLE
+	kidsexpirytable = $('#kidsexpiry_table').DataTable({
+		paging: true,
+		pageLength: 25,
+		"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Alle"]],
+		ordering: true,
+		sortable: true,
+		rowId: 'KidID',
+		"language": {
+			"url": "libs/datatables/lang/dutch.json",
+			buttons: {
+				 copyTitle: 'Kopiëer',
+				 copyKeys: 'Druk op <i>ctrl</i> of <i>\u2318</i> + <i>C</i> om de rijen te kopiëren naar je klembord. <br><br>Om te annuleren, klik op deze boodscap of op ESC.',
+				 copySuccess: {
+						 _: '%d rijen gekopiëerd',
+						 1: '1 rij gekopiëerd'
+				 }
+			 }
+		},
+		dom: '<l<"filterkids">fr>t<iBp>',
+		"order": [[ 0, 'asc' ], [ 1, 'asc' ]],
+		buttons: [
+				'copyHtml5',
+				{
+						extend: 'csv',
+						filename: 'Opwielekes lidmaatschap',
+						title: '',
+						exportOptions: { columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8]}
+				},
+				{
+						extend: 'excel',
+						filename: 'Opwielekes lidmaatschap',
+						title: '',
+						exportOptions: { columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8]}
+				},
+				{
+						extend: 'pdf',
+						filename: 'Opwielekes lidmaatschap',
+						title: '',
+						exportOptions: { columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8]},
+						orientation: 'landscape'
+				}
+		],
+		autoWidth: true,
+			columns: [
+				{ data:
+					{
+						KidName: 'KidName',
+						KidSurname: 'KidSurname'
+					},
+					render: function (data, type) {
+						return data.KidName + " " + data.KidSurname;
+					},
+					sortable: true
+				},
+				{ data:
+					{
+					ParentName: 'ParentName',
+					ParentSurname: 'ParentSurname'
+					},
+					render: function (data, type) {
+						return data.ParentName + " " + data.ParentSurname;
+					},
+					sortable: true
+				},
+				{data: 'ParentEmail', name: 'ParentEmail'},
+				{data: 'KidActive', name: 'KidActive'},
+				{data: 'ParentActiveKids', name: 'ParentActiveKids', visible: false},
+				{data: 'KidNr', name: 'KidNr'},
+				{data:
+					{
+						KidExpiryDate: 'KidExpiryDate',
+					},
+					render: function (data, type) {
+						if (data.KidExpiryDate == '00-00-0000') {
+							return "";
+						} else {
+							return data.KidExpiryDate;
+						}
+					},
+					sortable: true
+				},
+				{data:
+					{
+						KidActive: 'KidActive',
+						KidExpiryDate: 'KidExpiryDate',
+					},
+					render: function (data, type) {
+						if (data.KidActive == '1') {
+							if (!moment(data.KidExpiryDate, 'DD-MM-YYYY').isValid() || moment(data.KidExpiryDate, 'DD-MM-YYYY').isBefore(today)) {
+								return 1;
+							} else {
+								return 0;
+							}
+						} else {
+							return 0;
+						}
+					},
+					sortable: true
+				},
+				{data:
+					{
+						KidActive: 'KidActive',
+						KidExpiryDate: 'KidExpiryDate',
+						KidNr: 'KidNr',
+						ParentMembershipID: 'ParentMembershipID'
+					},
+					render: function (data, type) {
+						if (data.KidActive == '1') {
+							return getMembershipFee(data.KidExpiryDate, data.KidNr, data.ParentMembershipID);
+						} else {
+							return (0).toFixed(2);
+						}
+					},
+					sortable: true
+				}
+			],
+			"search": {
+				"regex": true,
+				"smart":false
+			},
+			select: true,
+			"initComplete": function( settings, json ) {
+				$("div.filterkids").html('<input type="checkbox" name="kidsfilteractive" id="kidsfilteractive" checked > Actief <input type="checkbox" id="kidsfilterinactive" checked> Inactief');
+				/* FILTER MEMBERS TABLE */
+				$('.filterkids').on('change', function() {
+							kidsexpirytable.draw();
+				});
+		}
+  });
+
 
 
 	$('#parentdatepicker').datetimepicker({
@@ -168,6 +315,9 @@ function loadMembers() {
 	$.ajax({
         url: 'api/members/all',
         success: function (members) {
+					kidsexpirytable.clear();
+					kidsexpirytable.rows.add(members);
+					kidsexpirytable.columns.adjust().draw();
 					loadParents(members);
 					//setActionMembers(members);
 				}

@@ -1,5 +1,6 @@
 // tables
 var bikestable;
+var kidsexpirytable;
 var expirytable;
 var financestable;
 var memberstable;
@@ -48,6 +49,7 @@ var sendername;
 
 var kidsToDelete = [];
 
+var today =  moment();
 
 // email variables
 var newEmailTemplate;
