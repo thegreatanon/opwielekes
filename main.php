@@ -114,11 +114,6 @@
   						<label class="col-sm-2 control-label lb-sm">Actie</label>
   						<div class="col-sm-3">
   							<select style="width : 100%;" class="form-control" id="action_type" name="action_type">
-  								<!--<option></option>
-  								<option value="start">Start</option>
-  								<option value="trade">Ruil</option>
-  								<option value="end">Eind</option>
-  								<option value="donate">Donatie</option>-->
   							</select>
   						</div>
 
@@ -166,29 +161,24 @@
   								<select style="width : 100%;" class="form-control" id="action_bike_out" name="action_bike_out"></select>
   							</div>
   						</div>
-
-
-
   					</div>
 
             <div class="form-group">
+  						 <label class="col-sm-2 control-label lb-sm">Lidmaatschap</label>
+               <div class="action_memberdiv" hidden>
+                  <div class="col-sm-2">
+                    <select style="width : 100%;" class="form-control" id="action_membershipsel" name="action_membershipsel">
+                    </select>
+                  </div>
 
-  						<label class="col-sm-2 control-label lb-sm">Lidmaatschap</label>
-              <div class="action_memberdiv" hidden>
-                <div class="col-sm-2">
-                  <select style="width : 100%;" class="form-control" id="action_membershipsel" name="action_membershipsel">
-                  </select>
+                  <label class="col-sm-1 control-label lb-sm">Vervaldag</label>
+                  <div class="input-group col-sm-2" id="actionexpirydatepicker">
+                      <input type='text' class="form-control input-sm" id="action_expirydate" name="action_expirydate" />
+                      <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                      </span>
+                  </div>
                 </div>
-
-                <label class="col-sm-1 control-label lb-sm">Vervaldag</label>
-                <div class='input-group col-sm-2' id='actionexpirydatepicker'>
-                    <input type='text' class="form-control input-sm" id="action_expirydate" name="action_expirydate" />
-                    <span class="input-group-addon">
-                      <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
-                </div>
-
-              </div>
   					</div>
 
             <div class="form-group">
@@ -1456,6 +1446,7 @@
 
 <!-- own js -->
 <script src="js/globalvars.js"></script>
+<script src="js/globalfunctions.js"></script>
 <script src="js/finances.js"></script>
 <script src="js/settings.js"></script>
 <script src="js/members.js"></script>

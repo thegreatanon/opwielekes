@@ -96,7 +96,7 @@ $preferences = SettingsService::getPreferences()
                               </div>
 
                               <div class="row">
-                                <label class="col-md-8">Kind 1 (indien van toepassing)</label>
+                                <label class="col-md-8">Kind 1</label>
                                 <label class="col-md-4">Geboortedatum</label>
                               </div>
                               <div class="row">
@@ -106,7 +106,7 @@ $preferences = SettingsService::getPreferences()
                                 <div class="form-group col-md-4">
                                     <input class="form-control" type="text" name="kid1lastname" id="kid1lastname" placeholder="Familienaam" />
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-md-3">
                                     <div class='input-group' id='kid1birthdatepicker'>
                                       <input class="form-control" type="text" name="kid1birthdate" id="kid1birthdate"  />
                                       <span class="input-group-addon">
@@ -114,20 +114,23 @@ $preferences = SettingsService::getPreferences()
                                       </span>
                                     </div>
                                 </div>
+                                <div class="form-group col-md-1">
+                                    <button type="button" class="btn btn-default" onclick="showSignUpKid2()"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+                                </div>
                               </div>
 
-                              <div class="row">
-                                <label class="col-md-8">Kind 2 (indien van toepassing)</label>
+                              <div class="row kid2">
+                                <label class="col-md-8">Kind 2</label>
                                 <label class="col-md-4">Geboortedatum</label>
                               </div>
-                              <div class="row">
+                              <div class="row kid2">
                                 <div class="form-group col-md-4">
                                     <input class="form-control" type="text" name="kid2firstname" id="kid2firstname" placeholder="Voornaam" />
                                 </div>
                                 <div class="form-group col-md-4">
                                     <input class="form-control" type="text" name="kid2lastname" id="kid2lastname" placeholder="Familienaam"  />
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-md-3">
                                     <div class='input-group' id='kid2birthdatepicker'>
                                       <input class="form-control" type="text" name="kid2birthdate" id="kid2birthdate" />
                                       <span class="input-group-addon">
@@ -135,20 +138,23 @@ $preferences = SettingsService::getPreferences()
                                       </span>
                                     </div>
                                 </div>
+                                <div class="form-group col-md-1">
+                                    <button type="button" class="btn btn-default" onclick="showSignUpKid3()"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+                                </div>
                               </div>
 
-                              <div class="row">
-                                <label class="col-md-8">Kind 3 (indien van toepassing)</label>
+                              <div class="row kid3">
+                                <label class="col-md-8">Kind 3</label>
                                 <label class="col-md-4">Geboortedatum</label>
                               </div>
-                              <div class="row">
+                              <div class="row kid3">
                                 <div class="form-group col-md-4">
                                     <input class="form-control" type="text" name="kid3firstname" id="kid3firstname" placeholder="Voornaam" />
                                 </div>
                                 <div class="form-group col-md-4">
                                     <input class="form-control" type="text" name="kid3lastname" id="kid3lastname" placeholder="Familienaam"  />
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-md-3">
                                     <div class='input-group' id='kid3birthdatepicker'>
                                       <input class="form-control" type="text" name="kid3birthdate" id="kid3birthdate" />
                                       <span class="input-group-addon">
@@ -156,26 +162,31 @@ $preferences = SettingsService::getPreferences()
                                       </span>
                                     </div>
                                 </div>
+                                <div class="form-group col-md-1">
+                                    <button type="button" class="btn btn-default" onclick="showSignUpKid4()"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+                                </div>
                               </div>
 
-                              <div class="row">
-                                <label class="col-md-8">Kind 4 (indien van toepassing)</label>
+                              <div class="row kid4">
+                                <label class="col-md-8">Kind 4</label>
                                 <label class="col-md-4">Geboortedatum</label>
                               </div>
-                              <div class="row">
+                              <div class="row kid4">
                                 <div class="form-group col-md-4">
                                     <input class="form-control" type="text" name="kid4firstname" id="kid4firstname" placeholder="Voornaam" />
                                 </div>
                                 <div class="form-group col-md-4">
                                     <input class="form-control" type="text" name="kid4lastname" id="kid4lastname" placeholder="Familienaam"  />
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-md-3">
                                     <div class='input-group' id='kid4birthdatepicker'>
                                       <input class="form-control" type="text" name="kid4birthdate" id="kid4birthdate" />
                                       <span class="input-group-addon">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                       </span>
                                     </div>
+                                </div>
+                                <div class="form-group col-md-1">
                                 </div>
                               </div>
 
@@ -301,7 +312,7 @@ $preferences = SettingsService::getPreferences()
     <script src="../libs/datetimepicker/bootstrap-datetimepicker.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
 
-    <script src="../js/globalvars.js"></script>
+    <script src="../js/globalfunctions.js"></script>
     <script src="../js/signup.js"></script>
 
   </body>

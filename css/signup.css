@@ -15,7 +15,7 @@ body {
 
 .form-signup {
   width: 100%;
-  max-width: 600px;
+  max-width: 700px;
   padding: 10px;
   margin: 0 auto;
 }
@@ -57,4 +57,14 @@ body {
 .actbtn {
 	float: right;
 	margin-left: 10px;
+}
+
+.kid2 {
+  display: none;
+}
+.kid3 {
+  display: none;
+}
+.kid4 {
+  display: none;
 }

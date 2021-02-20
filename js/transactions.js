@@ -382,7 +382,7 @@ function checkMembership(actionoption, memberoption) {
 	membership = db_memberships.find(x => x.ID === membershipid.toString());
 	var balance = 0;
 	if (actionoption.data('checkmembership')=='1') {
-		if (!moment(expirydate, 'DD-MM-YYYY').isValid() || moment(expirydate, 'DD-MM-YYYY').isBefore(today)) {
+		if (isExpired(expirydate)) {
 			if (memberoption.data('kidnr') == "0") {
 				currentKidNr = parseInt(memberoption.data('parentactivekids')) + 1;
 			} else {
@@ -395,8 +395,16 @@ function checkMembership(actionoption, memberoption) {
 	return [balance.toFixed(2), expirydate];
 }
 
+function isExpired(expirydate) {
+		if (!moment(expirydate, 'DD-MM-YYYY').isValid() || moment(expirydate, 'DD-MM-YYYY').isBefore(today)) {
+			return true;
+		} else {
+			return false;
+		}
+}
+
 function getMembershipFee(expirydate, kidnr, membershipid) {
-	if (!moment(expirydate, 'DD-MM-YYYY').isValid() || moment(expirydate, 'DD-MM-YYYY').isBefore(today)) {
+	if (isExpired(expirydate)) {
 		membership = db_memberships.find(x => x.ID === membershipid.toString());
 		return parseFloat(membership['MembershipK'+kidnr]).toFixed(2);
 	} else {
