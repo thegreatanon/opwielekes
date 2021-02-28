@@ -9,6 +9,7 @@ abstract class TableEnum extends BasicEnum {
 	const BIKESTATUS = 'bikestatus';
 	const BIKESTATUSLOGS = 'bikestatuslogs';
 	const EMAILS = 'emails';
+	const EMAILLOGS = 'emaillogs';
 	const FINANCES = 'finances';
 	const KIDS = 'kids';
 	const MEMBERSHIPS = 'memberships';
@@ -17,6 +18,7 @@ abstract class TableEnum extends BasicEnum {
 	const POSTALCODES = 'postalcodes';
 	const PREFERENCES = 'preferences';
 	const REGISTRATIONS = 'registrations';
+	const RENEWALS = 'renewals';
 	const TRANSACTIONS = 'transactions';
 
 }

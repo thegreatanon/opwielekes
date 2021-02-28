@@ -403,6 +403,7 @@ function isExpired(expirydate) {
 		}
 }
 
+// NOTE THAT THERE IS A SIMILAR PHP FUNCTION getRenewalFee() THAT SHOULD BE KEPT CONSISTENT
 function getMembershipFee(expirydate, kidnr, membershipid) {
 	if (isExpired(expirydate)) {
 		membership = db_memberships.find(x => x.ID === membershipid.toString());
@@ -664,8 +665,12 @@ function saveTransaction() {
 			'MembershipMethod' : methodmembership.PaymentMethodID,
 			'Caution': parseFloat(amountcaution),
 			'CautionReceived': methodcaution.PaymentMethodImmediate,
-			'CautionMethod' : methodcaution.PaymentMethodID
+			'CautionMethod' : methodcaution.PaymentMethodID,
+			'AutoRenewal' : "0"
 		});
+		if (amountcaution == 0 && amountmembership == 0) {
+			updateFin = "0";
+		}
 		// BIKE DONATION
 		updateDonor = "0";
 		donorData = [];

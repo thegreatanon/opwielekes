@@ -8,17 +8,19 @@ class TableService {
     /**
      * Get the correct table name - with location prefix
      **/
-    public static function getTable($tableName) {
+    public static function getTable($tableName, $accountcode=null) {
+
         if (!TableEnum::isValidValue($tableName)) {
             throw new Exception("table does not exist");
         }
 
-
         if ($tableName == "postalcodes" ) {
           return $tableName;
+        }
+    
+        if (isset($accountcode)) {
+            return $accountcode . '_' . $tableName;
         } else {
-          //return 'dem_' . $tableName;
-          //exit();
           if (isset($_SESSION["account"])) {
               return $_SESSION["account"]["AccountCode"] . '_' . $tableName;
           } elseif (isset($_SESSION["urlaccount"])) {
@@ -27,8 +29,7 @@ class TableService {
               return $tableName;
           }
         }
-
-
     }
+
 
 }

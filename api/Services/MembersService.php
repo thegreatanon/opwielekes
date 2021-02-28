@@ -140,22 +140,23 @@ class MembersService
         }
 	}
 
-	public static function updateKidExpiryDate($data) {
+	public static function updateKidExpiryDate($id, $expirydate) {
 
 		global $DBH;
-        if (isset($data->ID) && isset($data->ExpiryDate) ) {
+    if (isset($id) && isset($expirydate) ) {
 			try {
-                $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::KIDS) . " SET ExpiryDate = :ExpiryDate WHERE ID = :ID");
-				$STH->bindParam(':ID', $data->ID);
-				$STH->bindParam(':ExpiryDate', $data->ExpiryDate);
-                $STH->execute();
-            } catch (Exception $e) {
-               return ["status" => -1, "error" => "Er is iets fout gelopen in update kind vervaldag..."];
-            }
-        } else {
-           return ["status" => -1, "error" => "Onvoldoende parameters in update kind vervaldag..."];
-        }
+        $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::KIDS) . " SET ExpiryDate = :ExpiryDate WHERE ID = :ID");
+				$STH->bindParam(':ID', $id);
+				$STH->bindParam(':ExpiryDate', $expirydate);
+        $STH->execute();
+      } catch (Exception $e) {
+         return ["status" => -1, "error" => "Er is iets fout gelopen in update kind vervaldag..."];
+      }
+    } else {
+       return ["status" => -1, "error" => "Onvoldoende parameters in update kind vervaldag..."];
+    }
 	}
+
 	public static function updateKidFinances($data) {
 
 		global $DBH;
@@ -206,41 +207,36 @@ class MembersService
         }
     }
 
-		/*
 	public static function getKids() {
-			$mysqldateformat = $GLOBALS['mysqldateformat'];
-      global $DBH;
-			$STH = $DBH->prepare("SELECT ID, ParentID, Name, Surname, DATE_FORMAT(BirthDate, '" . $mysqldateformat . "') BirthDate, Caution, DATE_FORMAT(ExpiryDate, '" . $mysqldateformat . "') ExpiryDate, Active, BikeID, KidNr FROM " . TableService::getTable(TableEnum::KIDS) );
-			$STH->execute();
-			return $STH->fetchAll();
-    }
-		*/
-
-		public static function getKids() {
-			$mysqldateformat = $GLOBALS['mysqldateformat'];
-	    global $DBH;
-			$STH = $DBH->prepare("SELECT k.ID, k.ParentID, k.Name, k.Surname, DATE_FORMAT(k.BirthDate, '" . $mysqldateformat . "') BirthDate, k.Caution, DATE_FORMAT(k.ExpiryDate, '" . $mysqldateformat . "') ExpiryDate, k.Active, k.BikeID, k.KidNr, b.Number BikeNr
-				FROM " . TableService::getTable(TableEnum::KIDS) . " k
-				LEFT JOIN " . TableService::getTable(TableEnum::BIKES) . " b
-				ON k.BikeID = b.ID");
-			$STH->execute();
-			return $STH->fetchAll();
-	  }
-
-	/*
-	// DOES NOT WORK, MISSING FIELDS FOR KIDS WITH USED PARENTID
-	public static function getJoinedMembers2() {
-        global $DBH;
-		$STH = $DBH->prepare("SELECT k.ID KidID, k.Name KidName, k.Surname KidSurname, k.BirthDate KidBirthDate, k.CautionPresent KidCautionPresent, k.CautionAmount KidCautionAmount, k.ExpiryDate KidExpiryDate, k.Active KidActive, k.BikeID KidBikeID, k.KidNr KidNr, p.ID ParentID, p.Name ParentName, p.Surname ParentSurname, p.InitDate ParentInitDate, p.CautionAmount ParentCautionAmount, COUNT(k.ParentID) ParentNrKids, SUM(CASE WHEN k.Active THEN 1 ELSE 0 END) ParentActiveKids, (SELECT SUM(CASE WHEN t.Action = 'Donatie' THEN 1 ELSE 0 END) FROM " . TableService::getTable(TableEnum::TRANSACTIONS) . " t WHERE t.ParentID = p.ID GROUP BY t.ParentID) ParentDonations
+		$mysqldateformat = $GLOBALS['mysqldateformat'];
+    global $DBH;
+		$STH = $DBH->prepare("SELECT k.ID, k.ParentID, k.Name, k.Surname, DATE_FORMAT(k.BirthDate, '" . $mysqldateformat . "') BirthDate, k.Caution, DATE_FORMAT(k.ExpiryDate, '" . $mysqldateformat . "') ExpiryDate, k.Active, k.BikeID, k.KidNr, b.Number BikeNr
 			FROM " . TableService::getTable(TableEnum::KIDS) . " k
-			LEFT JOIN " . TableService::getTable(TableEnum::PARENTS) . " p
-			ON k.ParentID = p.ID
-			GROUP BY ParentID");
+			LEFT JOIN " . TableService::getTable(TableEnum::BIKES) . " b
+			ON k.BikeID = b.ID");
 		$STH->execute();
 		return $STH->fetchAll();
+  }
 
-    }
-	*/
+	public static function getKidByID($id) {
+		$mysqldateformat = $GLOBALS['mysqldateformat'];
+		$phpdateformat = $GLOBALS['phpdateformat'];
+		global $DBH;
+		if (isset($id)) {
+			$STH = $DBH->prepare("SELECT k.ID, k.ParentID, k.Name, k.Surname, DATE_FORMAT(k.BirthDate, '" . $mysqldateformat . "') BirthDate, k.Caution,
+			DATE_FORMAT(k.ExpiryDate, '" . $mysqldateformat . "') ExpiryDate, DATE_FORMAT(k.ExpiryDate, '" . $phpdateformat . "') PHPExpiryDate, k.Active,
+			k.BikeID, k.KidNr, p.MembershipID
+				FROM " . TableService::getTable(TableEnum::KIDS) . " k
+				LEFT JOIN " . TableService::getTable(TableEnum::PARENTS) . " p
+				ON k.ParentID = p.ID
+				WHERE k.ID = :KidID");
+			$STH->bindParam(':KidID', $id);
+			$STH->execute();
+			return $STH->fetch();
+		} else {
+			 return ["status" => -1, "error" => "Onvoldoende parameters in get kid by ID..."];
+		}
+	}
 
 	public static function logRegistration($data, $parentID) {
 		global $DBH;
@@ -265,22 +261,25 @@ class MembersService
 		        }
 	}
 
-	public static function getJoinedMembers() {
+	public static function getAllMembers($accountcode=null) {
 		$mysqldateformat = $GLOBALS['mysqldateformat'];
-        global $DBH;
-		$STH = $DBH->prepare("SELECT k.ID KidID, k.Name KidName, k.Surname KidSurname, DATE_FORMAT(k.BirthDate, '" . $mysqldateformat . "') KidBirthDate, DATE_FORMAT(k.ExpiryDate, '" . $mysqldateformat . "') KidExpiryDate, k.Active KidActive, k.BikeID KidBikeID, k.KidNr KidNr, p.ID ParentID, p.Name ParentName, p.Surname ParentSurname,
-		DATE_FORMAT(p.InitDate, '" . $mysqldateformat . "') ParentInitDate, p.CautionAmount ParentCautionAmount, p.MembershipID ParentMembershipID, m.MembershipName ParentMembershipName, p.Email ParentEmail,
-		 (SELECT COUNT(*) FROM " . TableService::getTable(TableEnum::KIDS) . " l WHERE l.ParentID = k.ParentID AND l.Active = 1) ParentActiveKids
-			FROM " . TableService::getTable(TableEnum::KIDS) . " k
-			LEFT JOIN " . TableService::getTable(TableEnum::PARENTS) . " p
+		$phpdateformat = $GLOBALS['phpdateformat'];
+    global $DBH;
+		$STH = $DBH->prepare("SELECT k.ID KidID, k.Name KidName, k.Surname KidSurname, DATE_FORMAT(k.BirthDate, '" . $mysqldateformat . "') KidBirthDate,
+		DATE_FORMAT(k.ExpiryDate, '" . $mysqldateformat . "') KidExpiryDate, DATE_FORMAT(k.ExpiryDate, '" . $phpdateformat . "') KidExpiryDatePHP, k.Active KidActive,
+		k.BikeID KidBikeID, k.KidNr KidNr, p.ID ParentID, p.Name ParentName, p.Surname ParentSurname, DATE_FORMAT(p.InitDate, '" . $mysqldateformat . "') ParentInitDate,
+		p.CautionAmount ParentCautionAmount, p.MembershipID ParentMembershipID, m.MembershipName ParentMembershipName, p.Email ParentEmail,
+		 (SELECT COUNT(*) FROM " . TableService::getTable(TableEnum::KIDS, $accountcode) . " l WHERE l.ParentID = k.ParentID AND l.Active = 1) ParentActiveKids,
+		 (SELECT COUNT(*) FROM " . TableService::getTable(TableEnum::RENEWALS, $accountcode) . " r WHERE r.KidID = k.ID) NrRenewals
+			FROM " . TableService::getTable(TableEnum::KIDS, $accountcode) . " k
+			LEFT JOIN " . TableService::getTable(TableEnum::PARENTS, $accountcode) . " p
 			ON k.ParentID = p.ID
-			LEFT JOIN " . TableService::getTable(TableEnum::MEMBERSHIPS) . " m
-			ON p.MembershipID = m.ID");
+			LEFT JOIN " . TableService::getTable(TableEnum::MEMBERSHIPS, $accountcode) . " m
+			ON p.MembershipID = m.ID
+			ORDER BY DATE(k.ExpiryDate) ASC, k.ID ASC");
 		$STH->execute();
 		return $STH->fetchAll();
-
   }
-
 
 	public static function getParents() {
         global $DBH;

@@ -47,9 +47,6 @@ routie({
 	'members': function () {
         setPageActive('members');
     },
-	'kids': function () {
-					setPageActive('kids');
-			},
 	'transactionhistory': function () {
 	        setPageActive('transactionhistory');
 	    },
@@ -69,6 +66,9 @@ routie({
 	'settings_emails': function () {
         setPageActive('settings_emails');
     },
+	'settings_auto_emails': function () {
+				setPageActive('settings_auto_emails');
+		},
 	'settings_memberships': function () {
 	        setPageActive('settings_memberships');
 	    },

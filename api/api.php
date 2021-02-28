@@ -11,9 +11,11 @@ require_once(__DIR__ . "/Slim/Slim.php");
 require_once(__DIR__ . "/pdoconnect.php");
 
 require_once(__DIR__ . "/Services/BikesService.php");
+require_once(__DIR__ . "/Services/EmailsService.php");
 require_once(__DIR__ . "/Services/FinancesService.php");
 require_once(__DIR__ . "/Services/MembersService.php");
 require_once(__DIR__ . "/Services/SettingsService.php");
+require_once(__DIR__ . "/Services/RenewalsService.php");
 require_once(__DIR__ . "/Services/TransactionsService.php");
 require_once(__DIR__ . "/Services/TableService.php");
 require_once(__DIR__ . "/Services/TableEnum.php");
@@ -194,7 +196,7 @@ $app->group('/members', function() use ($app) {
     });
     */
 	$app->get('/all', function() use ($app) {
-      echo json_encode(MembersService::getJoinedMembers());
+      echo json_encode(MembersService::getAllMembers());
     });
 
   $app->post('/', function() use ($app) {
@@ -288,7 +290,7 @@ $app->group('/members', function() use ($app) {
     			}
 
     			if ($GLOBALS["data"]->updateMembership != 0) {
-    				$upm = MembersService::updateKidExpiryDate($GLOBALS["data"]->membershipData);
+    				$upm = MembersService::updateKidExpiryDate($GLOBALS["data"]->membershipData->ID, $GLOBALS["data"]->membershipData->ExpiryDate);
     				if ($upm["status"] == -1) {
     					throw new Exception($upm["error"]);
     				}
@@ -347,7 +349,7 @@ $app->group('/transactions', function() use ($app) {
 			}
       $transid = $newt["lastid"];
 
-      $uex = MembersService::updateKidExpiryDate($GLOBALS["data"]->expiryData);
+      $uex = MembersService::updateKidExpiryDate($GLOBALS["data"]->expiryData->ID, $GLOBALS["data"]->expiryData->ExpiryDate );
       if ($uex["status"] == -1) {
         throw new Exception($uex["error"]);
       }
@@ -420,7 +422,7 @@ $app->group('/finances', function() use ($app) {
 		try {
 			$DBH->beginTransaction();
 			foreach ($GLOBALS["data"]->finTransactions as $item) {
-				$newf = FinancesService::newTransaction($item);
+				$newf = FinancesService::newTransaction($item,0);
 				if ($newf["status"] == -1) {
 					throw new Exception($newf["error"]);
 				}
@@ -435,18 +437,32 @@ $app->group('/finances', function() use ($app) {
     });
 
   $app->post('/update/:id', function($id) use ($app) {
-          generateResponse(FinancesService::updateTransaction($id, $GLOBALS["data"]));
+        generateResponse(FinancesService::processPayment($id, $GLOBALS["data"]));
   });
-
-	$app->post('/receive/:id', function($id) use ($app) {
-        generateResponse(FinancesService::receiveTransaction($id));
-    });
 
 	$app->post('/delete/:id', function($id) use ($app) {
         generateResponse(FinancesService::deleteTransaction($id));
     });
 
+});
 
+$app->group('/email', function() use ($app) {
+  $app->post('/', function() use ($app) {
+     global $DBH;
+     try {
+       $DBH->beginTransaction();
+       $upde = EmailsService::newEmail($GLOBALS["data"]);
+       if ($upde["status"] == -1) {
+         throw new Exception($upde["error"]);
+       }
+       $DBH->commit();
+     } catch (Exception $e) {
+       $DBH->rollBack();
+       $GLOBALS["error"] = $e->getMessage();
+       $app->error();
+     }
+     echo json_encode(null);
+  });
 });
 
 $app->group('/settings', function() use ($app) {
@@ -569,9 +585,7 @@ $app->group('/settings', function() use ($app) {
      });
 
   	$app->get('/memberships', function() use ($app) {
-  		    global $DBH;
-          $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::MEMBERSHIPS));
-          echo json_encode($STH->fetchAll());
+  		    echo json_encode(SettingsService::getMemberships());
     });
 
 	   $app->post('/memberships', function() use ($app) {

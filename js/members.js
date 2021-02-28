@@ -222,11 +222,16 @@ $(document).ready(function () {
 					{
 						KidActive: 'KidActive',
 						KidExpiryDate: 'KidExpiryDate',
+						NrRenewals: 'NrRenewals'
 					},
 					render: function (data, type) {
 						if (data.KidActive == '1') {
 							if (!moment(data.KidExpiryDate, 'DD-MM-YYYY').isValid() || moment(data.KidExpiryDate, 'DD-MM-YYYY').isBefore(today)) {
-								return 1;
+								if (data.NrRenewals > 0) {
+									return '1 - gemaild';
+								} else {
+									return 1;
+								}
 							} else {
 								return 0;
 							}

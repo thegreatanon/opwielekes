@@ -6,6 +6,12 @@ require_once(__DIR__ . "/TableEnum.php");
 class SettingsService
 {
 
+	public static function getMemberships($account = null) {
+		global $DBH;
+		$STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::MEMBERSHIPS,$account));
+		return $STH->fetchAll();
+	}
+
 	public static function updateMemberships($data) {
 
 		global $DBH;
@@ -195,24 +201,30 @@ class SettingsService
 		 public static function updateEmailReminders($data) {
 				 global $DBH;
 				 if ( isset($data->signupsend) && isset($data->signupsubject) && isset($data->signupmessage) &&
-					 		isset($data->reminder1send) && isset($data->reminder1days) && isset($data->reminder1subject) && isset($data->reminder1message) &&
-			 		  	isset($data->reminder2send) && isset($data->reminder2days) && isset($data->reminder2subject) && isset($data->reminder2message) &&
-				    	isset($data->reminder3send) && isset($data->reminder3days) && isset($data->reminder3subject) && isset($data->reminder3message)  ) {
+					 		isset($data->reminder1send) && isset($data->reminder1days) && isset($data->reminder1afterexp) && isset($data->reminder1subject) && isset($data->reminder1message) &&
+			 		  	isset($data->reminder2send) && isset($data->reminder2days) && isset($data->reminder2afterexp) && isset($data->reminder2subject) && isset($data->reminder2message) &&
+				    	isset($data->reminder3send) && isset($data->reminder3days) && isset($data->reminder3afterexp) && isset($data->reminder3subject) && isset($data->reminder3message)  ) {
 						 try {
-								 $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::PREFERENCES) . " SET SignupSend=:signupsend, SignupSubject=:signupsubject, SignupMessage=:signupmessage, Reminder1Send=:reminder1send, Reminder1Days=:reminder1days, Reminder1Subject=:reminder1subject, Reminder1Message=:reminder1message, Reminder2Send=:reminder2send, Reminder2Days=:reminder2days, Reminder2Subject=:reminder2subject, Reminder2Message=:reminder2message, Reminder3Send=:reminder3send, Reminder3Days=:reminder3days, Reminder3Subject=:reminder3subject, Reminder3Message=:reminder3message WHERE ID=1");
+								 $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::PREFERENCES) . " SET SignupSend=:signupsend, SignupSubject=:signupsubject, SignupMessage=:signupmessage,
+								 Reminder1Send=:reminder1send, Reminder1Days=:reminder1days, Reminder1AfterExp=:reminder1afterexp, Reminder1Subject=:reminder1subject, Reminder1Message=:reminder1message,
+								 Reminder2Send=:reminder2send, Reminder2Days=:reminder2days, Reminder2AfterExp=:reminder2afterexp, Reminder2Subject=:reminder2subject, Reminder2Message=:reminder2message,
+								 Reminder3Send=:reminder3send, Reminder3Days=:reminder3days, Reminder3AfterExp=:reminder3afterexp, Reminder3Subject=:reminder3subject, Reminder3Message=:reminder3message WHERE ID=1");
 								 $STH->bindParam(':signupsend', $data->signupsend);
 								 $STH->bindParam(':signupsubject', $data->signupsubject);
 								 $STH->bindParam(':signupmessage', $data->signupmessage);
 								 $STH->bindParam(':reminder1send', $data->reminder1send);
 								 $STH->bindParam(':reminder1days', $data->reminder1days);
+								 $STH->bindParam(':reminder1afterexp', $data->reminder1afterexp);
 								 $STH->bindParam(':reminder1subject', $data->reminder1subject);
 								 $STH->bindParam(':reminder1message', $data->reminder1message);
 								 $STH->bindParam(':reminder2send', $data->reminder2send);
 								 $STH->bindParam(':reminder2days', $data->reminder2days);
+								 $STH->bindParam(':reminder2afterexp', $data->reminder2afterexp);
 								 $STH->bindParam(':reminder2subject', $data->reminder2subject);
 								 $STH->bindParam(':reminder2message', $data->reminder2message);
 								 $STH->bindParam(':reminder3send', $data->reminder3send);
 								 $STH->bindParam(':reminder3days', $data->reminder3days);
+								 $STH->bindParam(':reminder3afterexp', $data->reminder3afterexp);
 								 $STH->bindParam(':reminder3subject', $data->reminder3subject);
 								 $STH->bindParam(':reminder3message', $data->reminder3message);
 								 $STH->execute();
@@ -225,5 +237,16 @@ class SettingsService
 				 }
 		 }
 
+		 public static function getRenewalSettings($account = null) {
+	     global $DBH;
+	     $STH = $DBH->query("SELECT SendReminders,
+				 Reminder0Send, Reminder0Days, Reminder0AfterExp, Reminder0Subject, Reminder0Message,
+	       Reminder1Send, Reminder1Days, Reminder1AfterExp, Reminder1Subject, Reminder1Message,
+	       Reminder2Send, Reminder2Days, Reminder2AfterExp, Reminder2Subject, Reminder2Message,
+	       Reminder3Send, Reminder3Days, Reminder3AfterExp, Reminder3Subject, Reminder3Message,
+				 EmailCC, EmailReplyTo, EmailReplyToName, SenderName, DefaultIBAN
+	     FROM " . TableService::getTable(TableEnum::PREFERENCES,$account));
+	     return $STH->fetch();
+	   }
 
 }

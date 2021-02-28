@@ -105,7 +105,7 @@ class BikesService
 		public static function getBikes() {
 				$mysqldateformat = $GLOBALS['mysqldateformat'];
 				global $DBH;
-				$STH = $DBH->prepare("SELECT b.ID, b.Number, b.Name, b.Frame, b.Wheel, DATE_FORMAT(b.InitDate, '" . $mysqldateformat . "') InitDate, b.Status StatusNr, b.Donated, b.Donor, b.Source, b.Notes, s.Name StatusName, s.OnLoan StatusOnLoan, s.Available StatusAvailable, IFNULL(k.ID,0) KidID, IFNULL(k.ParentID,0) ParentID, IFNULL(CONCAT(k.Name, ' ', k.Surname), '') AS KidName 
+				$STH = $DBH->prepare("SELECT b.ID, b.Number, b.Name, b.Frame, b.Wheel, DATE_FORMAT(b.InitDate, '" . $mysqldateformat . "') InitDate, b.Status StatusNr, b.Donated, b.Donor, b.Source, b.Notes, s.Name StatusName, s.OnLoan StatusOnLoan, s.Available StatusAvailable, IFNULL(k.ID,0) KidID, IFNULL(k.ParentID,0) ParentID, IFNULL(CONCAT(k.Name, ' ', k.Surname), '') AS KidName
 				FROM " . TableService::getTable(TableEnum::BIKES) . " b
 				LEFT JOIN " . TableService::getTable(TableEnum::BIKESTATUS) . " s
 				ON b.Status = s.ID

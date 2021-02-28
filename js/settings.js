@@ -702,14 +702,17 @@ function setSettingsEmailReminders(preferences) {		// Membership reminders
 		settingssignupquill.root.innerHTML = preferences.SignupMessage;
 		$('#settings_membership_reminder1send').prop('checked', (preferences.Reminder1Send=="1") ? true : false);
 		$('#settings_membership_reminder1days').val(preferences.Reminder1Days).trigger('change');
+		$('#settings_membership_reminder1afterexp').val(preferences.Reminder1AfterExp).trigger('change');
 		$('#settings_membership_reminder1subject').val(preferences.Reminder1Subject);
 		settingsreminder1quill.root.innerHTML = preferences.Reminder1Message;
 		$('#settings_membership_reminder2send').prop('checked', (preferences.Reminder2Send=="1") ? true : false);
 		$('#settings_membership_reminder2days').val(preferences.Reminder2Days).trigger('change');
+		$('#settings_membership_reminder2afterexp').val(preferences.Reminder2AfterExp).trigger('change');
 		$('#settings_membership_reminder2subject').val(preferences.Reminder2Subject);
 		settingsreminder2quill.root.innerHTML = preferences.Reminder2Message;
 		$('#settings_membership_reminder3send').prop('checked', (preferences.Reminder3Send=="1") ? true : false);
 		$('#settings_membership_reminder3days').val(preferences.Reminder3Days).trigger('change');
+		$('#settings_membership_reminder3afterexp').val(preferences.Reminder3AfterExp).trigger('change');
 		$('#settings_membership_reminder3subject').val(preferences.Reminder3Subject);
 		settingsreminder3quill.root.innerHTML = preferences.Reminder3Message;
 
@@ -717,6 +720,25 @@ function setSettingsEmailReminders(preferences) {		// Membership reminders
 
 function cancelEmailReminders(){
 	setSettingsEmailReminders(db_preferences)
+}
+
+function testEmailReminders(){
+	$.ajax({
+		type: 'POST',
+		url: 'runcron.php',
+		data: {
+			'mode': 'test'
+			//,
+			//'emailto': 'mdepypere@gmail.com',
+			//'testdate': '2021-03-02'
+		},
+		success: function (result) {
+			toastr.success('Test verzonden');
+		},
+		error: function() {
+			toastr.error('Test niet verzonden','Er liep iets fout');
+		}
+	});
 }
 
 function saveEmailReminders(){
@@ -730,14 +752,17 @@ function saveEmailReminders(){
 			'signupmessage' : settingssignupquill.root.innerHTML,
 			'reminder1send': $('#settings_membership_reminder1send').is(':checked'),
 			'reminder1days': $('#settings_membership_reminder1days').val(),
+			'reminder1afterexp': $('#settings_membership_reminder1afterexp').val(),
 			'reminder1subject' : $('#settings_membership_reminder1subject').val(),
 			'reminder1message' : settingsreminder1quill.root.innerHTML,
 			'reminder2send': $('#settings_membership_reminder2send').is(':checked'),
 			'reminder2days': $('#settings_membership_reminder2days').val(),
+			'reminder2afterexp': $('#settings_membership_reminder2afterexp').val(),
 			'reminder2subject' : $('#settings_membership_reminder2subject').val(),
 			'reminder2message' : settingsreminder2quill.root.innerHTML,
 			'reminder3send': $('#settings_membership_reminder3send').is(':checked'),
 			'reminder3days': $('#settings_membership_reminder3days').val(),
+			'reminder3afterexp': $('#settings_membership_reminder3afterexp').val(),
 			'reminder3subject' : $('#settings_membership_reminder3subject').val(),
 			'reminder3message' : settingsreminder3quill.root.innerHTML
 		}),

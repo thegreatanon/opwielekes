@@ -66,17 +66,18 @@
                       <li class="active"><a href="#transactions">Ontleningen</a></li>
                       <li><a href="#bikes">Fietsen</a></li>
                       <li><a href="#members">Leden</a></li>
-                      <li><a href="#kids">Lidmaatschappen</a></li>
+                      <!--<li><a href="#kids">Lidmaatschappen</a></li>-->
                       <!--<li><a href="#transactionhistory">Transacties</a></li>-->
             					<li><a href="#finances">Financiën</a></li>
             					<!--<li><a href="#stats">Dashboard</a></li>-->
   					<li class="dropdown">
   						<a href="#settings" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Instellingen <span class="caret"></span></a>
   						  <ul class="dropdown-menu">
-                <li><a href="#settings_bikes">Fietsen</a></li>
+                <li><a href="#settings_bikes">Fietsstatus</a></li>
   							<li><a href="#settings_prices">Financiëel</a></li>
   							<li><a href="#settings_emails">Emails</a></li>
-                <li><a href="#settings_memberships">Automatische emails</a></li>
+                <li><a href="#settings_auto_emails">Automatische emails</a></li>
+                <li><a href="#settings_memberships">Lidmaatschappen</a></li>
   						  </ul>
   					</li>
                   </ul>
@@ -665,75 +666,6 @@
   		  </div>
       </section>
 
-      <section id="content_kids" class="content_section">
-       <h4 class="inlineh4">Opvolging lidmaatschap</h4>
-
-       <div class="container-fluid" width="100%">
-         <table id="kidsexpiry_table" class="table table-striped" width="100%">
-           <thead>
-             <tr>
-               <th>Kind</th>
-               <th>Ouder</th>
-               <th>Email</th>
-               <th>Actief</th>
-               <th>Actieve kids</th>
-               <th>Kind Nr</th>
-               <th>Vervaldatum</th>
-               <th>Vernieuwen</th>
-               <th>Te betalen</th>
-             </tr>
-           </thead>
-           <tfoot>
-             <tr>
-               <th>Kind</th>
-               <th>Ouder</th>
-               <th>Email</th>
-               <th>Actief</th>
-               <th>Actieve kids</th>
-               <th>Kind Nr</th>
-               <th>Vervaldatum</th>
-               <th>Vernieuwen</th>
-               <th>Te betalen</th>
-             </tr>
-           </tfoot>
-         </table>
-       </div>
-
-     </section>
-
-
-      <section id="content_transactionhistory" class="content_section">
-       <h4 class="inlineh4">Transacties</h4>
-
-       <div class="container-fluid" width="100%">
-         <table id="transactions_table" class="table table-striped" width="100%">
-           <thead>
-             <tr>
-               <th>Datum</th>
-               <th>Ouder</th>
-               <th>Kind</th>
-               <th>Actie</th>
-               <th>Fiets IN</th>
-               <th>Fiets UIT</th>
-             </tr>
-           </thead>
-           <tfoot>
-             <tr>
-               <th>Datum</th>
-               <th>Ouder</th>
-               <th>Kind</th>
-               <th>Actie</th>
-               <th>Fiets IN</th>
-               <th>Fiets UIT</th>
-             </tr>
-           </tfoot>
-         </table>
-       </div>
-
-     </section>
-
-
-
       <section id="content_finances" class="content_section">
   		<h4 class="inlineh4">Financiële transacties</h4>
 
@@ -822,19 +754,26 @@
                                   </select>
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group finmodal_caution">
                                 <label for="fin_cautioninfo" class="control-label">Waarborg:</label>
                                 <p class="form-control-static" id="fin_cautioninfo"> </p>
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group finmodal_caution">
                                 <label for="fin_cautionstatus" class="control-label">Status waarborg:</label>
                                 <select style="width : 100%;" id="fin_cautionstatus">
                                     <option value="1">Voldaan</option>
                                     <option value="0">In afwachting</option>
                                   </select>
                             </div>
+
+                            <div class="form-group finmodal_renewal">
+                                <label for="fin_renewalinfo" class="control-label">Hernieuwing</label>
+                                <p class="form-control-static" id="fin_renewalinfo">Het lidmaatschap wordt met 1 jaar verlengd bij bevestiging van ontvangst van deze betaling.</p>
+                            </div>
+
                             <input type="hidden" id="fin_id" name="fin_id" value="0">
+                            <input type="hidden" id="fin_autorenewal" name="fin_autorenewal" value="0">
                         </form>
                     </div>
                     <div class="modal-footer">
@@ -1207,7 +1146,7 @@
 
       </section>
 
-      <section id="content_settings_memberships" class="content_section">
+      <section id="content_settings_auto_emails" class="content_section">
 
 
         <div class="container-fluid" width="100%">
@@ -1238,8 +1177,17 @@
                 </div>
             </div>
 
-
             <h4 class="inlineh4">Herinneringen bij vervallen van lidmaatschap</h4>
+
+            <div class="form-group">
+  							<label for="emailmsg" class="col-md-2 control-label"></label>
+  							<div class="col-sm-10">
+  								<p>Volgende codes in het onderwerp en de tekst worden ingevuld door de echte waarden:<br>
+  								{{voornaam_ouder}}, {{achternaam_ouder}}, {{voornaam_kind}}, {{achternaam_kind}}, {{IBAN_depot}},
+                  {{bedrag_lidmaatschap}}
+  								</p>
+  							</div>
+  					</div>
 
             <div class="form-group form-inline">
               <label class="col-sm-2 control-label lb-sm">Herinnering 1</label>
@@ -1255,12 +1203,17 @@
                     <option value="6">6</option>
                     <option value="7">7</option>
                     <option value="10">10</option>
+                    <option value="14">14</option>
                     <option value="15">15</option>
                     <option value="30">30</option>
                     <option value="45">45</option>
                     <option value="60">60</option>
                 </select>
-                  dagen voor de vervaldag. Het bedrag wordt toegvoegd aan de financiëntabel.</label>
+                  dagen
+                  <select class="form-control" name="settings_membership_reminder1afterexp" id="settings_membership_reminder1afterexp">
+                      <option value="0">voor</option>
+                      <option value="1">na</option>
+                  </select> de vervaldag. Het bedrag wordt toegvoegd aan de financiëntabel.</label>
 
               </div>
             </div>
@@ -1296,12 +1249,18 @@
                     <option value="6">6</option>
                     <option value="7">7</option>
                     <option value="10">10</option>
+                    <option value="14">14</option>
                     <option value="15">15</option>
                     <option value="30">30</option>
                     <option value="45">45</option>
                     <option value="60">60</option>
                 </select>
-                 dag(en) voor de vervaldag, indien de betaling nog niet ontvangen is.</label>
+                 dag(en)
+                 <select class="form-control" name="settings_membership_reminder2afterexp" id="settings_membership_reminder2afterexp">
+                     <option value="0">voor</option>
+                     <option value="1">na</option>
+                 </select>
+                  de vervaldag, indien de betaling nog niet ontvangen is.</label>
               </div>
             </div>
 
@@ -1336,12 +1295,18 @@
                     <option value="6">6</option>
                     <option value="7">7</option>
                     <option value="10">10</option>
+                    <option value="14">14</option>
                     <option value="15">15</option>
                     <option value="30">30</option>
                     <option value="45">45</option>
                     <option value="60">60</option>
                 </select>
-                 dag(en) voor de vervaldag, indien de betaling nog niet ontvangen is.</label>
+                 dag(en)
+                 <select class="form-control" name="settings_membership_reminder3afterexp" id="settings_membership_reminder3afterexp">
+                     <option value="0">voor</option>
+                     <option value="1">na</option>
+                 </select>
+                  de vervaldag, indien de betaling nog niet ontvangen is.</label>
               </div>
             </div>
 
@@ -1365,6 +1330,7 @@
             <div class="input-group col-sm-9 actbtns">
               <button type="button" onclick="cancelEmailReminders()" class="btn btn-default actbtn">Annuleren</button>
               <button type="button" onclick="saveEmailReminders()" class="btn btn-primary actbtn">Opslaan</button>
+              <button type="button" onclick="testEmailReminders()" class="btn btn-default actbtn" style="margin-right:300px;">Test</button>
             </div>
 
           </form>
@@ -1373,6 +1339,73 @@
 
         </section>
 
+
+        <section id="content_settings_memberships" class="content_section">
+         <h4 class="inlineh4">Opvolging lidmaatschap</h4>
+
+         <div class="container-fluid" width="100%">
+           <table id="kidsexpiry_table" class="table table-striped" width="100%">
+             <thead>
+               <tr>
+                 <th>Kind</th>
+                 <th>Ouder</th>
+                 <th>Email</th>
+                 <th>Actief</th>
+                 <th>Actieve kids</th>
+                 <th>Kind Nr</th>
+                 <th>Vervaldatum</th>
+                 <th>Vernieuwen</th>
+                 <th>Te betalen</th>
+               </tr>
+             </thead>
+             <tfoot>
+               <tr>
+                 <th>Kind</th>
+                 <th>Ouder</th>
+                 <th>Email</th>
+                 <th>Actief</th>
+                 <th>Actieve kids</th>
+                 <th>Kind Nr</th>
+                 <th>Vervaldatum</th>
+                 <th>Vernieuwen</th>
+                 <th>Te betalen</th>
+               </tr>
+             </tfoot>
+           </table>
+         </div>
+
+        </section>
+
+
+        <section id="content_transactionhistory" class="content_section">
+         <h4 class="inlineh4">Transacties</h4>
+
+         <div class="container-fluid" width="100%">
+           <table id="transactions_table" class="table table-striped" width="100%">
+             <thead>
+               <tr>
+                 <th>Datum</th>
+                 <th>Ouder</th>
+                 <th>Kind</th>
+                 <th>Actie</th>
+                 <th>Fiets IN</th>
+                 <th>Fiets UIT</th>
+               </tr>
+             </thead>
+             <tfoot>
+               <tr>
+                 <th>Datum</th>
+                 <th>Ouder</th>
+                 <th>Kind</th>
+                 <th>Actie</th>
+                 <th>Fiets IN</th>
+                 <th>Fiets UIT</th>
+               </tr>
+             </tfoot>
+           </table>
+         </div>
+
+        </section>
   </div>
 
   <!-- div to make footer work -->

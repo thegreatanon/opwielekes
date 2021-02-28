@@ -175,7 +175,6 @@ function registerMember() {
 			contentType: "application/json",
 			success: function () {
 				toastr.success('Registratie opgeslagen');
-
 			},
 			error: function (data) {
 				console.error(data);
@@ -195,6 +194,7 @@ function mailRegistration(parentemail) {
 		$.ajax({
 			type: 'POST',
 			url: '../sendEmail.php',
+		//	url: '../api/email',
 			data: {
 				'sendto': [parentemail],
 				'sendcc': $('#emailcc').val(),
@@ -202,7 +202,14 @@ function mailRegistration(parentemail) {
 				'replytoname' : $('#emailreplytoname').val(),
 				'sendername': $('#emailsender').val(),
 				'subject': $('#emailsubject').val(),
-				'message': $('#emailmessage').val()
+				'message': $('#emailmessage').val(),
+				'KidID': '0',
+				'Recipient': parentemail,
+				'DateTime': moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+				'Auto': '1',
+				'RenewalFee': '0',
+				'TransactionID': '0',
+				'Template': 'signup'
 			},
 			success: function (result) {
 				toastr.success('Email verzonden');
