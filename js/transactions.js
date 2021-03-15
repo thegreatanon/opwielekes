@@ -668,9 +668,9 @@ function saveTransaction() {
 			'CautionMethod' : methodcaution.PaymentMethodID,
 			'AutoRenewal' : "0"
 		});
-		if (amountcaution == 0 && amountmembership == 0) {
-			updateFin = "0";
-		}
+		// if (amountcaution == 0 && amountmembership == 0) {
+		// 	updateFin = "0";
+		// }
 		// BIKE DONATION
 		updateDonor = "0";
 		donorData = [];
