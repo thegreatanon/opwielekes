@@ -74,7 +74,7 @@ var quillToolbarOptions = [
 	[{ size: [ 'small', false, 'large', 'huge' ]}],
 	['bold', 'italic', 'underline'],        // toggled buttons
 	[{ 'list': 'ordered'}, { 'list': 'bullet' }],
-	[ 'link', 'image' ],
+	[ 'link'],
 	[{ 'indent': '-1'}, { 'indent': '+1' }],
 	['clean']                   // remove formatting button
 ];
