@@ -1,0 +1,70 @@
+* {
+margin: 0;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  padding-top: 30px;
+  padding-bottom: 40px;
+  background-color: #eee;
+  margin: 0 auto;
+}
+
+.form-signup {
+  width: 100%;
+  max-width: 700px;
+  padding: 10px;
+  margin: 0 auto;
+}
+
+.form-signup-heading  {
+  text-align: center;
+}
+
+.form-signup .form-control {
+  position: relative;
+  height: auto;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.form-signup .form-control:focus {
+  z-index: 2;
+}
+
+/* select 2 does not automatically show has-error */
+.has-error .select2-selection {
+    border-color: rgb(185, 74, 72) !important;
+}
+/*
+.has-error input[type="checkbox"] {
+    outline: 1px solid ;
+    outline-color: rgb(185, 74, 72) !important;
+}
+*/
+
+.fancybox-slide--iframe .fancybox-content {
+
+    max-width  : 80%;
+    max-height : 100%;
+    margin: 0;
+}
+
+.actbtn {
+	float: right;
+	margin-left: 10px;
+}
+
+.kid2 {
+  display: none;
+}
+.kid3 {
+  display: none;
+}
+.kid4 {
+  display: none;
+}

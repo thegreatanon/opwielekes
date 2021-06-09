@@ -57,12 +57,21 @@ routie({
 	'stats': function () {
         setPageActive('stats');
     },
+	'settings_bikes': function () {
+				setPageActive('settings_bikes');
+		},
 	'settings_prices': function () {
         setPageActive('settings_prices');
     },
 	'settings_emails': function () {
         setPageActive('settings_emails');
     },
+	'settings_auto_emails': function () {
+				setPageActive('settings_auto_emails');
+		},
+	'settings_memberships': function () {
+	        setPageActive('settings_memberships');
+	    },
     'logout': function () {
         setPageActive('logout');
     }
@@ -82,21 +91,4 @@ function setPageActive(page) {
 	}
     $('.content_section.active').removeClass('active');
     $('#content_' + page).addClass('active');
-}
-
-// HELP FUNCTIONS
-
-function isEmptyString(mystring) {
-	return !mystring.trim().length;
-}
-
-function myGetDate() {
-    return moment().format('YYYY-MM-DD');
-}
-
-function extendExpiryDate(expirydate) {
-	if (!moment(expirydate, 'YYYY-MM-DD', true).isValid()) {
-		expirydate = myGetDate();
-	}
-    return moment(expirydate).add(1, 'year').format('YYYY-MM-DD');
 }

@@ -11,9 +11,10 @@
 .hidden {
     visibility: hidden !important;
 }
+
 body {
   padding-top: 40px;
-  padding-bottom: 40px;
+  /*padding-bottom: 40px;*/
   /*background-color: #eee;*/
 }
 .toast {
@@ -45,6 +46,21 @@ body {
 	float: right;
 }
 
+.filterkids{
+	font-weight: bold;
+	margin-left: 10px;
+	margin-right: 10px;
+	float: right;
+}
+
+.filterfinances{
+	display: inline;
+	font-weight: bold;
+	margin-left: 10px;
+	margin-right: 10px;
+	float: right;
+}
+
 .actbtn {
 	float: right;
 	margin-left: 10px;
@@ -56,22 +72,26 @@ body {
 	margin-right: 20px;
 }
 
+.centerbtns {
+
+}
+
+.bikebtns {
+	float: right;
+	padding-right: 20px;
+}
+
+
 .plabel {
      font-weight: normal !important;
 }
 
 #action_kids_table td {
-   text-align: center; 
+   text-align: center;
 }
 
 #action_kids_table th {
-   text-align: center; 
-}
-
-.financerangediv{
-	margin-left: 10px;
-	margin-right: 10px;
-	float: right;
+   text-align: center;
 }
 
 
@@ -80,6 +100,7 @@ body {
   padding-left: 15px;
   text-indent: -15px;
 }
+
 #action_sendemail {
   width: 13px;
   height: 13px;
@@ -92,3 +113,64 @@ body {
   display: inline;
 }
 
+input[type=number]{
+    width: 70px;
+}
+
+.outlined {
+  border: 2px solid;
+	border-color: #eee;
+}
+
+
+
+* {
+margin: 0;
+}
+html, body {
+height: 100%;
+}
+.wrapper {
+min-height: 100%;
+height: auto !important;
+height: 100%;
+margin: 0 auto -4em;
+}
+.footer, .push {
+height: 4em;
+text-align: center;
+}
+
+.logotext {
+    margin:0;
+    display: inline-block;
+}
+
+/* select 2 does not automatically show has-error */
+.has-error .select2-selection {
+    border-color: rgb(185, 74, 72) !important;
+}
+
+.div_rightline {
+	border-right: 2px solid #ddd;
+}
+
+/* to align with bike_status */
+#bikestatusdatepicker {
+	padding-right: 15px;
+	margin-right: 15px;
+}
+.bikeleft {
+	padding-left: 0;
+	margin-left: 0;
+}
+
+#bikestatusbtn {
+	line-height: 1.1em;
+}
+#bsbdiv {
+	padding-left: 0;
+	padding-right: 0;
+	margin-left: 0;
+	margin-right: 0;
+}
