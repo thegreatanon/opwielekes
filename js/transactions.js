@@ -723,20 +723,20 @@ function saveTransaction() {
 				'subject': document.getElementById("action_emailsubject").value
 			};
 		}
-		console.log('Transaction API data: ' + JSON.stringify({
-					'transactionData': transactionData,
-					'updateKid': updateKid,
-					'kidStatus': kidStatus,
-					'updateBike': updateBike,
-					'bikeStatus': bikeStatus,
-					'updateFin': updateFin,
-					'finTransactions': finTransactions,
-					'updateCaution': updateCaution,
-					'cautionData': cautionData,
-					'updateDonor': updateDonor,
-					'donorData': donorData,
-					'expiryData': expiryData
-				}));
+		// console.log('Transaction API data: ' + JSON.stringify({
+		// 			'transactionData': transactionData,
+		// 			'updateKid': updateKid,
+		// 			'kidStatus': kidStatus,
+		// 			'updateBike': updateBike,
+		// 			'bikeStatus': bikeStatus,
+		// 			'updateFin': updateFin,
+		// 			'finTransactions': finTransactions,
+		// 			'updateCaution': updateCaution,
+		// 			'cautionData': cautionData,
+		// 			'updateDonor': updateDonor,
+		// 			'donorData': donorData,
+		// 			'expiryData': expiryData
+		// 		}));
 		if (!validInput){
 			toastr.error('Vul alle velden in', 'Niet opgeslagen');
 		} else {

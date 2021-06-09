@@ -17,6 +17,7 @@ abstract class TableEnum extends BasicEnum {
 	const PAYMENTMETHODS = 'paymethods';
 	const POSTALCODES = 'postalcodes';
 	const PREFERENCES = 'preferences';
+	const PROPERTIES = 'properties';
 	const REGISTRATIONS = 'registrations';
 	const RENEWALS = 'renewals';
 	const TRANSACTIONS = 'transactions';

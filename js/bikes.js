@@ -27,19 +27,20 @@ $(document).ready(function () {
 								extend: 'csv',
 								filename: 'Opwielekes fietsjes',
 								title: '',
-								exportOptions: { columns: [ 0, 1, 2, 3, 4, 6, 7]}
+								exportOptions: { columns: [ 0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13]}
 						},
 						{
 								extend: 'excel',
 								filename: 'Opwielekes fietsjes',
 								title: '',
-								exportOptions: { columns: [ 0, 1, 2, 3, 4, 6, 7]}
+								exportOptions: { columns: [ 0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13]}
 						},
 						{
 								extend: 'pdf',
 								filename: 'Opwielekes fietsjes',
 								title: '',
-								exportOptions: { columns: [ 0, 1, 2, 3, 4, 6, 7]}
+								exportOptions: { columns: [ 0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13]},
+								orientation: 'landscape'
 						}
 				],
 				autoWidth: true,
@@ -47,9 +48,15 @@ $(document).ready(function () {
 						{data: 'Number', name: 'Number'},
 						{data: 'Name', name: 'Name'},
 						{data: 'StatusName', name: 'StatusName'},
+						{data: 'Brand', name: 'Brand'},
+						{data: 'Gender', name: 'Gender'},
 			      {data: 'Frame', name: 'Frame'},
 						{data: 'Wheel', name: 'Wheel'},
-						{data: 'InitDate', name: 'InitDate'},
+						{data: 'Gears', name: 'Gears'},
+						{data: 'Colour', name: 'Colour'},
+						{data: 'Location', name: 'Location'},
+						{data: 'InitDate', name: 'Initdate'},
+						{data: 'LoanDate', name: 'Loandate'},
 						{data: 'KidName', name: 'KidName'},
 						{data: 'Notes', name: 'Notes'},
 						{
@@ -66,7 +73,7 @@ $(document).ready(function () {
 			        }
 	        ],
 					columnDefs: [ {
-			        targets: 7,
+			        targets: 13,
 			        render: $.fn.dataTable.render.ellipsis(75)
 			    } ],
 					"search": {
@@ -210,6 +217,7 @@ function loadBikes(bikeid) {
         success: function (bikes) {
 					bikestable.clear();
 					bikestable.rows.add(bikes);
+					setBikesTableColumns(bikestable)
 					bikestable.columns.adjust().draw();
 					setActionBikes(bikes);
 					db_bikes = bikes;
@@ -238,7 +246,13 @@ function setBikeFormByID(bikeID) {
 	$('#bike_name').val(bike.Name);
 	$('#bike_frame').val(bike.Frame);
 	$('#bike_wheel').val(bike.Wheel);
-	$('#bike_date').val(bike.InitDate);
+	$('#bike_brand').val(bike.Brand);
+	bikegender.val(bike.Gender).trigger('change');
+	$('#bike_colour').val(bike.Colour);
+	$('#bike_gears').val(bike.Gears);
+	$('#bike_location').val(bike.Location);
+	$('#bike_initdate').val(bike.InitDate);
+	document.getElementById('bike_loandate').innerHTML = bike.LoanDate;
 	document.getElementById('bike_status_text').innerHTML = bike.StatusName;
 	$('#bike_statusnr').val(bike.StatusNr);
 	bikequill.root.innerHTML = bike.Notes;
@@ -267,7 +281,13 @@ function emptyBikeForm() {
 	$('#bike_name').val('');
 	$('#bike_frame').val('');
 	$('#bike_wheel').val('');
-	$('#bike_date').val(myGetDate());
+	$('#bike_brand').val('');
+	bikegender.val('').trigger('change');
+	$('#bike_colour').val('');
+	$('#bike_gears').val('');
+	$('#bike_location').val('');
+	$('#bike_initdate').val(myGetDate());
+	document.getElementById('bike_loandate').innerHTML = '';
 	$('#bike_statusnr').val(defaultBikeAvailableID);
 	bikestatus.empty();
 	var initstatus = db_bikestatuses.filter(x => x.ID === defaultBikeAvailableID.toString());
@@ -317,8 +337,13 @@ function saveBike() {
 				'Status': defaultBikeAvailableID,
 				'Frame': $('#bike_frame').val(),
 				'Wheel': $('#bike_wheel').val(),
+				'Brand': $('#bike_brand').val(),
+				'Gender': $('#bike_gender').val(),
+				'Colour': $('#bike_colour').val(),
+				'Gears': $('#bike_gears').val(),
+				'Location': $('#bike_location').val(),
 				'Source': 'Donatie lid',
-				'Date': convertDate($('#bike_date').val()),
+				'Date': convertDate($('#bike_initdate').val()),
 				'Notes': bikequill.root.innerHTML,
 				'KidID': 0
 			};
@@ -331,8 +356,13 @@ function saveBike() {
 				'Name': $('#bike_name').val(),
 				'Frame': $('#bike_frame').val(),
 				'Wheel': $('#bike_wheel').val(),
+				'Brand': $('#bike_brand').val(),
+				'Gender': $('#bike_gender').val(),
+				'Colour': $('#bike_colour').val(),
+				'Gears': $('#bike_gears').val(),
+				'Location': $('#bike_location').val(),
 				'Source': 'Donatie lid',
-				'Date': convertDate($('#bike_date').val()),
+				'Date': convertDate($('#bike_initdate').val()),
 				'Notes': bikequill.root.innerHTML
 			}
 		}

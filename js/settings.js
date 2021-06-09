@@ -131,6 +131,7 @@ function loadSettings() {
 	loadPrices();
 	loadEmails(0);
 	loadPreferences();
+	loadProperties();
 	// loadSettingsPaymentMethods() called in loadPreferences;
 	//loadDefaultPaymentInfo() called in loadPreferences;
 }
@@ -437,7 +438,7 @@ function loadBikeStatuses() {
 }
 
 function setBikeStatusTable(bikestatuses) {
-	$('#settings_bikes_table_tbody').empty();
+	$('#settings_bikes_status_table_tbody').empty();
 	var myhtml = '';
 	$.each(bikestatuses, function (index, item) {
 		if (item.OnLoan == 1) {
@@ -461,7 +462,7 @@ function setBikeStatusTable(bikestatuses) {
 		}
 		//myhtml += '<td><button type="button" class="btn btn-default addStatusRowBtn"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></td>';
 		myhtml += '</tr>';
-		$('#settings_bikes_table_tbody').append(myhtml);
+		$('#settings_bikes_status_table_tbody').append(myhtml);
 	});
 }
 
@@ -470,14 +471,14 @@ function getBikestatusHtmlRow(){
 }
 
 
-function cancelBikeSettings(){
+function cancelBikeStatusSettings(){
 	setBikeStatusTable(db_bikestatuses)
 }
 
-function saveBikeSettings(){
+function saveBikeStatusSettings(){
 	var updateStatusData = [];
 	var row;
-	$('#settings_bikes_table_tbody').find('tr').each(function () {
+	$('#settings_bikes_status_table_tbody').find('tr').each(function () {
 		row = $(this);
 		updateStatusData.push({
 			'ID': parseFloat(row.data('statusid')),
@@ -774,4 +775,173 @@ function saveEmailReminders(){
 			toastr.error('Automatische emails niet opgeslagen','Er liep iets fout');
 		}
 	});
+}
+
+function loadProperties() {
+    $.ajax({
+        url: 'api/settings/properties',
+        success: function (properties) {
+					db_properties = properties;
+					setBikePropertiesTable();
+					setBikeFieldVisibility();
+				}
+    });
+}
+
+
+function setBikeFieldVisibility() {
+	var bikeid = $('#bike_id').val();
+	var bikefields = ['frame','wheel','brand','gender','colour','gears','location','initdate','loandate'];
+	var descriptions = ['Frame', 'Wiel', 'Merk', 'Gender', 'Kleur', 'Versnellingen','Locatie','Ingebracht','Ontleend'];
+	var fieldtypes = ['text', 'text', 'text', 'dropdowng', 'text', 'text', 'text', 'date', 'p'];
+	//var fieldnames = bikefields.map(field => '#bike_' + field + '_div');
+	var bikeproperties = bikefields.map(field => 'bike_show_' + field);
+	$('#bike_fields_div').empty();
+	var myhtml = '';
+	var openrow = false;
+	var closerow = false;
+	var fieldsshown = 0;
+	var initdropdowng = false;
+	$.each(bikefields, function (index, item) {
+		prop = getProperty(bikeproperties[index]);
+		if (prop.value == true) {
+			fieldsshown = fieldsshown + 1;
+			if (fieldsshown % 2 == 0) {
+				closerow = true;
+			} else {
+				openrow = true;
+			}
+		}
+		if (openrow == true) {
+			myhtml += '<div class="form-group">'
+			openrow = false;
+		}
+		//myhtml +=	'<div';
+		if (prop.value == false) {
+			divvisibility = ' hidden';
+		} else {
+			divvisibility = '';
+		}
+		//myhtml += '>';
+		myhtml += '<label class="col-sm-2 control-label lb-sm"' +	divvisibility + '>' + descriptions[index] + '</label>';
+		myhtml +=	'<div class="col-sm-4"' + divvisibility + '>';
+		if (fieldtypes[index] == 'text') {
+			myhtml +=	'<input type="text" class="form-control input-sm" id="bike_' + item + '" name="bike_' + item + '">';
+		} else if (fieldtypes[index] == 'date'){
+				myhtml +=	'<div class="input-group" id="bikedatepicker">';
+				myhtml +=	'<input type="text" class="form-control input-sm" id="bike_' + item + '" name="bike_' + item + '">';
+				myhtml +=	'<span class="input-group-addon">';
+				myhtml +=	'<span class="glyphicon glyphicon-calendar"></span>';
+				myhtml +=	'</span>';
+				myhtml +=	'</div>';
+		} else if (fieldtypes[index] == 'p') {
+			 	myhtml += '<p class="col-sm-2 form-control-static" id="bike_' + item + '" name="bike_' + item + '"> </p>';
+		}
+		else if (fieldtypes[index] == 'dropdowng') {
+			myhtml += '<select style="width : 100%;" id="bike_' + item + '">';
+			myhtml += '<option value=""></option>';
+			myhtml += '<option value="Unisex">Unisex</option>';
+			myhtml += '<option value="Jongen">Jongen</option>';
+			myhtml += '<option value="Meisje">Meisje</option>';
+			myhtml += '</select>';
+			initdropdowng = true;
+		}
+		myhtml +=	'</div>';
+		//myhtml +=	'</div>';
+		if (closerow == true) {
+			myhtml += '</div>';
+			closerow = false;
+		}
+	});
+	$('#bike_fields_div').append(myhtml);
+	bikegender = $('#bike_gender').select2({
+		tags: false,
+	});
+
+	if (typeof bikeid !== 'undefined') {
+		if (bikeid != 0) {
+			setBikeFormByID(bikeid);
+		}
+	}
+}
+
+function setBikesTableColumns(bikestable) {
+	var bikeproperties = ['bike_show_frame','bike_show_wheel','bike_show_brand','bike_show_gender','bike_show_colour','bike_show_gears','bike_show_location','bike_show_initdate','bike_show_loandate'];
+	var colnames = bikeproperties.map(sliceCaseBikeProperty);
+	$.each(colnames, function (index, item) {
+		prop = getProperty(bikeproperties[index]);
+		bikestable.column(item + ':name').visible(prop.value);
+	});
+}
+
+function sliceCaseBikeProperty(item) {
+  return item.slice(10).replace(/^\w/, (c) => c.toUpperCase());
+}
+
+function setBikePropertiesTable() {
+	var descriptions = ['Frame', 'Wiel', 'Merk', 'Gender', 'Kleur', 'Versnellingen','Locatie','Datum ingebracht ','Datum laatste ontlening'];
+	var bikeproperties = ['bike_show_frame','bike_show_wheel','bike_show_brand','bike_show_gender','bike_show_colour','bike_show_gears','bike_show_location','bike_show_initdate','bike_show_loandate'];
+	$('#settings_bikes_properties_table_tbody').empty();
+	var myhtml = '';
+	$.each(descriptions, function (index, item) {
+		prop = getProperty(bikeproperties[index]);
+		myhtml = '<tr data-propid="' + prop.ID + '" style="height:100%">';
+		myhtml += '<td>' + item + '</td>';
+		myhtml += '<td><input type="checkbox" class="property_visible"';
+		if (prop.value == true) {
+			myhtml += ' checked></td>';
+		} else {
+			myhtml += '></td>';
+		}
+		myhtml += '</tr>';
+		$('#settings_bikes_properties_table_tbody').append(myhtml);
+	});
+}
+
+function cancelBikeProperties(){
+	setBikePropertiesTable();
+}
+
+function saveBikeProperties(){
+	var updatePropertiesData = [];
+	var row;
+	$('#settings_bikes_properties_table_tbody').find('tr').each(function () {
+		row = $(this);
+		updatePropertiesData.push({
+			'ID': parseFloat(row.data('propid')),
+			'Value': row.find('.property_visible').is(":checked").toString()
+		});
+	});
+	$.ajax({
+		type: 'POST',
+		url: 'api/settings/properties',
+		dataType: 'json',
+		data: JSON.stringify({
+			'updateData': updatePropertiesData
+		}),
+		success: function (result) {
+			toastr.success('Eigenschappen opgeslagen');
+			loadProperties();
+			loadBikes();
+		},
+		error: function() {
+			toastr.error('Eigenschappen niet opgeslagen','Er liep iets fout');
+		}
+	});
+
+}
+
+function getProperty(key) {
+	var prop = db_properties.find(x => x.Setting === key.toString());
+	if (prop.Type == 'boolean')  {
+		propval = (prop.Value === 'true')
+	} else if (prop.Type == 'int') {
+		propval = parseInt(prop.Value);
+	} else {
+		propval = prop.Value;
+	}
+    return {
+        value: propval,
+        ID: prop.ID
+    };
 }

@@ -237,6 +237,29 @@ class SettingsService
 				 }
 		 }
 
+
+		 public static function getProperties() {
+ 		 		global $DBH;
+ 		    $STH = $DBH->query("SELECT * FROM " . TableService::getTable(TableEnum::PROPERTIES));
+ 		 		return $STH->fetchAll();
+  		}
+
+			public static function updateProperty($data) {
+				global $DBH;
+				if (isset($data->ID) && isset($data->Value) ) {
+						try {
+								$STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::PROPERTIES) . " SET Value = :Value WHERE ID = :ID");
+								$STH->bindParam(':ID', $data->ID);
+								$STH->bindParam(':Value', $data->Value);
+								$STH->execute();
+						} catch (Exception $e) {
+							 return ["status" => -1, "error" => "Er is iets fout gelopen in update property..."];
+						}
+				} else {
+					 return ["status" => -1, "error" => "Onvoldoende parameters in update property..."];
+				}
+		 }
+
 		 public static function getRenewalSettings($account = null) {
 	     global $DBH;
 	     $STH = $DBH->query("SELECT SendReminders,

@@ -284,7 +284,11 @@ class MembersService
 	public static function getParents() {
         global $DBH;
 				$mysqldateformat = $GLOBALS['mysqldateformat'];
-		$STH = $DBH->prepare("SELECT p.ID, p.Name, p.Surname, p.Street, p.StreetNumber, p.Postal, p.Town, p.Email, p.Phone, p.IBAN, DATE_FORMAT(p.InitDate, '" . $mysqldateformat . "') InitDate, p.CautionAmount, p.Notes, COUNT(k.ParentID) NrKids, SUM(CASE WHEN k.Active THEN 1 ELSE 0 END) ActiveKids, (SELECT COUNT(*) FROM " . TableService::getTable(TableEnum::BIKES) . " WHERE Donor IN (k.ID)) Donations, p.MembershipID, m.MembershipName
+		$STH = $DBH->prepare("SELECT p.ID, p.Name, p.Surname, p.Street, p.StreetNumber, p.Postal, p.Town, p.Email,
+			p.Phone, p.IBAN, DATE_FORMAT(p.InitDate, '" . $mysqldateformat . "') InitDate, p.CautionAmount, p.Notes,
+			COUNT(k.ParentID) NrKids, SUM(CASE WHEN k.Active THEN 1 ELSE 0 END) ActiveKids,
+			(SELECT COUNT(*) FROM " . TableService::getTable(TableEnum::BIKES) . " WHERE Donor IN (k.ID)) Donations,
+			p.MembershipID, m.MembershipName
 			FROM " . TableService::getTable(TableEnum::PARENTS) . " p
 			LEFT JOIN " . TableService::getTable(TableEnum::KIDS) . " k
 			ON p.ID = k.ParentID

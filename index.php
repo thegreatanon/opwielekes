@@ -5,7 +5,21 @@
     // server should keep session data for AT LEAST 1 hour
     ini_set('session.gc_maxlifetime', 3600);
     // each client should remember their session id for EXACTLY 1 hour
-    session_set_cookie_params(3600);
+    // see https://stackoverflow.com/questions/39750906/php-setcookie-samesite-strict
+    //for php < 7.3
+    session_set_cookie_params (3600);
+    //session_set_cookie_params(3600 ,'/; samesite=lax', null , false , false);
+    //setcookie('cookie-name', '1', 0, '/; samesite=strict');
+    //header("Set-Cookie: admin.opwielekes.be; path=/; SameSite=Lax");
+    //for php > 7.3
+    // session_set_cookie_params([
+    //   'lifetime' => 3600,
+    //   //'path' => '/',
+    //   //'domain' => $cookie_domain,
+    //   'secure' => false,
+    //   //'httponly' => $cookie_httponly,
+    //   'samesite' => 'None'
+    // ]);
     session_start();
     $now = time();
     if (isset($_SESSION['discard_after']) && $now > $_SESSION['discard_after']) {

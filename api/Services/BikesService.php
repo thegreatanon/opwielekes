@@ -9,14 +9,21 @@ class BikesService
 	public static function updateBike($data) {
 
 		global $DBH;
-        if (isset($data->ID) && isset($data->Number) && isset($data->Name) && isset($data->Frame) && isset($data->Wheel) && isset($data->Source) && isset($data->Date) && isset($data->Notes) ) {
+        if (isset($data->ID) && isset($data->Number) && isset($data->Name) && isset($data->Frame) && isset($data->Wheel)
+				  && isset($data->Brand) && isset($data->Gender) && isset($data->Colour) && isset($data->Gears) && isset($data->Location)
+				  && isset($data->Source) && isset($data->Date) && isset($data->Notes) ) {
 					try {
-		          $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::BIKES) . " SET Number = :Number, Name = :Name, Frame = :Frame, Wheel = :Wheel, InitDate = :InitDate, Source = :Source, Notes = :Notes  WHERE ID = :ID");
+		          $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::BIKES) . " SET Number = :Number, Name = :Name, Frame = :Frame, Wheel = :Wheel, Brand = :Brand, Gender = :Gender, Colour = :Colour, Gears = :Gears, Location = :Location, InitDate = :InitDate, Source = :Source, Notes = :Notes  WHERE ID = :ID");
 							$STH->bindParam(':ID', $data->ID);
 							$STH->bindParam(':Number', $data->Number);
 							$STH->bindParam(':Name', $data->Name);
 							$STH->bindParam(':Frame', $data->Frame);
 							$STH->bindParam(':Wheel', $data->Wheel);
+							$STH->bindParam(':Brand', $data->Brand);
+							$STH->bindParam(':Gender', $data->Gender);
+							$STH->bindParam(':Colour', $data->Colour);
+							$STH->bindParam(':Gears', $data->Gears);
+							$STH->bindParam(':Location', $data->Location);
 							$STH->bindParam(':InitDate', $data->Date);
 							$STH->bindParam(':Source', $data->Source);
 							$STH->bindParam(':Notes', $data->Notes);
@@ -67,13 +74,20 @@ class BikesService
 
 	public static function newBike($data) {
 		global $DBH;
-        if (isset($data->Number) && isset($data->Name) && isset($data->Status) && isset($data->Frame) && isset($data->Wheel) && isset($data->Source) && isset($data->Date) && isset($data->Notes) ) {
+        if (isset($data->Number) && isset($data->Name) && isset($data->Status) && isset($data->Frame) && isset($data->Wheel)
+				 		&& isset($data->Brand) && isset($data->Gender) && isset($data->Colour) && isset($data->Gears) && isset($data->Location)
+						&& isset($data->Source) && isset($data->Date) && isset($data->Notes) ) {
             try {
-                $STH = $DBH->prepare("INSERT INTO " . TableService::getTable(TableEnum::BIKES) . " (Number, Name, Frame, Wheel, InitDate, Status, Source, Notes) VALUES (:Number, :Name, :Frame, :Wheel, :InitDate, :Status, :Source, :Notes)");
+                $STH = $DBH->prepare("INSERT INTO " . TableService::getTable(TableEnum::BIKES) . " (Number, Name, Frame, Wheel, Brand, Gender, Colour, Gears, Location, InitDate, Status, Source, Notes) VALUES (:Number, :Name, :Frame, :Wheel, :Brand, :Gender, :Colour, :Gears, :Location, :InitDate, :Status, :Source, :Notes)");
 								$STH->bindParam(':Number', $data->Number);
 								$STH->bindParam(':Name', $data->Name);
 								$STH->bindParam(':Frame', $data->Frame);
 								$STH->bindParam(':Wheel', $data->Wheel);
+								$STH->bindParam(':Brand', $data->Brand);
+								$STH->bindParam(':Gender', $data->Gender);
+								$STH->bindParam(':Colour', $data->Colour);
+								$STH->bindParam(':Gears', $data->Gears);
+								$STH->bindParam(':Location', $data->Location);
 								$STH->bindParam(':InitDate', $data->Date);
 								$STH->bindParam(':Status', $data->Status);
 								$STH->bindParam(':Source', $data->Source);
@@ -105,7 +119,12 @@ class BikesService
 		public static function getBikes() {
 				$mysqldateformat = $GLOBALS['mysqldateformat'];
 				global $DBH;
-				$STH = $DBH->prepare("SELECT b.ID, b.Number, b.Name, b.Frame, b.Wheel, DATE_FORMAT(b.InitDate, '" . $mysqldateformat . "') InitDate, b.Status StatusNr, b.Donated, b.Donor, b.Source, b.Notes, s.Name StatusName, s.OnLoan StatusOnLoan, s.Available StatusAvailable, IFNULL(k.ID,0) KidID, IFNULL(k.ParentID,0) ParentID, IFNULL(CONCAT(k.Name, ' ', k.Surname), '') AS KidName
+				$STH = $DBH->prepare("SELECT b.ID, b.Number, b.Name, b.Frame, b.Wheel, b.Brand, b.Gender, b.Colour,
+					b.Gears, b.Location, DATE_FORMAT(b.InitDate, '" . $mysqldateformat . "') InitDate, b.Status StatusNr,
+					b.Donated, b.Donor, b.Source, b.Notes, s.Name StatusName, s.OnLoan StatusOnLoan, s.Available StatusAvailable,
+					IFNULL(k.ID,0) KidID, IFNULL(k.ParentID,0) ParentID, IFNULL(CONCAT(k.Name, ' ', k.Surname), '') AS KidName,
+					(SELECT COUNT(*) FROM " . TableService::getTable(TableEnum::BIKESTATUSLOGS) . " WHERE BikeID = b.ID AND NewStatusNr = 1) NrLoans,
+					DATE_FORMAT((SELECT Date FROM " . TableService::getTable(TableEnum::BIKESTATUSLOGS) . " WHERE BikeID = b.ID AND NewStatusNr = 1 ORDER BY Date DESC LIMIT 1), '" . $mysqldateformat . "') LoanDate
 				FROM " . TableService::getTable(TableEnum::BIKES) . " b
 				LEFT JOIN " . TableService::getTable(TableEnum::BIKESTATUS) . " s
 				ON b.Status = s.ID

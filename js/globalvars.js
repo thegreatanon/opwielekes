@@ -21,6 +21,7 @@ var db_postalcodes;
 var db_bikestatuses;
 var db_preferences;
 var db_paymentmethods;
+var db_properties;
 
 // selectboxes
 var actiontype;
@@ -30,6 +31,7 @@ var actionbikeall;
 var defaultmembership;
 var parentmembership;
 var actionmembershipsel;
+var bikegender;
 
 // finance variables
 var cautionBalance;

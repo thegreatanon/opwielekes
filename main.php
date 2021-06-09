@@ -30,11 +30,6 @@
         }
     </style>
 
-
-	<?php
-		// database access
-		// require_once(__DIR__ . "/api/pdoconnect.php");
-	?>
 </head>
 
 <body>
@@ -73,7 +68,7 @@
   					<li class="dropdown">
   						<a href="#settings" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Instellingen <span class="caret"></span></a>
   						  <ul class="dropdown-menu">
-                <li><a href="#settings_bikes">Fietsstatus</a></li>
+                <li><a href="#settings_bikes">Fietsen</a></li>
   							<li><a href="#settings_prices">Financiëel</a></li>
   							<li><a href="#settings_emails">Emails</a></li>
                 <li><a href="#settings_auto_emails">Automatische emails</a></li>
@@ -339,9 +334,15 @@
   						<th>Nummer</th>
   						<th>Naam</th>
   						<th>Status</th>
+              <th>Merk</th>
+              <th>Gender</th>
   						<th>Frame</th>
   						<th>Wiel</th>
+              <th>Versnellingen</th>
+  						<th>Kleur</th>
+              <th>Locatie</th>
   						<th>Ingebracht</th>
+              <th>Ontleend</th>
               <th>Ontlener</th>
               <th>Notities</th>
   						<th></th>
@@ -349,12 +350,18 @@
   				</thead>
   				<tfoot>
   					<tr>
-  						<th>Nummer</th>
+              <th>Nummer</th>
   						<th>Naam</th>
   						<th>Status</th>
+              <th>Merk</th>
+              <th>Gender</th>
   						<th>Frame</th>
   						<th>Wiel</th>
+              <th>Versnellingen</th>
+  						<th>Kleur</th>
+              <th>Locatie</th>
   						<th>Ingebracht</th>
+              <th>Ontleend</th>
               <th>Ontlener</th>
               <th>Notities</th>
   						<th></th>
@@ -379,40 +386,21 @@
       									</div>
       									<label class="col-sm-1 control-label lb-sm">Naam</label>
       									<div class="col-sm-3">
-      										<input type="text" class="form-control input-sm" id="bike_name" name="bike_name" placeholder="naam">
+      										<input type="text" class="form-control input-sm" id="bike_name" name="bike_name" placeholder="name">
       									</div>
                         <label class="col-sm-2 control-label">Status</label>
                         <p class="col-sm-2 form-control-static" id="bike_status_text"> </p>
       								</div>
 
+                      <!-- will be populated dynamically depending on selected fields-->
+                      <div id="bike_fields_div">
+                      </div>
 
-      								<div class="form-group">
-      									<label class="col-sm-2 control-label lb-sm">Frame</label>
-      									<div class="col-sm-4">
-      										<input type="text" class="form-control input-sm" id="bike_frame" name="bike_frame" placeholder="frame">
-      									</div>
-      									<label class="col-sm-2 control-label lb-sm">Wiel</label>
-      									<div class="col-sm-4">
-      										<input type="text" class="form-control input-sm" id="bike_wheel" name="bike_wheel" placeholder="wiel">
-      									</div>
-      								</div>
-
-      								<div class="form-group">
-      									<label class="col-sm-2 control-label lb-sm">Ingebracht</label>
-
-      									<div class='col-sm-4'>
-      										<div class='input-group' id='bikedatepicker'>
-      											<input type='text' class="form-control input-sm" id="bike_date" name="bike_date" >
-      											<span class="input-group-addon">
-      												<span class="glyphicon glyphicon-calendar"></span>
-      											</span>
-      										</div>
-      									</div>
-
+      								<!-- <div class="form-group">
       									<div class="col-sm-6" hidden>
       										<input type="text" class="form-control input-sm" id="bike_donator" name="bike_donator" placeholder="lid" >
       									</div>
-  								    </div>
+  								    </div> -->
 
                       <div class="form-group">
               					<label class="col-sm-2 control-label lb-sm">Notities</label>
@@ -428,7 +416,7 @@
       									<div class="input-group col-sm-6" id="bikebtns">
       										<input type="hidden" id="bike_id" name="bike_id" value="0">
                           <input type="hidden" id="bike_statusnr" name="bike_statusnr">
-                            <button type="button" onclick="deleteBike()" class="btn btn-danger actbtn">Verwijderen</button>
+                          <button type="button" onclick="deleteBike()" class="btn btn-danger actbtn">Verwijderen</button>
       										<button type="button" onclick="cancelBike()" class="btn btn-default actbtn">Annuleren</button>
       										<button type="button" onclick="saveBike()" class="btn btn-primary actbtn">Opslaan</button>
       									</div>
@@ -816,54 +804,83 @@
   		</div>
       </section>
 
-       <section id="content_stats" class="content_section">
-  		<h4 class="inlineh4">Statistieken</h4>
+      <section id="content_stats" class="content_section">
+    		<h4 class="inlineh4">Statistieken</h4>
 
-  		<div class="container-fluid" width="100%">
-  		</div>
+    		<div class="container-fluid" width="100%">
+    		</div>
 
       </section>
 
       <section id="content_settings_bikes" class="content_section">
-        <h4 class="inlineh4">Instellingen: Fietsen status</h4>
-
+        <h4 class="inlineh4">Instellingen: Fietsen</h4>
         <div class="container-fluid" width="100%">
           <form id="settings_bikes_form">
 
-            <div class="col-md-3">
+            <h4 class="inlineh4">Status</h4>
+            <div id="settings_bikes_status" class="container-fluid" width="100%">
+              <div class="col-md-3">
+              </div>
+              <div class="col-md-6">
+                <table id="settings_bikes_status_table" class="table" width="50%">
+                  <thead>
+                    <tr>
+                      <th scope='col'>Omschrijving</th>
+                      <th scope='col'>Beschikbaar voor uitlening</th>
+                      <th scope='col'>In gebruik</th>
+                    </tr>
+                  </thead>
+                  <tbody id="settings_bikes_status_table_tbody">
+                  </tbody>
+                </table>
+              </div>
+              <div class="col-md-3">
+              </div>
+
+              <!--
+              <div class="form-group">
+                  <label class="col-sm-3 control-label lb-sm">Standaard status na terugbrengen fietsje</label>
+                  <div class="col-sm-3">
+                    <select style="width : 100%;" class="form-control" id="default_bikestatus" name="default_bikestatus">
+                    </select>
+                  </div>
+              </div>
+            -->
+
+              <div class="input-group col-sm-9" id="actbtns">
+                <button type="button" onclick="cancelBikeStatusSettings()" class="btn btn-default actbtn">Annuleren</button>
+                <button type="button" onclick="saveBikeStatusSettings()" class="btn btn-primary actbtn">Opslaan</button>
+              </div>
+
             </div>
 
-            <div class="col-md-6">
-              <table id="settings_bikes_table" class="table" width="50%">
-                <thead>
-                  <tr>
-                    <th scope='col'>Omschrijving</th>
-                    <th scope='col'>Beschikbaar voor uitlening</th>
-                    <th scope='col'>In gebruik</th>
-                  </tr>
-                </thead>
-                <tbody id="settings_bikes_table_tbody">
-                </tbody>
-              </table>
+            <hr />
+
+            <h4 class="inlineh4">Eigenschappen</h4>
+            <div id="settings_bikes_properties" class="container-fluid" width="100%">
+              <div class="col-md-3">
+              </div>
+              <div class="col-md-6">
+                <table id="settings_bikes_properties_table" class="table" width="50%">
+                  <thead>
+                    <tr>
+                      <th scope='col'>Eigenschap</th>
+                      <th scope='col'>Zichtbaar</th>
+                    </tr>
+                  </thead>
+                  <tbody id="settings_bikes_properties_table_tbody">
+                  </tbody>
+                </table>
+              </div>
+              <div class="col-md-3">
+              </div>
+
+              <div class="input-group col-sm-9" id="actbtns">
+                <button type="button" onclick="cancelBikeProperties()" class="btn btn-default actbtn">Annuleren</button>
+                <button type="button" onclick="saveBikeProperties()" class="btn btn-primary actbtn">Opslaan</button>
+              </div>
             </div>
 
-            <div class="col-md-3">
-            </div>
-            <!--
-            <div class="form-group">
-                <label class="col-sm-3 control-label lb-sm">Standaard status na terugbrengen fietsje</label>
-                <div class="col-sm-3">
-                  <select style="width : 100%;" class="form-control" id="default_bikestatus" name="default_bikestatus">
-                  </select>
-                </div>
-            </div>
-          -->
-
-
-            <div class="input-group col-sm-9" id="actbtns">
-              <button type="button" onclick="cancelBikeSettings()" class="btn btn-default actbtn">Annuleren</button>
-              <button type="button" onclick="saveBikeSettings()" class="btn btn-primary actbtn">Opslaan</button>
-            </div>
           </form>
         </div>
 

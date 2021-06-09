@@ -28,8 +28,9 @@ require_once(__DIR__ . "/Services/TableEnum.php");
 \Slim\Slim::registerAutoLoader();
 $app = new \Slim\Slim();
 $app->response->headers->set('Content-Type', 'application/json');
-$app->response->headers->set('Access-Control-Allow-Origin', 'http://localhost/opwielekes');
-$app->response->headers->set('Access-Control-Allow-Methods', 'GET');
+//$app->response->headers->set('Access-Control-Allow-Origin', 'http://localhost/opwielekes');
+//$app->response->headers->set('Access-Control-Allow-Origin', 'http://demo.opwielekes.be');
+//$app->response->headers->set('Access-Control-Allow-Methods', 'GET');
 $app->error(function() use ($app) {
     if (isset($GLOBALS["error"])) {
         echo json_encode(["errorMessage" => $GLOBALS["error"]]);
@@ -52,7 +53,7 @@ $app->hook("slim.before.dispatch", function() use ($app) {
          * unless the call is to /items, since this is used for a the public as well
          **/
         $app->response->setStatus(401);
-        $GLOBALS["error"] = "Je bent niet aangemeld.";
+        $GLOBALS["error"] = "Je bent niet aangemeld. De uri is " . $app->request->getResourceUri() . "<br>De account is " . $_SESSION["account"];
         $app->error();
     }
 
@@ -70,6 +71,9 @@ $app->get('/', function() use($app) {
 	$app->error();
 });
 
+$app->get('/test', function() use($app) {
+  var_dump($_SESSION);
+});
 
 
 $app->group('/bikes', function() use ($app) {
@@ -573,6 +577,29 @@ $app->group('/settings', function() use ($app) {
             $updpm = SettingsService::updatePaymentMethods($item);
             if ($updpm["status"] == -1) {
               throw new Exception($updpm["error"]);
+            }
+          }
+        $DBH->commit();
+        } catch (Exception $e) {
+          $DBH->rollBack();
+          $GLOBALS["error"] = $e->getMessage();
+          $app->error();
+        }
+        echo json_encode(null);
+     });
+
+     $app->get('/properties', function() use ($app) {
+           echo json_encode(SettingsService::getProperties());
+     });
+
+     $app->post('/properties', function() use ($app) {
+        global $DBH;
+        try {
+          $DBH->beginTransaction();
+          foreach ($GLOBALS["data"]->updateData as $item) {
+            $updp = SettingsService::updateProperty($item);
+            if ($updp["status"] == -1) {
+              throw new Exception($updp["error"]);
             }
           }
         $DBH->commit();
