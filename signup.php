@@ -195,7 +195,7 @@ $preferences = SettingsService::getPreferences()
                               $date_entered = date('dd-mm-Y');
                               echo '<input type="hidden" value="<' . $date_entered . '" name="dateregistered">';
                               echo '<input type="hidden" id="emailsend" name="emailsend" value ="' . $preferences['SignupSend'] . '">';
-                              echo '<input type="hidden" id="emailmessage" name="emailmessage" value ="' . $preferences['SignupMessage'] . '">';
+                              echo '<input type="hidden" id="emailmessage" name="emailmessage" value ="' . htmlspecialchars($preferences['SignupMessage']) . '">';
                               echo '<input type="hidden" id="emailsubject" name="emailsubject" value="' . $preferences['SignupSubject'] . '">';
                               echo '<input type="hidden" id="emailcc" name="emailcc" value="' . $preferences['EmailCC'] . '">';
                               echo '<input type="hidden" id="emailreplyto" name="remailreplyto" value="' . $preferences['EmailReplyTo'] . '">';
@@ -211,7 +211,9 @@ $preferences = SettingsService::getPreferences()
                               echo '<div class="col-md-12 form-group" id="signrulesdiv">';
                               if ( $_SESSION["urlaccount"]["AccountCode"] == "has" ) {
                                   $termsfile = "https://admin.opwielekes.be/pdf/ReglementHasselt.pdf";
-                              } else {
+                              } elseif ( $_SESSION["urlaccount"]["AccountCode"] == "flo" ) {
+                                  $termsfile = "https://admin.opwielekes.be/pdf/ReglementFlora.pdf";
+                                } else {
                                   $termsfile = "https://admin.opwielekes.be/pdf/ReglementOpwielekes.pdf";
                               }
                               echo '<input type="checkbox" name="signrules" id="signrules">  <label class="control-label" for="signrules"> Ik teken het <a data-fancybox data-type="iframe" href="' . $termsfile . '" title="Je kan het intern reglement lezen door op deze link te klikken">intern reglement</a>.<span class="req"> * </span></label>';
