@@ -57,7 +57,13 @@ $(document).ready(function () {
 	              },
 								sortable: true
 			      },
-						{data: 'ActiveKids', name: 'ActiveKids'},
+						{
+								data: {	ActiveKids: 'ActiveKids'},
+								name: 'ActiveKids',
+								render: function (data, type) {
+									return data.ActiveKids;
+								}
+						},
 						{data: 'CautionAmount', name: 'CautionAmount'},
 						{data: 'Donations', name: 'Donations'},
 						{data: 'Notes', name: 'Notes'},
@@ -93,10 +99,10 @@ $(document).ready(function () {
 
 	/* Custom filtering function for datatablesr items-table with lowstockcheckbox */
 	$.fn.dataTable.ext.search.push(
-		function( settings, data ) {
+		function( settings, searchData, index, rowData, counter ) {
 			/* for orders */
 			if (settings.nTable.id == 'members_table') {
-				var state = data[4];
+				var state = rowData.ActiveKids;
 				if (state >= 1) {
 					if ($('#membersfilteractive').is(':checked')){
 						return true;
@@ -114,22 +120,22 @@ $(document).ready(function () {
 				}
 			}
 			if (settings.nTable.id == 'kidsexpiry_table') {
-				var state = data[3];
+				var datetime = moment(rowData.KidExpiryDate, findateformat);
+				var startdate = moment($('#expiryrange').data('daterangepicker').startDate,findateformat);
+				var enddate = moment($('#expiryrange').data('daterangepicker').endDate,findateformat);
+				var validDate = (moment(datetime).isSameOrAfter(startdate) && moment(datetime).isSameOrBefore(enddate));
+				var validfilters = false;
+				var state = rowData.KidActive;
 				if (state >= 1) {
 					if ($('#kidsfilteractive').is(':checked')){
-					return true;
-					} else
-					return false;
+						validfilters = true;
 					}
-				else if (state == 0) {
-					if ($('#kidsfilterinactive').is(':checked')){
-					return true;
-					} else {
-					return false;
-					}
-				} else {
-					return true;
+				} else if (state == 0) {
+						if ($('#kidsfilterinactive').is(':checked')){
+							validfilters = true;
+						}
 				}
+				return (validDate && validfilters);
 			}
 			return true;
 		}
@@ -202,18 +208,35 @@ $(document).ready(function () {
 					sortable: true
 				},
 				{data: 'ParentEmail', name: 'ParentEmail'},
-				{data: 'KidActive', name: 'KidActive'},
+				{
+					data: {KidActive: 'KidActive'},
+					name: 'KidActive',
+					render: function (data, type) {
+						return data.KidActive;
+					}
+				},
 				{data: 'ParentActiveKids', name: 'ParentActiveKids', visible: false},
 				{data: 'KidNr', name: 'KidNr'},
-				{data:
+				{
+				 data:
 					{
-						KidExpiryDate: 'KidExpiryDate',
+						KidExpiryDate: 'KidExpiryDate'
 					},
 					render: function (data, type) {
-						if (data.KidExpiryDate == '00-00-0000') {
-							return "";
+						// manual sorting of dates, because 00-00-0000 is not defined
+						if ( type === 'sort') {
+							if (data.KidExpiryDate == '00-00-0000') {
+								return 0;
+							} else {
+								return moment( data.KidExpiryDate, findateformat).unix();
+							}
+						// override display of 00-00-0000 to blank
 						} else {
-							return data.KidExpiryDate;
+							if (data.KidExpiryDate == '00-00-0000') {
+								return "";
+							} else {
+								return data.KidExpiryDate;
+							}
 						}
 					},
 					sortable: true
@@ -264,15 +287,38 @@ $(document).ready(function () {
 			},
 			select: true,
 			"initComplete": function( settings, json ) {
-				$("div.filterkids").html('<input type="checkbox" name="kidsfilteractive" id="kidsfilteractive" checked > Actief <input type="checkbox" id="kidsfilterinactive" checked> Inactief');
-				/* FILTER MEMBERS TABLE */
-				$('.filterkids').on('change', function() {
-							kidsexpirytable.draw();
-				});
-		}
+					//$("div.filterkids").html('<input type="checkbox" name="kidsfilteractive" id="kidsfilteractive" checked > Actief <input type="checkbox" id="kidsfilterinactive" checked> Inactief');
+					$("div.filterkids").html('<div id="expiryrange" class="pull-right" style="background: #fff;cursor: pointer;padding: 2px 10px;border: 1px solid #ccc;"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i>&nbsp;<span></span> <b class="caret"></b></div> <div id="expiryfilter" class="pull-left"><input type="checkbox" name="kidsfilteractive" id="kidsfilteractive" checked > Actief <input type="checkbox" id="kidsfilterinactive" checked> Inactief</div>');
+					var initstart = moment("01-01-2015", findateformat);
+					var initend = moment().add(5, 'years').endOf('year');
+					$('#expiryrange').daterangepicker({
+						locale: {format: findateformat},
+						minDate: moment("01-01-2016", findateformat),
+						startDate: initstart,
+						endDate: initend,
+						alwaysShowCalendars: true,
+						ranges: {
+									 'Vandaag': [moment(), moment()],
+									 'Tot vandaag': [moment("01-01-2015", findateformat), moment()],
+									 'Deze maand': [moment().startOf('month'), moment().endOf('month')],
+									 'Dit jaar': [moment().startOf('year'), moment().endOf('year')],
+									 'Dit en volgend jaar': [moment().startOf('year'), moment().add(1, 'years').endOf('year')],
+									 'Altijd': [moment("01-01-2015", findateformat), moment().add(5, 'years').endOf('year')]
+								}
+					}, expiryrangechanged);
+					expiryrangechanged(initstart, initend);
+
+					/* FILTER MEMBERS TABLE */
+					$('.filterkids').on('change', function() {
+								kidsexpirytable.draw();
+					});
+			}
   });
 
-
+	function expiryrangechanged(start, end) {
+		$('#expiryrange').find('span').html(start.format('D MMM, YYYY') + ' - ' + end.format('D MMM, YYYY'));
+		kidsexpirytable.columns.adjust().draw();
+	}
 
 	$('#parentdatepicker').datetimepicker({
 		//locale: 'nl',

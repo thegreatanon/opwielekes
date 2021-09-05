@@ -55,8 +55,29 @@ $(document).ready(function () {
 						{data: 'Gears', name: 'Gears'},
 						{data: 'Colour', name: 'Colour'},
 						{data: 'Location', name: 'Location'},
-						{data: 'InitDate', name: 'Initdate'},
-						{data: 'LoanDate', name: 'Loandate'},
+						{
+							data: {InitDate: 'InitDate'},
+							name: 'Initdate',
+						  render: function (data, type) {
+							 		return data.InitDate;
+							},
+							sortable: true
+						},
+						{
+							data: {LoanDate: 'LoanDate'},
+							name: 'Loandate',
+							render: function (data, type) {
+								if ( type === 'sort') {
+									if (data.LoanDate == '') {
+										return 0;
+									} else {
+										return moment( data.LoanDate, findateformat).unix();
+									}
+								}	else {
+									return data.LoanDate;
+								}
+							}
+						},
 						{data: 'KidName', name: 'KidName'},
 						{data: 'Notes', name: 'Notes'},
 						{
