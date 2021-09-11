@@ -143,8 +143,8 @@ function loadPrices() {
         url: 'api/settings/memberships',
         success: function (memberships) {
 					setPriceTable(memberships);
-					setDefaultMembership(memberships, actionmembershipsel);
-					setDefaultMembership(memberships, parentmembership);
+					setMembershipTypes(memberships, actionmembershipsel);
+					setMembershipTypes(memberships, parentmembership);
 
 					//setDefaultMembership(memberships, defaultmembership);
 					db_memberships = memberships;
@@ -161,13 +161,21 @@ function setPriceTable(memberships) {
 	});
 }
 
-function setDefaultMembership(memberships, selectbox) {
+function addEmptyPriceRow() {
+	myhtml = getEmptyPriceRowHTML();
+	$('#settings_prices_table_tbody').append(myhtml);
+}
+
+function setMembershipTypes(memberships, selectbox) {
 	selectbox.empty();
 	for (var i = 0, len = memberships.length; i < len; i++) {
-		var newOption = new Option(memberships[i].MembershipName, memberships[i].ID, false, false);
-		selectbox.append(newOption);
+		if (memberships[i].Active == 1) {
+			var htmlOption = '<option value="' + memberships[i].ID + '">' + memberships[i].MembershipName  + '</option>';
+		} else {
+			var htmlOption = '<option value="' + memberships[i].ID + '" disabled>' + memberships[i].MembershipName + ' (niet in gebruik)</option>';
+		}
+		selectbox.append(htmlOption);
 	}
-	// TO ADD: select actual preference
 	selectbox.trigger('change');
 }
 
@@ -193,7 +201,8 @@ function saveMembershipPrices() {
 				'CautionK1': row.find('.price_ckid1 input')[0].value,
 				'CautionK2': row.find('.price_ckid2 input')[0].value,
 				'CautionK3': row.find('.price_ckid3 input')[0].value,
-				'CautionK4': row.find('.price_ckid4 input')[0].value
+				'CautionK4': row.find('.price_ckid4 input')[0].value,
+				'Active': row.find('.price_active').is(":checked")
 			});
 		});
 		// check if prices are if (!$.isNumeric(price)){ ??
@@ -229,12 +238,38 @@ function getPriceRowHTML(item) {
 	myhtml += '<td class="price_ckid2"><input type="number" value="' + item.CautionK2 + '" step="0.01" min="0"></td>';
 	myhtml += '<td class="price_ckid3"><input type="number" value="' + item.CautionK3 + '" step="0.01" min="0"></td>';
 	myhtml += '<td class="price_ckid4"><input type="number" value="' + item.CautionK4 + '" step="0.01" min="0"></td>';
+	myhtml += '<td><input type="checkbox" class="price_active"';
+	if  (item.Active == 1) {
+		myhtml += ' checked></td>';
+	} else {
+		myhtml += '></td>';
+	}
 	myhtml += '</tr>';
 	return myhtml;
 }
 
-// EMAILS
+function getEmptyPriceRowHTML() {
+	emptyitem = {
+		"ID" : 0,
+		"MembershipName" : "Nieuw Tarief",
+		"YearsValid" : 1,
+		"MonthsValid" : 0,
+		"DaysValid" : 0,
+		"MembershipK1" : "20.00",
+		"MembershipK2" : "20.00",
+		"MembershipK3" : "20.00",
+		"MembershipK4" : "20.00",
+		"CautionK1" : "10.00",
+		"CautionK2" : "10.00",
+		"CautionK3" : "10.00",
+		"CautionK4" : "10.00",
+		"Active" : 1
+	}
+	myhtml = getPriceRowHTML(emptyitem);
+	return myhtml;
+}
 
+// EMAILS
 function loadEmails(lastid) {
     $.ajax({
         url: 'api/settings/emails',

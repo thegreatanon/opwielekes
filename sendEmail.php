@@ -25,6 +25,7 @@ if($_POST){
 	$mail->Password = $mailpassword;                        // SMTP password
 	$mail->SMTPSecure = $mailsmtpecure;
 
+	//$mail->Sender = 'admin@opwielekes.be'; //$mailfromaddress; // for bounces
 	$mail->setFrom($mailfromaddress, $sendername);
 
 	foreach($sendto as $email){

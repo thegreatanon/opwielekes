@@ -12,12 +12,12 @@ class SettingsService
 		return $STH->fetchAll();
 	}
 
-	public static function updateMemberships($data) {
-
+	public static function updateMembership($data) {
 		global $DBH;
-        if (isset($data->ID) && isset($data->MembershipName) && isset($data->YearsValid) && isset($data->MonthsValid) && isset($data->DaysValid) && isset($data->MembershipK1) && isset($data->MembershipK2) && isset($data->MembershipK3) && isset($data->MembershipK4) && isset($data->CautionK1) && isset($data->CautionK2) && isset($data->CautionK3) && isset($data->CautionK4)) {
+        if (isset($data->ID) && isset($data->MembershipName) && isset($data->YearsValid) && isset($data->MonthsValid) && isset($data->DaysValid) && isset($data->MembershipK1) && isset($data->MembershipK2) && isset($data->MembershipK3) && isset($data->MembershipK4) && isset($data->CautionK1)
+				&& isset($data->CautionK2) && isset($data->CautionK3) && isset($data->CautionK4) && isset($data->Active)) {
 						try {
-				        $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::MEMBERSHIPS) . " SET MembershipName = :MembershipName, YearsValid = :YearsValid, MonthsValid = :MonthsValid, DaysValid = :DaysValid, MembershipK1 = :MembershipK1, MembershipK2 = :MembershipK2, MembershipK3 = :MembershipK3, MembershipK4 = :MembershipK4, CautionK1 = :CautionK1, CautionK2 = :CautionK2, CautionK3 = :CautionK3, CautionK4 = :CautionK4 WHERE ID = :ID");
+				        $STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::MEMBERSHIPS) . " SET MembershipName = :MembershipName, YearsValid = :YearsValid, MonthsValid = :MonthsValid, DaysValid = :DaysValid, MembershipK1 = :MembershipK1, MembershipK2 = :MembershipK2, MembershipK3 = :MembershipK3, MembershipK4 = :MembershipK4, CautionK1 = :CautionK1, CautionK2 = :CautionK2, CautionK3 = :CautionK3, CautionK4 = :CautionK4, Active = :Active WHERE ID = :ID");
 								$STH->bindParam(':ID', $data->ID);
 								$STH->bindParam(':MembershipName', $data->MembershipName);
 								$STH->bindParam(':YearsValid', $data->YearsValid);
@@ -31,16 +31,45 @@ class SettingsService
 								$STH->bindParam(':CautionK2', $data->CautionK2);
 								$STH->bindParam(':CautionK3', $data->CautionK3);
 								$STH->bindParam(':CautionK4', $data->CautionK4);
+								$STH->bindParam(':Active', $data->Active);
                 $STH->execute();
             } catch (Exception $e) {
-               return ["status" => -1, "error" => "Er is iets fout gelopen in update memberships data..."];
+               return ["status" => -1, "error" => "Er is iets fout gelopen in update membership data..."];
             }
         } else {
-           return ["status" => -1, "error" => "Onvoldoende parameters in update memberships data..."];
+           return ["status" => -1, "error" => "Onvoldoende parameters in update membership data..."];
 
         }
-
     }
+
+		public static function newMembership($data) {
+			global $DBH;
+			if (isset($data->MembershipName) && isset($data->YearsValid) && isset($data->MonthsValid) && isset($data->DaysValid) && isset($data->MembershipK1) && isset($data->MembershipK2) && isset($data->MembershipK3) && isset($data->MembershipK4) && isset($data->CautionK1) && isset($data->CautionK2)
+			&& isset($data->CautionK3) && isset($data->CautionK4) && isset($data->Active)) {
+					 try {
+								$STH = $DBH->prepare("INSERT INTO " . TableService::getTable(TableEnum::MEMBERSHIPS) . " (MembershipName, YearsValid, MonthsValid, DaysValid, MembershipK1, MembershipK2, MembershipK3, MembershipK4, CautionK1, CautionK2, CautionK3, CautionK4, Active) VALUES (:MembershipName, :YearsValid, :MonthsValid, :DaysValid, :MembershipK1, :MembershipK2, :MembershipK3, :MembershipK4, :CautionK1, :CautionK2, :CautionK3, :CautionK4, :Active)");
+								$STH->bindParam(':MembershipName', $data->MembershipName);
+								$STH->bindParam(':YearsValid', $data->YearsValid);
+								$STH->bindParam(':MonthsValid', $data->MonthsValid);
+								$STH->bindParam(':DaysValid', $data->DaysValid);
+								$STH->bindParam(':MembershipK1', $data->MembershipK1);
+								$STH->bindParam(':MembershipK2', $data->MembershipK2);
+								$STH->bindParam(':MembershipK3', $data->MembershipK3);
+								$STH->bindParam(':MembershipK4', $data->MembershipK4);
+								$STH->bindParam(':CautionK1', $data->CautionK1);
+								$STH->bindParam(':CautionK2', $data->CautionK2);
+								$STH->bindParam(':CautionK3', $data->CautionK3);
+								$STH->bindParam(':CautionK4', $data->CautionK4);
+								$STH->bindParam(':Active', $data->Active);
+								$STH->execute();
+								return ["status" => 0];
+						 } catch (Exception $e) {
+								return ["status" => -1, "error" => "Er is iets fout gelopen in nieuw tarief..."];
+						 }
+			 } else {
+					return ["status" => -1, "error" => "Onvoldoende parameters in nieuw tarief..."];
+			 }
+		}
 
 		public static function updatePaymentMethods($data) {
 					global $DBH;

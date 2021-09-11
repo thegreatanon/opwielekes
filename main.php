@@ -899,10 +899,11 @@
     				<table id="settings_prices_table" class="table" >
     					<thead>
                 <tr>
-                  <th colspan="1" scope='colgroup'></th>
+                  <th colspan="1" scope='colgroup'><button type="button" class="btn btn-default" onclick="addEmptyPriceRow()"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></th>
                   <th colspan="3" scope='colgroup' class="outlined">Geldig</th>
                   <th colspan="4" scope='colgroup' class="outlined">Prijs lidmaatschap</th>
                   <th colspan="4" scope='colgroup' class="outlined">Prijs waarborg</th>
+                  <th colspan="1" scope='colgroup' class="outlined"></th>
                 </tr>
       					<tr>
       						<th scope='col'>Type</th>
@@ -917,6 +918,7 @@
                   <th scope='col'>Kind 2</th>
                   <th scope='col'>Kind 3</th>
                   <th scope='col'>Kind 4+</th>
+                  <th scope='col'>In gebruik</th>
       					</tr>
     					</thead>
     					<tbody id="settings_prices_table_tbody">

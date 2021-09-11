@@ -615,24 +615,31 @@ $app->group('/settings', function() use ($app) {
   		    echo json_encode(SettingsService::getMemberships());
     });
 
-	   $app->post('/memberships', function() use ($app) {
-        global $DBH;
-    		try {
-    			$DBH->beginTransaction();
-    			foreach ($GLOBALS["data"]->updateData as $item) {
-    				$updp = SettingsService::updateMemberships($item);
-    				if ($updp["status"] == -1) {
-    					throw new Exception($updp["error"]);
-    				}
-    			}
-    		$DBH->commit();
-    		} catch (Exception $e) {
-    			$DBH->rollBack();
-    			$GLOBALS["error"] = $e->getMessage();
-    			$app->error();
-    		}
-    		echo json_encode(null);
-    });
+    $app->post('/memberships', function() use ($app) {
+       global $DBH;
+       try {
+         $DBH->beginTransaction();
+         foreach ($GLOBALS["data"]->updateData as $item) {
+           if ($item->ID == 0) {
+             $nems = SettingsService::newMembership($item);
+             if ($nems["status"] == -1) {
+               throw new Exception($nems["error"]);
+             }
+           } else {
+             $updp = SettingsService::updateMembership($item);
+             if ($updp["status"] == -1) {
+               throw new Exception($updp["error"]);
+             }
+           }
+         }
+         $DBH->commit();
+       } catch (Exception $e) {
+         $DBH->rollBack();
+         $GLOBALS["error"] = $e->getMessage();
+         $app->error();
+       }
+       echo json_encode(null);
+   });
 
     $app->get('/emails', function() use ($app) {
 		    global $DBH;

@@ -45,6 +45,8 @@ class EmailsService
 			$mail->Username = $mailvars["mailusername"];                // SMTP username
 			$mail->Password = $mailvars["mailpassword"];                        // SMTP password
 			$mail->SMTPSecure = $mailvars["mailsmtpecure"];
+
+			//$mail->Sender = 'admin@opwielekes.be'; //$mailvars["mailfromaddress"]; // for bounces
 			$mail->setFrom($mailvars["mailfromaddress"], $data->sendername);
 
 			foreach($data->sendto as $email){
