@@ -27,19 +27,19 @@ $(document).ready(function () {
 								extend: 'csv',
 								filename: 'Opwielekes fietsjes',
 								title: '',
-								exportOptions: { columns: [ 0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13]}
+								exportOptions: { columns: [ 0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14]}
 						},
 						{
 								extend: 'excel',
 								filename: 'Opwielekes fietsjes',
 								title: '',
-								exportOptions: { columns: [ 0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13]}
+								exportOptions: { columns: [ 0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14]}
 						},
 						{
 								extend: 'pdf',
 								filename: 'Opwielekes fietsjes',
 								title: '',
-								exportOptions: { columns: [ 0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13]},
+								exportOptions: { columns: [ 0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14]},
 								orientation: 'landscape'
 						}
 				],
@@ -52,6 +52,7 @@ $(document).ready(function () {
 						{data: 'Gender', name: 'Gender'},
 			      {data: 'Frame', name: 'Frame'},
 						{data: 'Wheel', name: 'Wheel'},
+						{data: 'Tyre', name: 'Tyre'},
 						{data: 'Gears', name: 'Gears'},
 						{data: 'Colour', name: 'Colour'},
 						{data: 'Location', name: 'Location'},
@@ -267,6 +268,7 @@ function setBikeFormByID(bikeID) {
 	$('#bike_name').val(bike.Name);
 	$('#bike_frame').val(bike.Frame);
 	$('#bike_wheel').val(bike.Wheel);
+	$('#bike_tyre').val(bike.Tyre);
 	$('#bike_brand').val(bike.Brand);
 	bikegender.val(bike.Gender).trigger('change');
 	$('#bike_colour').val(bike.Colour);
@@ -302,6 +304,7 @@ function emptyBikeForm() {
 	$('#bike_name').val('');
 	$('#bike_frame').val('');
 	$('#bike_wheel').val('');
+	$('#bike_tyre').val('');
 	$('#bike_brand').val('');
 	bikegender.val('').trigger('change');
 	$('#bike_colour').val('');
@@ -358,6 +361,7 @@ function saveBike() {
 				'Status': defaultBikeAvailableID,
 				'Frame': $('#bike_frame').val(),
 				'Wheel': $('#bike_wheel').val(),
+				'Tyre': $('#bike_tyre').val(),
 				'Brand': $('#bike_brand').val(),
 				'Gender': $('#bike_gender').val(),
 				'Colour': $('#bike_colour').val(),
@@ -377,6 +381,7 @@ function saveBike() {
 				'Name': $('#bike_name').val(),
 				'Frame': $('#bike_frame').val(),
 				'Wheel': $('#bike_wheel').val(),
+				'Tyre': $('#bike_tyre').val(),
 				'Brand': $('#bike_brand').val(),
 				'Gender': $('#bike_gender').val(),
 				'Colour': $('#bike_colour').val(),

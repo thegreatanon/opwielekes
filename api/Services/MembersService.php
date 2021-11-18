@@ -295,7 +295,7 @@ class MembersService
 			LEFT JOIN " . TableService::getTable(TableEnum::MEMBERSHIPS) . " m
 			ON p.MembershipID = m.ID
 			GROUP BY ID
-			ORDER BY Name");
+			ORDER BY Surname");
 		$STH->execute();
 		return $STH->fetchAll();
 

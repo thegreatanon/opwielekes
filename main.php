@@ -19,9 +19,12 @@
 	<link href="libs/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
   <link href="libs/select2/4.0.13/dist/css/select2.css" rel="stylesheet"/>
 	<!-- <link href="libs/datatables/datatables.min.css" rel="stylesheet"/> -->
-  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.22/b-1.6.5/b-html5-1.6.5/datatables.min.css"/>
+  <!--<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.22/b-1.6.5/b-html5-1.6.5/datatables.min.css"/>  -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.11.3/b-2.0.1/b-colvis-2.0.1/b-html5-2.0.1/datatables.min.css"/>
 	<link href="libs/daterangepicker/2.1.25/daterangepicker.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/qtip2/3.0.3/jquery.qtip.css" integrity="sha512-+eoiXLTtw/fDauKv6qMjHuO5pCnqJLz83WWIEpCF+fCAoIkK4UNy04CtJbNZ73Oo/WeNom5FwKie4NVorKjomA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<link href="libs/quill/1.3.6/quill.snow.css" rel="stylesheet">
+  <link href="libs/quill-emoji/0.2.0/dist/quill-emoji.css" rel="stylesheet">
 
     <link href="css/opwielekes.css" rel="stylesheet"/>
     <style type='text/css'>
@@ -73,6 +76,7 @@
   							<li><a href="#settings_emails">Emails</a></li>
                 <li><a href="#settings_auto_emails">Automatische emails</a></li>
                 <li><a href="#settings_memberships">Lidmaatschappen</a></li>
+                <!--<li><a href="#settings_faq">FAQ</a></li>-->
   						  </ul>
   					</li>
                   </ul>
@@ -338,6 +342,7 @@
               <th>Gender</th>
   						<th>Frame</th>
   						<th>Wiel</th>
+              <th>Band</th>
               <th>Versnellingen</th>
   						<th>Kleur</th>
               <th>Locatie</th>
@@ -357,6 +362,7 @@
               <th>Gender</th>
   						<th>Frame</th>
   						<th>Wiel</th>
+              <th>Band</th>
               <th>Versnellingen</th>
   						<th>Kleur</th>
               <th>Locatie</th>
@@ -564,9 +570,9 @@
         							<div class="col-sm-3">
         								<input type="text" class="form-control input-md" id="parent_town" name="parent_town" placeholder="Stad">
         							</div>
-                      <label class="col-sm-2 control-label">Rekeningnr</label>
+                      <label class="col-sm-2 control-label">Rekeningnr <i class="fa fa-info-circle" title="Om de waarborg te kunnen terugstorten."></i></label>
                       <div class="col-sm-3">
-        								<input type="text" class="form-control input-md" id="parent_iban" name="parent_iban" placeholder="IBAN">
+        								<input type="text" class="form-control input-md" id="parent_iban" name="parent_iban" placeholder="IBAN" >
         							</div>
         						</div>
 
@@ -1396,6 +1402,13 @@
         </section>
 
 
+        <section id="content_settings_faq" class="content_section">
+         <h4 class="inlineh4">FAQ</h4>
+
+
+        </section>
+
+
         <section id="content_transactionhistory" class="content_section">
          <h4 class="inlineh4">Transacties</h4>
 
@@ -1491,10 +1504,13 @@
 <!-- <script src="libs/datatables/datatables.min.js"></script> -->
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.22/b-1.6.5/b-html5-1.6.5/datatables.min.js"></script>
+<!-- <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.22/b-1.6.5/b-html5-1.6.5/datatables.min.js"></script> -->
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.11.3/b-2.0.1/b-colvis-2.0.1/b-html5-2.0.1/datatables.min.js"></script>
 <script type="text/javascript" src="libs/datatables/ellipsis.js"></script>
 <script src="https://cdn.datatables.net/plug-ins/1.10.21/sorting/datetime-moment.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qtip2/3.0.3/jquery.qtip.min.js" integrity="sha512-BxJRFdTKV85fhFUw+olPr0B+UEzk8FTLxRB7dAdhoQ7SXmwMECj1I4BlSmZfeoSfy0OVA8xFLTDyObu3Nv1FoQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="libs/quill/1.3.6/quill.min.js"></script>
+<script src="libs/quill-emoji/0.2.0/dist/quill-emoji.js"></script>
 
 <!-- own js -->
 <script src="js/globalvars.js"></script>

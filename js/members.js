@@ -329,6 +329,7 @@ $(document).ready(function () {
 	parentquill = new Quill('#parent_notes', {
 			modules: {
 				toolbar: quillToolbarOptions
+        //  "emoji-toolbar": true
 			},
 			theme: 'snow',
 			background: 'white'

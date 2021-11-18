@@ -81,6 +81,21 @@ var quillToolbarOptions = [
 	['clean']                   // remove formatting button
 ];
 
+var quillToolbarOptions2 = {
+        container: [
+					[{ size: [ 'small', false, 'large', 'huge' ]}],
+          ['bold', 'italic', 'underline', 'strike'],
+          [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+					[ 'link'],
+          [{ 'indent': '-1' }, { 'indent': '+1' }],
+					['image'],
+          ['clean'],
+          ['emoji']
+        ],
+        handlers: {
+          'emoji': function () {}
+        }
+};
 
 
 // Quill setting to avoid double newlines in emailSend

@@ -3,6 +3,8 @@ $(document).ready(function () {
 	loadActions();
 
 	compileHandlebarTemplates();
+
+	$('[title!=""]').qtip();
 });
 
 function loadActions() {
@@ -71,8 +73,11 @@ routie({
 		},
 	'settings_memberships': function () {
 	        setPageActive('settings_memberships');
-	    },
-    'logout': function () {
+    },
+	'settings_faq': function () {
+			setPageActive('settings_faq');
+		},
+  	'logout': function () {
         setPageActive('logout');
     }
 });

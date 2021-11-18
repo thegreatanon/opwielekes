@@ -826,9 +826,9 @@ function loadProperties() {
 
 function setBikeFieldVisibility() {
 	var bikeid = $('#bike_id').val();
-	var bikefields = ['frame','wheel','brand','gender','colour','gears','location','initdate','loandate'];
-	var descriptions = ['Frame', 'Wiel', 'Merk', 'Gender', 'Kleur', 'Versnellingen','Locatie','Ingebracht','Ontleend'];
-	var fieldtypes = ['text', 'text', 'text', 'dropdowng', 'text', 'text', 'text', 'date', 'p'];
+	var bikefields = ['frame','wheel', 'tyre', 'brand','gender','colour','gears','location','initdate','loandate'];
+	var descriptions = ['Frame', 'Wiel', 'Band', 'Merk', 'Gender', 'Kleur', 'Versnellingen','Locatie','Ingebracht','Ontleend'];
+	var fieldtypes = ['text', 'text', 'text', 'text', 'dropdowng', 'text', 'text', 'text', 'date', 'p'];
 	//var fieldnames = bikefields.map(field => '#bike_' + field + '_div');
 	var bikeproperties = bikefields.map(field => 'bike_show_' + field);
 	$('#bike_fields_div').empty();
@@ -858,7 +858,11 @@ function setBikeFieldVisibility() {
 			divvisibility = '';
 		}
 		//myhtml += '>';
-		myhtml += '<label class="col-sm-2 control-label lb-sm"' +	divvisibility + '>' + descriptions[index] + '</label>';
+		myhtml += '<label class="col-sm-2 control-label lb-sm"' +	divvisibility ;
+		//if (descriptions[index]=="Wiel") {
+		//	myhtml += ' title="Voeg hier de inchmaat toe van de fiets, dit zie je op de buitenband, of vul aan met loopfiets, step,.. Mogelijke kindermaten zijn 12 inch, 14, 16,...  tem 26 inch"';
+		//}
+		myhtml += '>' + descriptions[index] + '</label>';
 		myhtml +=	'<div class="col-sm-4"' + divvisibility + '>';
 		if (fieldtypes[index] == 'text') {
 			myhtml +=	'<input type="text" class="form-control input-sm" id="bike_' + item + '" name="bike_' + item + '">';
@@ -901,7 +905,7 @@ function setBikeFieldVisibility() {
 }
 
 function setBikesTableColumns(bikestable) {
-	var bikeproperties = ['bike_show_frame','bike_show_wheel','bike_show_brand','bike_show_gender','bike_show_colour','bike_show_gears','bike_show_location','bike_show_initdate','bike_show_loandate'];
+	var bikeproperties = ['bike_show_frame','bike_show_wheel','bike_show_tyre','bike_show_brand','bike_show_gender','bike_show_colour','bike_show_gears','bike_show_location','bike_show_initdate','bike_show_loandate'];
 	var colnames = bikeproperties.map(sliceCaseBikeProperty);
 	$.each(colnames, function (index, item) {
 		prop = getProperty(bikeproperties[index]);
@@ -914,8 +918,8 @@ function sliceCaseBikeProperty(item) {
 }
 
 function setBikePropertiesTable() {
-	var descriptions = ['Frame', 'Wiel', 'Merk', 'Gender', 'Kleur', 'Versnellingen','Locatie','Datum ingebracht ','Datum laatste ontlening'];
-	var bikeproperties = ['bike_show_frame','bike_show_wheel','bike_show_brand','bike_show_gender','bike_show_colour','bike_show_gears','bike_show_location','bike_show_initdate','bike_show_loandate'];
+	var descriptions = ['Frame', 'Wiel', 'Band', 'Merk', 'Gender', 'Kleur', 'Versnellingen','Locatie','Datum ingebracht ','Datum laatste ontlening'];
+	var bikeproperties = ['bike_show_frame','bike_show_wheel','bike_show_tyre','bike_show_brand','bike_show_gender','bike_show_colour','bike_show_gears','bike_show_location','bike_show_initdate','bike_show_loandate'];
 	$('#settings_bikes_properties_table_tbody').empty();
 	var myhtml = '';
 	$.each(descriptions, function (index, item) {
