@@ -228,6 +228,28 @@ $(document).ready(function () {
 						}
 				});
 
+
+
+				//Dropzone.autoDiscover = false;
+
+				// Dropzone class:
+				// var myDropzone = new Dropzone("div#mydropzone", { url: "/file/post"});
+
+				// If you use jQuery, you can use the jQuery plugin Dropzone ships with:
+				//$("div#myDrop").dropzone({ url: "/file/post" });
+
+			  // Dropzone.options.myGreatDropzone = { // camelized version of the `id`
+			  //   paramName: "file", // The name that will be used to transfer the file
+			  //   maxFilesize: 2, // MB
+			  //   accept: function(file, done) {
+			  //     if (file.name == "justinbieber.jpg") {
+			  //       done("Naha, you don't.");
+			  //     }
+			  //     else { done(); }
+			  //   }
+			  // };
+
+
 	loadBikes();
 
 });
@@ -412,13 +434,11 @@ function saveBike() {
 	}
 
 function deleteBike() {
-	var bikeid = $('#bike_id').val();
+	var bikeid = $('#bike_id').value;
 	if (bikeid==0){
 		viewTab('Members','all');
 	} else {
 		var kids = db_kids.filter(x => x.BikeID === bikeid);
-		console.log(kids)
-		console.log(kids.length)
 		if (kids.length > 0) {
 			alert('Dit fietsje is momenteel in gebruik en kan niet verwijderd worden.');
 		} else {
@@ -443,7 +463,7 @@ function deleteBike() {
 
 
 function saveBikeStatus() {
-	var bikeid = $('#bike_id').val();
+	var bikeid = $('#bike_id').value;
 	var oldstatusnr = $('#bike_statusnr').val();
 	var newstatusnr = $('#bike_status').val();
 

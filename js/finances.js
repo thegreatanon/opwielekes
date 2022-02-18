@@ -52,7 +52,7 @@ $(document).ready(function () {
         },
         render: function (data, type) {
 						//if (type === 'display'){
-	           		return '<a href="#members" class="memberlink">' + data.ParentName + ' ' +  data.ParentSurname + '</a>';
+	           		return '<a href="#members" class="memberlink">' + data.ParentSurname + ' ' +  data.ParentName + '</a>';
 //	          } else {
 								//return data.ParentName + " " + data.ParentSurname;
 						//}

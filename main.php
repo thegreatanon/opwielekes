@@ -25,6 +25,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/qtip2/3.0.3/jquery.qtip.css" integrity="sha512-+eoiXLTtw/fDauKv6qMjHuO5pCnqJLz83WWIEpCF+fCAoIkK4UNy04CtJbNZ73Oo/WeNom5FwKie4NVorKjomA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<link href="libs/quill/1.3.6/quill.snow.css" rel="stylesheet">
   <link href="libs/quill-emoji/0.2.0/dist/quill-emoji.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
 
     <link href="css/opwielekes.css" rel="stylesheet"/>
     <style type='text/css'>
@@ -288,7 +289,7 @@
 
   					<div class="form-row">
   						<div class="form-group action_memberdiv form-control-static" hidden>
-  							<label class="col-sm-1 control-label lb-sm">Ouder</label>
+  							<label class="col-sm-2 control-label lb-sm style='float: left;'">Verantwoordelijke <i class="fa fa-info-circle" title="Ouder, grootouder, voogd, ..."></i></label>
   							<p class="col-sm-2 form-control-static" id="action_parentname"></p>
   							<label class="col-sm-2 control-label lb-sm">Lidmaatschap</label>
   							<p class="col-sm-1 form-control-static" id="action_membership"></p>
@@ -300,7 +301,7 @@
   							<!-- hidden temp -->
   						</div>
   						<div class="form-group action_memberdiv" hidden>
-  							<label class="col-sm-1 control-label lb-sm">Overzicht</label>
+  							<label class="col-sm-2 control-label lb-sm">Overzicht</label>
   							<div class="col-sm-10">
   								<table class="table table-condensed" id="action_kids_table">
   									<thead>
@@ -315,7 +316,7 @@
   									<tbody id="action_kids_table_tbody">
   									</tbody>
   								</table>
-  								<label class="col-sm-1 control-label plabel"></label>
+
   							</div>
   						</div>
   					</div>
@@ -434,6 +435,21 @@
 
 
                   <div class="col-sm-3" id="bikestatusdiv">
+
+                    <!-- <div class="form-row">
+      								<div class="form-group">
+                        <label class="col-md-3 control-label">Afbeelding</label>
+                     <form action="/target" class="dropzone" id="my-great-dropzone"></form>
+      								</div>
+      							</div>
+
+                    <div class="clsbox-1" runat="server"  >
+                    		<div class="dropzone clsbox" id="mydropzone">
+                    		</div>
+                    </div>
+
+                    <hr> -->
+
                     <div class="form-row">
       								<div class="form-group">
                         <label class="col-md-3 control-label">Status</label>
@@ -535,7 +551,7 @@
         				<div class="col-sm-10">
         					<form id="klant_form" class="form-horizontal">
         						<div class="form-group">
-        							<label class="col-sm-2 control-label">Ouder</label>
+        							<label class="col-sm-2 control-label">Verantwoordelijke</label>
         							<div class="col-sm-2">
         								<input type="text" class="form-control input-md" id="parent_name" name="parent_name" placeholder="Voornaam">
         							</div>
@@ -624,8 +640,8 @@
           											<th>Achternaam</th>
                                 <th>Voornaam</th>
           											<th>Geboortedatum</th>
-                                <th>Fiets</th>
-                                <th>Lid tot</th>
+                                <th>Fiets <i class="fa fa-info-circle" title="Dit veld wordt later automatisch ingevuld via het tabblad ontleningen)."></i></th>
+                                <th>Lid tot <i class="fa fa-info-circle" title="Dit veld wordt later automatisch ingevuld via het tabblad ontleningen)."></i></th>
           											<th></th>
           										</tr>
           									</thead>
@@ -661,7 +677,7 @@
       </section>
 
       <section id="content_finances" class="content_section">
-  		<h4 class="inlineh4">Financiële transacties</h4>
+  		<h4 class="inlineh4">Financiële transacties <i class="fa fa-info-circle" title="Volg hier op welke acties er gebeurden per lid, en zie de openstaande betalingen die je nog moet ontvangen. Zet de transacties op voldaan als je ze hebt ontvangen of terugbetaald (bv waarborg)."></i></h4>
 
   		<div class="container-fluid" width="100%">
 
@@ -669,7 +685,7 @@
   				<thead>
   					<tr>
               <th>Datum</th>
-  						<th>Ouder</th>
+  						<th>Verantw.</th>
               <th>Straat</th>
               <th>Straatnr</th>
               <th>Postcode</th>
@@ -692,7 +708,7 @@
   				<tfoot>
   					<tr>
   						<th>Datum</th>
-  						<th>Ouder</th>
+  						<th>Verantw.</th>
               <th>Straat</th>
               <th>Straatnr</th>
               <th>Postcode</th>
@@ -783,7 +799,7 @@
   			<table id="expiry_table" class="table table-striped" width="100%" style="display: none;">
   				<thead>
   					<tr>
-  						<th>Ouder</th>
+  						<th>Verantwoordelijke</th>
   						<th>Kind</th>
   						<th>Kind nr</th>
   						<th>Fiets</th>
@@ -795,7 +811,7 @@
   				</thead>
   				<tfoot>
   					<tr>
-  						<th>Ouder</th>
+  						<th>Verantwoordelijke</th>
   						<th>Kind</th>
   						<th>Kind nr</th>
   						<th>Fiets</th>
@@ -1172,7 +1188,10 @@
       </section>
 
       <section id="content_settings_auto_emails" class="content_section">
-
+        <div class="container-fluid" width="100%">
+          <p class="bg-info" style="padding: 10px; margin-top: 5px;">De emails in dit tabblad worden automatisch naar je leden verzonden. Wees dus voorzichtig.<br>
+          Als je een cc adres hebt ingevuld onder 'Instellingen > Emails' ontvangt het cc adres elke verzonden email in cc.</p>
+        </div>
 
         <div class="container-fluid" width="100%">
           <form id="settings_email_signuppreferences" class="form-horizontal">
@@ -1204,15 +1223,24 @@
 
             <h4 class="inlineh4">Herinneringen bij vervallen van lidmaatschap</h4>
 
-            <div class="form-group">
-  							<label for="emailmsg" class="col-md-2 control-label"></label>
-  							<div class="col-sm-10">
-  								<p>Volgende codes in het onderwerp en de tekst worden ingevuld door de echte waarden:<br>
-  								{{voornaam_ouder}}, {{achternaam_ouder}}, {{voornaam_kind}}, {{achternaam_kind}}, {{IBAN_depot}},
-                  {{bedrag_lidmaatschap}}
-  								</p>
-  							</div>
-  					</div>
+            <div class="container-fluid" width="100%">
+              <p class="bg-danger" style="padding: 10px; margin-top: 5px;" id="SendRemindersOffMsg">Herinneringsemails zijn momenteel niet geactiveerd voor dit depot. Om deze te activeren contacteer webmaster@opwielekes.be.</p>
+
+              <p class="bg-info" style="padding: 10px; margin-top: 5px;">Deze emails zijn bedoeld om de opvolging van lidmaatschappen te vergemakkelijken.
+                  <a href="#managefieldsinfo" data-toggle="collapse">Meer info over de werking.</a></p>
+              <div id="managefieldsinfo" class="collapse">
+                <p>Eenmaal per dag wordt een email verzonden naar de leden wiens lidmaatschap vervalt binnen de aangegeven dagen, of al het aantal dagen vervallen is.
+                  <br>In deze email kan je ze vragen het lidmaatschap opnieuw te betalen.
+                  <br>Dit bedrag wordt toegevoegd aan de financiën tabel, zodat je weet dat je dit geld dient te ontvangen. Als je het als ontvangen aanduidt, wordt de vervaldatum verlengd met 1 jaar (of zoals aangegeven in het tariefplan).
+                  <br>Volgende codes in het onderwerp en de tekst van de email worden ingevuld door de echte waarden:</p>
+                  <ul>
+                   <li>{{voornaam_ouder}}, {{achternaam_ouder}}</li>
+                   <li>{{voornaam_kind}}, {{achternaam_kind}}</li>
+                   <li>{{IBAN_depot}}</li>
+                   <li>{{bedrag_lidmaatschap}}, berekend aan de hand van het tarief en het kind nr</li>
+                  </ul>
+              </div>
+            </div>
 
             <div class="form-group form-inline">
               <label class="col-sm-2 control-label lb-sm">Herinnering 1</label>
@@ -1355,7 +1383,7 @@
             <div class="input-group col-sm-9 actbtns">
               <button type="button" onclick="cancelEmailReminders()" class="btn btn-default actbtn">Annuleren</button>
               <button type="button" onclick="saveEmailReminders()" class="btn btn-primary actbtn">Opslaan</button>
-              <button type="button" onclick="testEmailReminders()" class="btn btn-default actbtn" style="margin-right:300px;">Test</button>
+              <button type="button" onclick="testEmailReminders()" class="btn btn-default actbtn" id="settings_membership_testreminders" style="margin-right:300px;">Test <i class="fa fa-info-circle" title="Deze test stuurt alle emails die vandaag naar leden verzonden zouden worden naar het cc adres."></i></button>
             </div>
 
           </form>
@@ -1373,7 +1401,7 @@
              <thead>
                <tr>
                  <th>Kind</th>
-                 <th>Ouder</th>
+                 <th>Verantwoordelijke</th>
                  <th>Email</th>
                  <th>Actief</th>
                  <th>Actieve kids</th>
@@ -1381,12 +1409,16 @@
                  <th>Vervaldatum</th>
                  <th>Vernieuwen</th>
                  <th>Te betalen</th>
+                 <th>Straat</th>
+                 <th>Straatnr</th>
+                 <th>Postcode</th>
+                 <th>Stad</th>
                </tr>
              </thead>
              <tfoot>
                <tr>
                  <th>Kind</th>
-                 <th>Ouder</th>
+                 <th>Verantwoordelijke</th>
                  <th>Email</th>
                  <th>Actief</th>
                  <th>Actieve kids</th>
@@ -1394,6 +1426,10 @@
                  <th>Vervaldatum</th>
                  <th>Vernieuwen</th>
                  <th>Te betalen</th>
+                 <th>Straat</th>
+                 <th>Straatnr</th>
+                 <th>Postcode</th>
+                 <th>Stad</th>
                </tr>
              </tfoot>
            </table>
@@ -1417,7 +1453,7 @@
              <thead>
                <tr>
                  <th>Datum</th>
-                 <th>Ouder</th>
+                 <th>Verantwoordelijke</th>
                  <th>Kind</th>
                  <th>Actie</th>
                  <th>Fiets IN</th>
@@ -1427,7 +1463,7 @@
              <tfoot>
                <tr>
                  <th>Datum</th>
-                 <th>Ouder</th>
+                 <th>Verantwoordelijke</th>
                  <th>Kind</th>
                  <th>Actie</th>
                  <th>Fiets IN</th>
@@ -1511,6 +1547,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qtip2/3.0.3/jquery.qtip.min.js" integrity="sha512-BxJRFdTKV85fhFUw+olPr0B+UEzk8FTLxRB7dAdhoQ7SXmwMECj1I4BlSmZfeoSfy0OVA8xFLTDyObu3Nv1FoQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="libs/quill/1.3.6/quill.min.js"></script>
 <script src="libs/quill-emoji/0.2.0/dist/quill-emoji.js"></script>
+<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+<script src="https://apis.google.com/js/api.js"></script>
 
 <!-- own js -->
 <script src="js/globalvars.js"></script>

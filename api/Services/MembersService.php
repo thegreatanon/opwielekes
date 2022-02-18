@@ -267,7 +267,8 @@ class MembersService
     global $DBH;
 		$STH = $DBH->prepare("SELECT k.ID KidID, k.Name KidName, k.Surname KidSurname, DATE_FORMAT(k.BirthDate, '" . $mysqldateformat . "') KidBirthDate,
 		DATE_FORMAT(k.ExpiryDate, '" . $mysqldateformat . "') KidExpiryDate, DATE_FORMAT(k.ExpiryDate, '" . $phpdateformat . "') KidExpiryDatePHP, k.Active KidActive,
-		k.BikeID KidBikeID, k.KidNr KidNr, p.ID ParentID, p.Name ParentName, p.Surname ParentSurname, DATE_FORMAT(p.InitDate, '" . $mysqldateformat . "') ParentInitDate,
+		k.BikeID KidBikeID, k.KidNr KidNr, p.ID ParentID, p.Name ParentName, p.Surname ParentSurname, p.Street ParentStreet, p.StreetNumber ParentStreetNumber,
+		p.Postal ParentPostal, p.Town ParentTown, DATE_FORMAT(p.InitDate, '" . $mysqldateformat . "') ParentInitDate,
 		p.CautionAmount ParentCautionAmount, p.MembershipID ParentMembershipID, m.MembershipName ParentMembershipName, p.Email ParentEmail,
 		 (SELECT COUNT(*) FROM " . TableService::getTable(TableEnum::KIDS, $accountcode) . " l WHERE l.ParentID = k.ParentID AND l.Active = 1) ParentActiveKids,
 		 (SELECT COUNT(*) FROM " . TableService::getTable(TableEnum::RENEWALS, $accountcode) . " r WHERE r.KidID = k.ID) NrRenewals

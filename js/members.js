@@ -169,19 +169,19 @@ $(document).ready(function () {
 						extend: 'csv',
 						filename: 'Opwielekes lidmaatschap',
 						title: '',
-						exportOptions: { columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8]}
+						exportOptions: { columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]}
 				},
 				{
 						extend: 'excel',
 						filename: 'Opwielekes lidmaatschap',
 						title: '',
-						exportOptions: { columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8]}
+						exportOptions: { columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]}
 				},
 				{
 						extend: 'pdf',
 						filename: 'Opwielekes lidmaatschap',
 						title: '',
-						exportOptions: { columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8]},
+						exportOptions: { columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]},
 						orientation: 'landscape'
 				}
 		],
@@ -279,7 +279,11 @@ $(document).ready(function () {
 						}
 					},
 					sortable: true
-				}
+				},
+				{data: 'ParentStreet', name: 'ParentStreet', 'visible': false},
+				{data: 'ParentStreetNumber', name: 'ParentStreetNumber', 'visible': false},
+				{data: 'ParentPostal', name: 'ParentPostal', 'visible': false},
+				{data: 'ParentTown', name: 'ParentTown', 'visible': false}
 			],
 			"search": {
 				"regex": true,
@@ -452,7 +456,7 @@ function viewMember() {
 
 function setKidForm(parentID) {
 	// find kids
-	var kids = db_kids.filter(x => x.ParentID === parentID);
+	var kids = db_kids.filter(x => x.ParentID === parentID.toString());
 	// edit form
 	$('#kids_table_tbody').empty();
 	for (var i = 0, len = kids.length; i < len; i++) {

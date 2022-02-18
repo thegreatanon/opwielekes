@@ -3,11 +3,11 @@
     // SESSION TIMINGS
     // see https://stackoverflow.com/questions/8311320/how-to-change-the-session-timeout-in-php
     // server should keep session data for AT LEAST 1 hour
-    ini_set('session.gc_maxlifetime', 3600);
+    ini_set('session.gc_maxlifetime', 10800);
     // each client should remember their session id for EXACTLY 1 hour
     // see https://stackoverflow.com/questions/39750906/php-setcookie-samesite-strict
     //for php < 7.3
-    session_set_cookie_params (3600);
+    session_set_cookie_params (10800);
     //session_set_cookie_params(3600 ,'/; samesite=lax', null , false , false);
     //setcookie('cookie-name', '1', 0, '/; samesite=strict');
     //header("Set-Cookie: admin.opwielekes.be; path=/; SameSite=Lax");

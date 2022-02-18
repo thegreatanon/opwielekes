@@ -132,12 +132,34 @@ function loadSettings() {
 	loadEmails(0);
 	loadPreferences();
 	loadProperties();
+	// loadFAQ();
 	// loadSettingsPaymentMethods() called in loadPreferences;
 	//loadDefaultPaymentInfo() called in loadPreferences;
 }
 
-// PRICES
+function loadFAQ() {
+	console.log('loading FAQ');
+	// 1. Load the JavaScript client library.
+//	gapi.load('client', start);
+	// 2. Initialize the JavaScript client library.
+	// gapi.client.init({
+	// 	'apiKey': 'YOUR_API_KEY',
+	// 	// clientId and scope are optional if auth is not required.
+	// 	'clientId': 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com',
+	// 	'scope': 'profile',
+	// }).then(function() {
+	// 	// 3. Initialize and make the API request.
+	// 	return gapi.client.request({
+	// 		'path': 'https://people.googleapis.com/v1/people/me?requestMask.includeField=person.names',
+	// 	})
+	// }).then(function(response) {
+	// 	console.log(response.result);
+	// }, function(reason) {
+	// 	console.log('Error: ' + reason.result.error.message);
+	// });
+}
 
+// PRICES
 function loadPrices() {
     $.ajax({
         url: 'api/settings/memberships',
@@ -751,6 +773,19 @@ function setSettingsEmailReminders(preferences) {		// Membership reminders
 		$('#settings_membership_reminder3afterexp').val(preferences.Reminder3AfterExp).trigger('change');
 		$('#settings_membership_reminder3subject').val(preferences.Reminder3Subject);
 		settingsreminder3quill.root.innerHTML = preferences.Reminder3Message;
+		if (preferences.SendReminders=="1") {
+			document.getElementById('SendRemindersOffMsg').style.display = 'none';
+			$('#settings_membership_reminder1send').prop('disabled', false)
+			$('#settings_membership_reminder2send').prop('disabled', false)
+			$('#settings_membership_reminder3send').prop('disabled', false)
+			document.getElementById("settings_membership_testreminders").disabled = false;
+		} else {
+			document.getElementById('SendRemindersOffMsg').style.display = 'block';
+			$('#settings_membership_reminder1send').prop('disabled', true)
+			$('#settings_membership_reminder2send').prop('disabled', true)
+			$('#settings_membership_reminder3send').prop('disabled', true)
+			document.getElementById("settings_membership_testreminders").disabled = true;
+		}
 
 }
 
@@ -825,7 +860,7 @@ function loadProperties() {
 
 
 function setBikeFieldVisibility() {
-	var bikeid = $('#bike_id').val();
+	var bikeid = $('#bike_id').value;
 	var bikefields = ['frame','wheel', 'tyre', 'brand','gender','colour','gears','location','initdate','loandate'];
 	var descriptions = ['Frame', 'Wiel', 'Band', 'Merk', 'Gender', 'Kleur', 'Versnellingen','Locatie','Ingebracht','Ontleend'];
 	var fieldtypes = ['text', 'text', 'text', 'text', 'dropdowng', 'text', 'text', 'text', 'date', 'p'];
