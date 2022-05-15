@@ -20,7 +20,7 @@
   <link href="libs/select2/4.0.13/dist/css/select2.css" rel="stylesheet"/>
 	<!-- <link href="libs/datatables/datatables.min.css" rel="stylesheet"/> -->
   <!--<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.22/b-1.6.5/b-html5-1.6.5/datatables.min.css"/>  -->
-  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.11.3/b-2.0.1/b-colvis-2.0.1/b-html5-2.0.1/datatables.min.css"/>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.12.0/b-2.2.3/b-colvis-2.2.3/b-html5-2.2.3/datatables.min.css"/>
 	<link href="libs/daterangepicker/2.1.25/daterangepicker.css" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/qtip2/3.0.3/jquery.qtip.css" integrity="sha512-+eoiXLTtw/fDauKv6qMjHuO5pCnqJLz83WWIEpCF+fCAoIkK4UNy04CtJbNZ73Oo/WeNom5FwKie4NVorKjomA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<link href="libs/quill/1.3.6/quill.snow.css" rel="stylesheet">
@@ -99,6 +99,7 @@
 
   				<form id="action_form" class="form-horizontal" target="_blank">
 
+            <input type="hidden" id="act_bi" name="act_bi" value="<?php echo $_SESSION["account"]["AccountCode"]?>">
 
   					<div class="form-group">
   						<label for="action_member" class="col-sm-2 control-label">Lid</label>
@@ -150,7 +151,7 @@
   							</div>
   						</div>
   						<div id="action_currentbike" hidden>
-  							<p class="col-sm-3 form-control-static" id="action_currentbiketext"></p>
+  							<p class="col-sm-3 form-control-static preducedvertspace" id="action_currentbiketext"></p>
   						</div>
   						<div id="action_bikein_space">
   							<p class="col-sm-3 form-control-static"></p>
@@ -226,7 +227,7 @@
                   </div>
     						</div>
                 <label class="col-sm-2 control-label lb-sm">Huidig saldo</label>
-                <p class="col-sm-1 form-control-static" id="action_parentcaution">0</p>
+                <p class="col-sm-1 form-control-static preducedvertspace" id="action_parentcaution">0</p>
               </div>
   					</div>
 
@@ -336,7 +337,8 @@
   			<table id="bikes_table" class="table table-striped compact" width="100%">
   				<thead>
   					<tr>
-  						<th>Nummer</th>
+              <th>Foto</th>
+  						<th>Nr</th>
   						<th>Naam</th>
   						<th>Status</th>
               <th>Merk</th>
@@ -356,7 +358,8 @@
   				</thead>
   				<tfoot>
   					<tr>
-              <th>Nummer</th>
+              <th>Foto</th>
+              <th>Nr</th>
   						<th>Naam</th>
   						<th>Status</th>
               <th>Merk</th>
@@ -386,35 +389,35 @@
   					<div class="row">
 
   					       <div class="col-sm-9 div_rightline">
-      								<div class="form-group">
-      									<label class="col-sm-2 control-label lb-sm">Nummer</label>
-      									<div class="col-sm-2">
-      										<input type="number" class="form-control input-sm" id="bike_nr" name="bike_nr" value=1>
-      									</div>
-      									<label class="col-sm-1 control-label lb-sm">Naam</label>
-      									<div class="col-sm-3">
-      										<input type="text" class="form-control input-sm" id="bike_name" name="bike_name" placeholder="name">
-      									</div>
-                        <label class="col-sm-2 control-label">Status</label>
-                        <p class="col-sm-2 form-control-static" id="bike_status_text"> </p>
-      								</div>
+
+                     <!-- will be populated dynamically depending on image-->
+                     <div id="bike_basics_div" >
+                     </div>
+
+                     <!-- TODO delete after pdf upload complete -->
+
+                        <!-- <div class="form-group">
+                          <div class="col-sm-2" >
+                          </div>
+                          <div class="clsbox-1 col-sm-4" runat="server" style="max-width: 500px;" hidden>
+                            <div class="dropzone clsbox" id="my-great-dropzone">
+                            </div>
+                          </div>
+                          <div class="col-sm-6" >
+                          </div>
+                        </div> -->
+
 
                       <!-- will be populated dynamically depending on selected fields-->
                       <div id="bike_fields_div">
                       </div>
-
-      								<!-- <div class="form-group">
-      									<div class="col-sm-6" hidden>
-      										<input type="text" class="form-control input-sm" id="bike_donator" name="bike_donator" placeholder="lid" >
-      									</div>
-  								    </div> -->
 
                       <div class="form-group">
               					<label class="col-sm-2 control-label lb-sm">Notities</label>
               					<div class="col-sm-10">
               							<div id="bike_notes">
               							</div>
-              						</div>
+              					</div>
               				</div>
 
       								<div class="form-group">
@@ -435,20 +438,6 @@
 
 
                   <div class="col-sm-3" id="bikestatusdiv">
-
-                    <!-- <div class="form-row">
-      								<div class="form-group">
-                        <label class="col-md-3 control-label">Afbeelding</label>
-                     <form action="/target" class="dropzone" id="my-great-dropzone"></form>
-      								</div>
-      							</div>
-
-                    <div class="clsbox-1" runat="server"  >
-                    		<div class="dropzone clsbox" id="mydropzone">
-                    		</div>
-                    </div>
-
-                    <hr> -->
 
                     <div class="form-row">
       								<div class="form-group">
@@ -878,11 +867,36 @@
 
             <hr />
 
+            <!-- TODO delete when pdf upload complete
+            <h4 class="inlineh4">Afbeeldingen</h4>
+            <div id="settings_bikes_image" class="container-fluid" width="100%">
+              <div class="col-md-3">
+              </div>
+              <div class='col-sm-6' >
+                <input class="styled" type="checkbox" id="settings_bike_show_image" name="settings_bike_show_image" value="settings_bike_show_image">
+                            <label for="settings_bike_show_image">
+                                Activeer afbeeldingen van fietsen
+                            </label>
+              </div>
+              <div class="col-md-3">
+              </div>
+
+              <div class="input-group col-sm-9" id="actbtns">
+                <button type="button" onclick="cancelBikeImageSettings()" class="btn btn-default actbtn">Annuleren</button>
+                <button type="button" onclick="saveBikeImageSettings()" class="btn btn-primary actbtn">Opslaan</button>
+              </div>
+
+            </div>
+
+            <hr /> -->
+
             <h4 class="inlineh4">Eigenschappen</h4>
             <div id="settings_bikes_properties" class="container-fluid" width="100%">
+
               <div class="col-md-3">
               </div>
               <div class="col-md-6">
+                <p style="margin-top: 5px;">Zet de zichtbaarheid van eigenschappen die je niet gebruikt af om deze velden niet te zien en een eenvoudigere interface te hebben.</p>
                 <table id="settings_bikes_properties_table" class="table" width="50%">
                   <thead>
                     <tr>
@@ -1541,7 +1555,7 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
 <!-- <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.22/b-1.6.5/b-html5-1.6.5/datatables.min.js"></script> -->
-<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.11.3/b-2.0.1/b-colvis-2.0.1/b-html5-2.0.1/datatables.min.js"></script>
+<script type="text/javascript" src="  https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.12.0/b-2.2.3/b-colvis-2.2.3/b-html5-2.2.3/datatables.min.js"></script>
 <script type="text/javascript" src="libs/datatables/ellipsis.js"></script>
 <script src="https://cdn.datatables.net/plug-ins/1.10.21/sorting/datetime-moment.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qtip2/3.0.3/jquery.qtip.min.js" integrity="sha512-BxJRFdTKV85fhFUw+olPr0B+UEzk8FTLxRB7dAdhoQ7SXmwMECj1I4BlSmZfeoSfy0OVA8xFLTDyObu3Nv1FoQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -1549,6 +1563,11 @@
 <script src="libs/quill-emoji/0.2.0/dist/quill-emoji.js"></script>
 <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
 <script src="https://apis.google.com/js/api.js"></script>
+
+
+<script>
+
+</script>
 
 <!-- own js -->
 <script src="js/globalvars.js"></script>
@@ -1558,6 +1577,7 @@
 <script src="js/members.js"></script>
 <script src="js/bikes.js"></script>
 <script src="js/transactions.js"></script>
+<script src="js/uploads.js"></script>
 <script src="js/main.js"></script>
 
 

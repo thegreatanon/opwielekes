@@ -144,7 +144,39 @@ $app->group('/bikes', function() use ($app) {
         echo json_encode(null);
      });
 
+     $app->post('/image', function() use ($app) {
+       global $DBH;
+       try {
+          $DBH->beginTransaction();
+ 					$nbim = BikesService::newBikeImage($GLOBALS["data"]);
+ 					if ($nbim["status"] == -1) {
+ 						throw new Exception($nbim["error"]);
+ 					}
+           $DBH->commit();
+         } catch (Exception $e) {
+           $DBH->rollBack();
+           $GLOBALS["error"] = $e->getMessage();
+           $app->error();
+         }
+         echo json_encode(null);
+      });
 
+      $app->post('/deleteimage', function() use ($app) {
+        global $DBH;
+        try {
+           $DBH->beginTransaction();
+           $dbim = BikesService::deactivateBikeImage($GLOBALS["data"]);
+           if ($dbim["status"] == -1) {
+             throw new Exception($dbim["error"]);
+           }
+            $DBH->commit();
+          } catch (Exception $e) {
+            $DBH->rollBack();
+            $GLOBALS["error"] = $e->getMessage();
+            $app->error();
+          }
+          echo json_encode(null);
+       });
 });
 
 $app->group('/parents', function() use ($app) {

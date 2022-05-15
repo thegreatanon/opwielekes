@@ -49,6 +49,10 @@ var replytoname;
 var ccemail;
 var sendername;
 
+// for image processing
+var imageDropzone;
+var imageopenbikeid;
+
 var kidsToDelete = [];
 
 var today =  moment();

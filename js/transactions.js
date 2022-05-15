@@ -403,7 +403,7 @@ function isExpired(expirydate) {
 		}
 }
 
-// NOTE THAT THERE IS A SIMILAR PHP FUNCTION getRenewalFee() THAT SHOULD BE KEPT CONSISTENT
+// IMPORTANT: THERE IS A SIMILAR PHP FUNCTION getRenewalFee() THAT SHOULD BE KEPT CONSISTENT
 function getMembershipFee(expirydate, kidnr, membershipid) {
 	if (isExpired(expirydate)) {
 		membership = db_memberships.find(x => x.ID === membershipid.toString());

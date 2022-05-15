@@ -11,7 +11,6 @@
 
 	//phpinfo();
 
-	// NOTE
 	// Every account has a variable SendReminders that enables these automatic emails that is not available through the interface
 	// Reminders1, 2 and 3 can be set via the user interface and will be sent out at according to the settings
 	// There is an additional Reminder0, not accessible through the user interface, that reminds all expired people
@@ -261,7 +260,7 @@ function remind($kids, $remindnr, $accountcode) {
 	} // foreach
 } // function
 
-// NOTE THAT THERE IS AN EQUIVALENT JS FUNCTION THAT SHOULD BE KEPT CONSISTENT
+// THERE IS AN EQUIVALENT JS FUNCTION THAT SHOULD BE KEPT CONSISTENT
 // SEE transactions.js
 function getRenewalFee($kidnr, $membershipid) {
 	if ($kidnr=='0') {

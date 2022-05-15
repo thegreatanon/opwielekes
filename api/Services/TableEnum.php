@@ -5,6 +5,7 @@ require_once(__DIR__ . "/BasicEnum.php");
 abstract class TableEnum extends BasicEnum {
 
 	const ACTIONS = 'actions';
+	const BIKEIMAGES = 'bikeimages';
 	const BIKES = 'bikes';
 	const BIKESTATUS = 'bikestatus';
 	const BIKESTATUSLOGS = 'bikestatuslogs';

@@ -97,50 +97,6 @@ $(document).ready(function () {
 				}
     });
 
-	/* Custom filtering function for datatablesr items-table with lowstockcheckbox */
-	$.fn.dataTable.ext.search.push(
-		function( settings, searchData, index, rowData, counter ) {
-			/* for orders */
-			if (settings.nTable.id == 'members_table') {
-				var state = rowData.ActiveKids;
-				if (state >= 1) {
-					if ($('#membersfilteractive').is(':checked')){
-						return true;
-					} else
-						return false;
-					}
-				else if (state == 0) {
-					if ($('#membersfilterinactive').is(':checked')){
-						return true;
-					} else {
-						return false;
-					}
-				} else {
-					return true;
-				}
-			}
-			if (settings.nTable.id == 'kidsexpiry_table') {
-				var datetime = moment(rowData.KidExpiryDate, findateformat);
-				var startdate = moment($('#expiryrange').data('daterangepicker').startDate,findateformat);
-				var enddate = moment($('#expiryrange').data('daterangepicker').endDate,findateformat);
-				var validDate = (moment(datetime).isSameOrAfter(startdate) && moment(datetime).isSameOrBefore(enddate));
-				var validfilters = false;
-				var state = rowData.KidActive;
-				if (state >= 1) {
-					if ($('#kidsfilteractive').is(':checked')){
-						validfilters = true;
-					}
-				} else if (state == 0) {
-						if ($('#kidsfilterinactive').is(':checked')){
-							validfilters = true;
-						}
-				}
-				return (validDate && validfilters);
-			}
-			return true;
-		}
-	);
-
 
 	// INIT KIDS TABLE
 	kidsexpirytable = $('#kidsexpiry_table').DataTable({
@@ -318,6 +274,56 @@ $(document).ready(function () {
 					});
 			}
   });
+
+	/* Custom filtering function for datatablesr items-table with lowstockcheckbox */
+	$.fn.dataTable.ext.search.push(
+		function( settings, searchData, index, rowData, counter ) {
+			/* for orders */
+			if (settings.nTable.id == 'members_table') {
+				var state = rowData.ActiveKids;
+				if (state >= 1) {
+					if ($('#membersfilteractive').is(':checked')){
+						return true;
+					} else
+						return false;
+					}
+				else if (state == 0) {
+					if ($('#membersfilterinactive').is(':checked')){
+						return true;
+					} else {
+						return false;
+					}
+				} else {
+					return true;
+				}
+			}
+			if (settings.nTable.id == 'kidsexpiry_table') {
+				var datetime = moment(rowData.KidExpiryDate, findateformat);
+				if (typeof $('#expiryrange').data('daterangepicker') === 'undefined') {
+					console.log('datrangepicker undefined');
+    			var startdate = moment("01-01-2015", findateformat);
+					var enddate = moment().add(5, 'years').endOf('year');
+				} else {
+					var startdate = moment($('#expiryrange').data('daterangepicker').startDate,findateformat);
+					var enddate = moment($('#expiryrange').data('daterangepicker').endDate,findateformat);
+				}
+				var validDate = (moment(datetime).isSameOrAfter(startdate) && moment(datetime).isSameOrBefore(enddate));
+				var validfilters = false;
+				var state = rowData.KidActive;
+				if (state >= 1) {
+					if ($('#kidsfilteractive').is(':checked')){
+						validfilters = true;
+					}
+				} else if (state == 0) {
+						if ($('#kidsfilterinactive').is(':checked')){
+							validfilters = true;
+						}
+				}
+				return (validDate && validfilters);
+			}
+			return true;
+		}
+	);
 
 	function expiryrangechanged(start, end) {
 		$('#expiryrange').find('span').html(start.format('D MMM, YYYY') + ' - ' + end.format('D MMM, YYYY'));

@@ -21,30 +21,79 @@ $(document).ready(function () {
 				},
 				dom: '<l<"filterbikes">fr>t<iBp>',
 				"order": [[ 0, 'asc' ], [ 1, 'asc' ]],
-				buttons: [
-						'copyHtml5',
-						{
-								extend: 'csv',
-								filename: 'Opwielekes fietsjes',
-								title: '',
-								exportOptions: { columns: [ 0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14]}
-						},
-						{
-								extend: 'excel',
-								filename: 'Opwielekes fietsjes',
-								title: '',
-								exportOptions: { columns: [ 0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14]}
-						},
-						{
-								extend: 'pdf',
-								filename: 'Opwielekes fietsjes',
-								title: '',
-								exportOptions: { columns: [ 0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14]},
-								orientation: 'landscape'
-						}
-				],
+			  buttons: [
+					{
+							extend: 'collection',
+						 	text: 'Kolommen',
+							 buttons: [
+								 {
+											 text: 'Toggle Ingebracht',
+											 action: function ( e, dt, node, config ) {
+													 dt.column( -5 ).visible( ! dt.column( -5 ).visible() );
+											 }
+									 },
+									 {
+											 text: 'Toggle Ontleend',
+											 action: function ( e, dt, node, config ) {
+													 dt.column( -4 ).visible( ! dt.column( -4 ).visible() );
+											 }
+									 },
+									 {
+											 text: 'Toggle Ontlener',
+											 action: function ( e, dt, node, config ) {
+													 dt.column( -3 ).visible( ! dt.column( -3 ).visible() );
+											 }
+									 },
+									 {
+											 text: 'Toggle Notities',
+											 action: function ( e, dt, node, config ) {
+													 dt.column( -2 ).visible( ! dt.column( -2 ).visible() );
+											 }
+									 }
+							 ]
+        	},
+	        {
+            extend: 'collection',
+            text: 'Exporteer',
+						buttons: [
+							'copyHtml5',
+							{
+									extend: 'csv',
+									filename: 'Opwielekes fietsjes',
+									title: '',
+									exportOptions: { columns: [ 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]}
+							},
+							// TODO fix export to excel
+							{
+									extend: 'excel',
+									filename: 'Opwielekes fietsjes',
+									title: '',
+									exportOptions: { columns: [1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]}
+							},
+							{
+									extend: 'pdf',
+									filename: 'Opwielekes fietsjes',
+									title: '',
+									exportOptions: { columns: [1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]},
+									orientation: 'landscape'
+							}
+						]
+        	}
+    		],
 				autoWidth: true,
 		    columns: [
+						{
+							data: {Imagefile: 'ImageFile'},
+							name: 'Image',
+							render: function (data, type) {
+								if (data.ImageFile !== null) {
+									return '<img src="uploads/' + $('#act_bi').val() + '/thumb/'+ data.ImageFile + '" style="height:75px;">';
+								} else {
+									return '<img src="images/transparent.png" style="height:75px;">';
+								}
+							},
+							sortable: false
+						},
 						{data: 'Number', name: 'Number'},
 						{data: 'Name', name: 'Name'},
 						{data: 'StatusName', name: 'StatusName'},
@@ -57,11 +106,8 @@ $(document).ready(function () {
 						{data: 'Colour', name: 'Colour'},
 						{data: 'Location', name: 'Location'},
 						{
-							data: {InitDate: 'InitDate'},
+							data: 'InitDate',
 							name: 'Initdate',
-						  render: function (data, type) {
-							 		return data.InitDate;
-							},
 							sortable: true
 						},
 						{
@@ -79,7 +125,7 @@ $(document).ready(function () {
 								}
 							}
 						},
-						{data: 'KidName', name: 'KidName'},
+						{data: 'KidName', name: 'KidName', visible: false},
 						{data: 'Notes', name: 'Notes'},
 						{
                 data: {
@@ -94,10 +140,12 @@ $(document).ready(function () {
 								sortable: false
 			        }
 	        ],
-					columnDefs: [ {
-			        targets: 13,
-			        render: $.fn.dataTable.render.ellipsis(75)
-			    } ],
+					columnDefs: [
+						{
+							targets: 14,
+							render: $.fn.dataTable.render.ellipsis(75)
+						}
+					],
 					"search": {
 						"regex": true,
 						"smart":false
@@ -199,56 +247,34 @@ $(document).ready(function () {
         setBikeForm(rowdata);
     });
 
-		$(document).on('click', '.deletebike', function () {
+	$(document).on('click', '.deletebike', function () {
 						// determine which item to delete
-						var row = $(this).closest('tr');
-						var id = row.data('id');
-						if (id == "0") {
+				var row = $(this).closest('tr');
+				var id = row.data('id');
+				if (id == "0") {
+					$(this).closest("tr").remove();
+				} else {
+					if (parseInt(row.data('active')) > 0) {
+						alert('Dit kind heeft momenteel een fietsje en kan niet verwijderd worden.');
+					} else {
+						if (confirm('Ben je zeker dat je ' + row.data('name') +  ' ' + row.data('surname') + ' wilt verwijderen?')) {
+							kidsToDelete.push(id);
 							$(this).closest("tr").remove();
-						} else {
-							if (parseInt(row.data('active')) > 0) {
-								alert('Dit kind heeft momenteel een fietsje en kan niet verwijderd worden.');
-							} else {
-								if (confirm('Ben je zeker dat je ' + row.data('name') +  ' ' + row.data('surname') + ' wilt verwijderen?')) {
-									kidsToDelete.push(id);
-									$(this).closest("tr").remove();
 
-									$.ajax({
-											type: 'POST',
-											url: 'api/members/deletekid/' + id,
-											success: function () {
-												loadMembers();
-											},
-											error: function () {
-													console.error();
-											}
-									});
-								}
-							}
+							$.ajax({
+									type: 'POST',
+									url: 'api/members/deletekid/' + id,
+									success: function () {
+										loadMembers();
+									},
+									error: function () {
+											console.error();
+									}
+							});
 						}
-				});
-
-
-
-				//Dropzone.autoDiscover = false;
-
-				// Dropzone class:
-				// var myDropzone = new Dropzone("div#mydropzone", { url: "/file/post"});
-
-				// If you use jQuery, you can use the jQuery plugin Dropzone ships with:
-				//$("div#myDrop").dropzone({ url: "/file/post" });
-
-			  // Dropzone.options.myGreatDropzone = { // camelized version of the `id`
-			  //   paramName: "file", // The name that will be used to transfer the file
-			  //   maxFilesize: 2, // MB
-			  //   accept: function(file, done) {
-			  //     if (file.name == "justinbieber.jpg") {
-			  //       done("Naha, you don't.");
-			  //     }
-			  //     else { done(); }
-			  //   }
-			  // };
-
+					}
+				}
+	});
 
 	loadBikes();
 
@@ -261,8 +287,8 @@ function loadBikes(bikeid) {
         success: function (bikes) {
 					bikestable.clear();
 					bikestable.rows.add(bikes);
-					setBikesTableColumns(bikestable)
-					bikestable.columns.adjust().draw();
+					setBikesTableColumns(bikestable);
+					//bikestable.columns.adjust().draw(); //moved to setbikestablecolumns
 					setActionBikes(bikes);
 					db_bikes = bikes;
 					if (bikeid !== undefined) {
@@ -298,9 +324,12 @@ function setBikeFormByID(bikeID) {
 	$('#bike_location').val(bike.Location);
 	$('#bike_initdate').val(bike.InitDate);
 	document.getElementById('bike_loandate').innerHTML = bike.LoanDate;
+	bikequill.root.innerHTML = bike.Notes;
+	setBikeImage(bike);
+	// STATUS
 	document.getElementById('bike_status_text').innerHTML = bike.StatusName;
 	$('#bike_statusnr').val(bike.StatusNr);
-	bikequill.root.innerHTML = bike.Notes;
+
 	bikestatus.empty();
 	if (bike.StatusOnLoan == 1) {
 		var newOption = new Option(bike.StatusName, bike.StatusNr, false, false);
@@ -334,6 +363,9 @@ function emptyBikeForm() {
 	$('#bike_location').val('');
 	$('#bike_initdate').val(myGetDate());
 	document.getElementById('bike_loandate').innerHTML = '';
+	bikequill.setContents([]);
+	resetBikeImage();
+	// STATUS
 	$('#bike_statusnr').val(defaultBikeAvailableID);
 	bikestatus.empty();
 	var initstatus = db_bikestatuses.filter(x => x.ID === defaultBikeAvailableID.toString());
@@ -341,7 +373,6 @@ function emptyBikeForm() {
 	var newOption = new Option(initstatus[0].Name, initstatus[0].ID, false, false);
 	bikestatus.append(newOption);
 	bikestatus.val(defaultBikeAvailableID).trigger('change');
-	bikequill.setContents([]);
 	visibilityBikeStatus(false);
 }
 
@@ -434,7 +465,7 @@ function saveBike() {
 	}
 
 function deleteBike() {
-	var bikeid = $('#bike_id').value;
+	var bikeid = $('#bike_id').val();
 	if (bikeid==0){
 		viewTab('Members','all');
 	} else {
@@ -463,7 +494,7 @@ function deleteBike() {
 
 
 function saveBikeStatus() {
-	var bikeid = $('#bike_id').value;
+	var bikeid = $('#bike_id').val();
 	var oldstatusnr = $('#bike_statusnr').val();
 	var newstatusnr = $('#bike_status').val();
 
@@ -505,4 +536,101 @@ function loadStatusHistory(bikeid) {
 			//console.error(data);
 		}
 	});
+}
+
+
+function setBikeFieldsDiv() {
+	var bikeid = $('#bike_id').val();
+	var bikefields = ['frame','wheel', 'tyre', 'brand','gender','colour','gears','location','initdate','loandate'];
+	var descriptions = ['Frame', 'Wiel', 'Band', 'Merk', 'Gender', 'Kleur', 'Versnellingen','Locatie','Ingebracht','Ontleend'];
+	var fieldtypes = ['text', 'text', 'text', 'text', 'dropdowng', 'text', 'text', 'text', 'date', 'p'];
+	//var fieldnames = bikefields.map(field => '#bike_' + field + '_div');
+	var bikeproperties = bikefields.map(field => 'bike_show_' + field);
+	$('#bike_fields_div').empty();
+	var myhtml = '';
+	var openrow = false;
+	var closerow = false;
+	var fieldsshown = 0;
+	var initdropdowng = false;
+
+	$.each(bikefields, function (index, item) {
+		prop = getProperty(bikeproperties[index]);
+		if (prop.value == true) {
+			fieldsshown = fieldsshown + 1;
+			if (fieldsshown % 2 == 0) {
+				closerow = true;
+			} else {
+				openrow = true;
+			}
+		}
+		if (openrow == true) {
+			myhtml += '<div class="form-group">'
+			openrow = false;
+		}
+		//myhtml +=	'<div';
+		if (prop.value == false) {
+			divvisibility = ' hidden';
+		} else {
+			divvisibility = '';
+		}
+		//myhtml += '>';
+		myhtml += '<label class="col-sm-2 control-label lb-sm"' +	divvisibility ;
+		//if (descriptions[index]=="Wiel") {
+		//	myhtml += ' title="Voeg hier de inchmaat toe van de fiets, dit zie je op de buitenband, of vul aan met loopfiets, step,.. Mogelijke kindermaten zijn 12 inch, 14, 16,...  tem 26 inch"';
+		//}
+		myhtml += '>' + descriptions[index] + '</label>';
+		myhtml +=	'<div class="col-sm-4"' + divvisibility + '>';
+		if (fieldtypes[index] == 'text') {
+			myhtml +=	'<input type="text" class="form-control input-sm" id="bike_' + item + '" name="bike_' + item + '">';
+		} else if (fieldtypes[index] == 'date'){
+				myhtml +=	'<div class="input-group" id="bikedatepicker">';
+				myhtml +=	'<input type="text" class="form-control input-sm" id="bike_' + item + '" name="bike_' + item + '">';
+				myhtml +=	'<span class="input-group-addon">';
+				myhtml +=	'<span class="glyphicon glyphicon-calendar"></span>';
+				myhtml +=	'</span>';
+				myhtml +=	'</div>';
+		} else if (fieldtypes[index] == 'p') {
+			 	myhtml += '<p class="form-control-static" id="bike_' + item + '" name="bike_' + item + '"> </p>';
+		}
+		else if (fieldtypes[index] == 'dropdowng') {
+			myhtml += '<select style="width : 100%;" id="bike_' + item + '">';
+			myhtml += '<option value=""></option>';
+			myhtml += '<option value="Unisex">Unisex</option>';
+			myhtml += '<option value="Jongen">Jongen</option>';
+			myhtml += '<option value="Meisje">Meisje</option>';
+			myhtml += '</select>';
+			initdropdowng = true;
+		}
+		myhtml +=	'</div>';
+		//myhtml +=	'</div>';
+		if (closerow == true) {
+			myhtml += '</div>';
+			closerow = false;
+		}
+	});
+	$('#bike_fields_div').append(myhtml);
+	bikegender = $('#bike_gender').select2({
+		tags: false,
+	});
+
+	if (typeof bikeid !== 'undefined') {
+		if (bikeid != 0) {
+			setBikeFormByID(bikeid);
+		}
+	}
+}
+
+
+function setBikesTableColumns(bikestable) {
+	var bikeproperties = ['bike_show_frame','bike_show_wheel','bike_show_tyre','bike_show_brand','bike_show_gender','bike_show_colour','bike_show_gears','bike_show_location','bike_show_initdate','bike_show_loandate','bike_show_image'];
+	var colnames = bikeproperties.map(sliceCaseBikeProperty);
+	$.each(colnames, function (index, item) {
+		prop = getProperty(bikeproperties[index]);
+		bikestable.column(item + ':name').visible(prop.value);
+	});
+	bikestable.columns.adjust().draw();
+}
+
+function sliceCaseBikeProperty(item) {
+  return item.slice(10).replace(/^\w/, (c) => c.toUpperCase());
 }

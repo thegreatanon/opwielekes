@@ -126,7 +126,9 @@ class BikesService
 					b.Donated, b.Donor, b.Source, b.Notes, s.Name StatusName, s.OnLoan StatusOnLoan, s.Available StatusAvailable,
 					IFNULL(k.ID,0) KidID, IFNULL(k.ParentID,0) ParentID, IFNULL(CONCAT(k.Name, ' ', k.Surname), '') AS KidName,
 					(SELECT COUNT(*) FROM " . TableService::getTable(TableEnum::BIKESTATUSLOGS) . " WHERE BikeID = b.ID AND NewStatusNr = 1) NrLoans,
-					DATE_FORMAT((SELECT Date FROM " . TableService::getTable(TableEnum::BIKESTATUSLOGS) . " WHERE BikeID = b.ID AND NewStatusNr = 1 ORDER BY Date DESC LIMIT 1), '" . $mysqldateformat . "') LoanDate
+					DATE_FORMAT((SELECT Date FROM " . TableService::getTable(TableEnum::BIKESTATUSLOGS) . " WHERE BikeID = b.ID AND NewStatusNr = 1 ORDER BY Date DESC LIMIT 1), '" . $mysqldateformat . "') LoanDate,
+				  (SELECT ImageFile FROM " . TableService::getTable(TableEnum::BIKEIMAGES) . " WHERE BikeID = b.ID AND Active = 1 ORDER BY UploadDatetime DESC LIMIT 1) ImageFile,
+					(SELECT ID FROM " . TableService::getTable(TableEnum::BIKEIMAGES) . " WHERE BikeID = b.ID AND Active = 1 ORDER BY UploadDatetime DESC LIMIT 1) ImageID
 				FROM " . TableService::getTable(TableEnum::BIKES) . " b
 				LEFT JOIN " . TableService::getTable(TableEnum::BIKESTATUS) . " s
 				ON b.Status = s.ID
@@ -181,6 +183,41 @@ class BikesService
 				} else {
 					 return ["status" => -1, "error" => "Onvoldoende parameters in nieuwe bike status log..."];
 
+				}
+		}
+
+		public static function newBikeImage($data) {
+			global $DBH;
+			if (isset($data->BikeID) && isset($data->ImageFile) && isset($data->UploadDatetime) && isset($data->Active) ) {
+					try {
+							$STH = $DBH->prepare("INSERT INTO " . TableService::getTable(TableEnum::BIKEIMAGES) . " (BikeID, ImageFile, UploadDatetime, Active) VALUES (:BikeID, :ImageFile, :UploadDatetime, :Active)");
+							$STH->bindParam(':BikeID', $data->BikeID);
+							$STH->bindParam(':ImageFile', $data->ImageFile);
+							$STH->bindParam(':UploadDatetime', $data->UploadDatetime);
+							$STH->bindParam(':Active', $data->Active);
+							$STH->execute();
+					} catch (Exception $e) {
+						 return ["status" => -1, "error" => "Er is iets fout gelopen in nieuwe bike image..."];
+					}
+			} else {
+				 return ["status" => -1, "error" => "Onvoldoende parameters in nieuwe bike image..."];
+
+			}
+		}
+
+		public static function deactivateBikeImage($data) {
+				global $DBH;
+				if (isset($data->ID) && isset($data->Active)) {
+						try {
+								$STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::BIKEIMAGES) . " SET Active = :Active WHERE ID = :ID");
+								$STH->bindParam(':ID', $data->ID);
+								$STH->bindParam(':Active', $data->Active);
+								$STH->execute();
+						} catch (Exception $e) {
+								return ["status" => -1, "error" => "Er is iets fout gelopen in verwijder fietsfoto..."];
+						}
+				} else {
+						return ["status" => -1, "error" => "Onvoldoende parameters in verwijder fietsfoto..."];
 				}
 		}
 }
