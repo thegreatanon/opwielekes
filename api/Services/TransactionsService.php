@@ -37,9 +37,29 @@ class TransactionsService
 	public static function getTransactions() {
 			$mysqldateformat = $GLOBALS['mysqldateformat'];
 			global $DBH;
-			$STH = $DBH->prepare("SELECT ID,	KidID,	ParentID,	ActionID,	BikeOutID,	BikeInID,	 DATE_FORMAT(Date, '" . $mysqldateformat . "') Date FROM " . TableService::getTable(TableEnum::TRANSACTIONS) . " ORDER BY Date");
+			$STH = $DBH->prepare("SELECT ID,	KidID,	ParentID,	ActionID,	BikeOutID,	BikeInID,	 DATE_FORMAT(Date, '" . $mysqldateformat . "') Date
+				FROM " . TableService::getTable(TableEnum::TRANSACTIONS) . " ORDER BY Date");
 			$STH->execute();
 			return $STH->fetchAll();
 	}
+
+	public static function getTransactionsByParentID($parentid) {
+			$mysqldateformat = $GLOBALS['mysqldateformat'];
+			global $DBH;
+			$STH = $DBH->prepare("SELECT t.ID,	t.KidID, k.Name KidName,	t.ActionID,	a.Name ActionName, t.BikeOutID, b.Number BikeOutNumber,	t.BikeInID,	i.Number BikeInNumber, DATE_FORMAT(t.Date, '" . $mysqldateformat . "') Date
+				FROM " . TableService::getTable(TableEnum::TRANSACTIONS) . " t
+				LEFT JOIN " . TableService::getTable(TableEnum::ACTIONS) . " a
+				ON t.ActionID = a.ID
+				LEFT JOIN " . TableService::getTable(TableEnum::KIDS) . " k
+				ON t.KidID = k.ID
+				LEFT JOIN " . TableService::getTable(TableEnum::BIKES) . " b
+				ON t.BikeOutID = b.ID
+				LEFT JOIN " . TableService::getTable(TableEnum::BIKES) . " i
+				ON t.BikeInID = i.ID
+				WHERE t.ParentID = :ParentID ORDER BY Date");
+			$STH->bindParam(':ParentID', $parentid);
+			$STH->execute();
+			return $STH->fetchAll();
+		}
 
 }

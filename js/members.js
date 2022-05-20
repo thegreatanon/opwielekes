@@ -360,7 +360,12 @@ $(document).ready(function () {
 						if (parseInt(row.data('active')) > 0) {
 							alert('Dit kind heeft momenteel een fietsje en kan niet verwijderd worden.');
 						} else {
-							kidsToDelete.push(id);
+							//kidsToDelete.push(id);
+							kidsToDelete.push({
+								'ID': id,
+								'Archived': true,
+								'ArchiveDate': convertDate(myGetDate())
+							});
 							$(this).closest("tr").remove();
 						}
 	        }
@@ -432,6 +437,7 @@ function setMemberForm(rowdata) {
 	$('#parent_membership').trigger('change');
 	parentquill.root.innerHTML = rowdata.Notes;
 	setKidForm(rowdata.ID);
+	setMemberHistory(rowdata.ID);
 	viewTab('Members','one');
 }
 
@@ -451,6 +457,7 @@ function setMemberFormByID(parentID){
 	$('#parent_membership').val(p.MembershipID);
 	$('#parent_membership').trigger('change');
 	setKidForm(parentID);
+	setMemberHistory(parentID);
 	viewTab('Members','one');
 }
 
@@ -470,6 +477,10 @@ function setKidForm(parentID) {
 	}
 }
 
+function setMemberHistory(parentID) {
+	loadTransactionHistoryByParent(parentID);
+}
+
 function emptyMemberForm() {
 	// parent
 	$('#parent_id').val(0);
@@ -486,6 +497,7 @@ function emptyMemberForm() {
 	$('#parent_membership').val(defaultMembershipID);
 	$('#parent_membership').trigger('change');
 	parentquill.setContents([]);
+	resetParentTransactionHistory();
 	// kids
 	$('#kids_table_tbody').empty();
 
@@ -534,6 +546,7 @@ function saveMember() {
 			'MembershipID':  $('#parent_membership').val(),
 			'Notes': parentquill.root.innerHTML,
 	};
+	console.log(kidsToDelete)
 	//if (confirm('Ben je zeker dat je kind ' + row.data('name') +  ' ' + row.data('surname') + ' wilt verwijderen?')) {
   $.ajax({
 		type: 'POST',
@@ -574,33 +587,35 @@ function deleteMember() {
 		viewTab('Members','all');
 	} else {
 		var kids = db_kids.filter(x => x.ParentID === parentid);
-		var kidsid = [];
+		var kidsdata = [];
 		var kidsactive = 0;
 		$.each(kids, function (index, item) {
-				kidsid.push({
+				kidsdata.push({
 					'ID': item.ID,
+					'Archived': true,
+					'ArchiveDate': convertDate(myGetDate())
 				});
 				kidsactive += item.Active;
 	  });
 		if (kidsactive > 0) {
-			alert('Dit lid heeft momenteel fietsjes en kan niet verwijderd worden.');
+			alert('Dit lid heeft momenteel fietsjes en kan niet gearchiveerd worden.');
 		} else {
-			console.log(JSON.stringify({
-				'parentid': parentid,
-				'kidsid': kidsid
-			}));
-
-			if (confirm('Ben je zeker dat je dit lid en bijhorende kinderen wilt verwijderen?')) {
+			if (confirm('Ben je zeker dat je dit lid en bijhorende kinderen wilt archiveren? Dit verwijdert alle persoonsgegevens en kan niet ongedaan worden.')) {
+				var parentdata = {
+					'ID': parentid,
+					'Archived': true,
+					'ArchiveDate': convertDate(myGetDate())
+				};
 				$.ajax({
 					type: 'POST',
 					url: 'api/members/delete',
 					data: JSON.stringify({
-						'parentid': parentid,
-						'kidsid': kidsid
+						'parentdata': parentdata,
+						'kidsdata': kidsdata
 					}),
 					contentType: "application/json",
 					success: function () {
-						toastr.success('Lid verwijderd');
+						toastr.success('Lid gearchiveerd');
 						loadMembers();
 						viewTab('Members','all');
 					},

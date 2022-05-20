@@ -5,6 +5,7 @@ var expirytable;
 var financestable;
 var memberstable;
 var transactionstable;
+var parenthistorytable;
 
 // handlebars
 var template_kidsrow;

@@ -5,8 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+    <link rel="icon" type="image/x-icon" href="https://admin.opwielekes.be/images/favicon.ico">
+    <!-- <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.ico"> -->
     <link rel="manifest" href="images/site.webmanifest">
 
     <title>Op Wielekes</title>
@@ -77,7 +78,7 @@
   							<li><a href="#settings_emails">Emails</a></li>
                 <li><a href="#settings_auto_emails">Automatische emails</a></li>
                 <li><a href="#settings_memberships">Lidmaatschappen</a></li>
-                <!--<li><a href="#settings_faq">FAQ</a></li>-->
+                <li><a href="#settings_faq">FAQ</a></li>
   						  </ul>
   					</li>
                   </ul>
@@ -426,7 +427,7 @@
       									<div class="input-group col-sm-6" id="bikebtns">
       										<input type="hidden" id="bike_id" name="bike_id" value="0">
                           <input type="hidden" id="bike_statusnr" name="bike_statusnr">
-                          <button type="button" onclick="deleteBike()" class="btn btn-danger actbtn">Verwijderen</button>
+                          <button type="button" onclick="deleteBike()" class="btn btn-danger actbtn">Archiveren</button>
       										<button type="button" onclick="cancelBike()" class="btn btn-default actbtn">Annuleren</button>
       										<button type="button" onclick="saveBike()" class="btn btn-primary actbtn">Opslaan</button>
       									</div>
@@ -541,56 +542,56 @@
         					<form id="klant_form" class="form-horizontal">
         						<div class="form-group">
         							<label class="col-sm-2 control-label">Verantwoordelijke</label>
-        							<div class="col-sm-2">
-        								<input type="text" class="form-control input-md" id="parent_name" name="parent_name" placeholder="Voornaam">
+        							<div class="col-sm-2" >
+        								<input type="text" tabindex="1" class="form-control input-md" id="parent_name" name="parent_name" placeholder="Voornaam">
         							</div>
         							<div class="col-sm-4">
-        								<input type="text" class="form-control input-md" id="parent_surname" name="parent_surname" placeholder="Familienaam">
+        								<input type="text"  tabindex="2" class="form-control input-md" id="parent_surname" name="parent_surname" placeholder="Familienaam">
         							</div>
                       <label class="col-sm-1 control-label">Tel</label>
-                      <div class="col-sm-3">
-                        <input type="text" class="form-control input-md" id="parent_phone" name="parent_phone" placeholder="Tel">
+                      <div class="col-sm-3" >
+                        <input type="text" tabindex="7" class="form-control input-md" id="parent_phone" name="parent_phone" placeholder="Tel">
                       </div>
         						</div>
 
         						<div class="form-group">
         							<label class="col-sm-2 control-label">Adres</label>
-        							<div class="col-sm-4">
-        								<input type="text" class="form-control input-md" id="parent_street" name="parent_street" placeholder="Straat">
+        							<div class="col-sm-4" >
+        								<input type="text" tabindex="3" class="form-control input-md" id="parent_street" name="parent_street" placeholder="Straat">
         							</div>
-        							<div class="col-sm-2">
-        								<input type="text" class="form-control input-md" id="parent_streetnr" name="parent_streetnr" placeholder="Nr">
+        							<div class="col-sm-2" >
+        								<input type="text" tabindex="4" class="form-control input-md" id="parent_streetnr" name="parent_streetnr" placeholder="Nr">
         							</div>
                       <label class="col-sm-1 control-label">Email</label>
-        							<div class="col-sm-3">
-        								<input type="text" class="form-control input-md" id="parent_email" name="parent_email" placeholder="email">
+        							<div class="col-sm-3" >
+        								<input type="text" tabindex="8" class="form-control input-md" id="parent_email" name="parent_email" placeholder="email">
         							</div>
         						</div>
 
         						<div class="form-group">
         							<label class="col-sm-2 control-label"></label>
-        							<div class="col-sm-2">
-        								<input type="text" class="form-control input-md" id="parent_postal" name="parent_postal" placeholder="Postcode">
+        							<div class="col-sm-2" >
+        								<input type="text" tabindex="5" class="form-control input-md" id="parent_postal" name="parent_postal" placeholder="Postcode">
         							</div>
-        							<div class="col-sm-3">
-        								<input type="text" class="form-control input-md" id="parent_town" name="parent_town" placeholder="Stad">
+        							<div class="col-sm-3" >
+        								<input type="text" tabindex="6" class="form-control input-md" id="parent_town" name="parent_town" placeholder="Stad">
         							</div>
                       <label class="col-sm-2 control-label">Rekeningnr <i class="fa fa-info-circle" title="Om de waarborg te kunnen terugstorten."></i></label>
-                      <div class="col-sm-3">
-        								<input type="text" class="form-control input-md" id="parent_iban" name="parent_iban" placeholder="IBAN" >
+                      <div class="col-sm-3" >
+        								<input type="text" tabindex="9" class="form-control input-md" id="parent_iban" name="parent_iban" placeholder="IBAN" >
         							</div>
         						</div>
 
                     <div class="form-group">
         							<label class="col-sm-2 control-label">Lidmaatschap</label>
         							<div class="col-sm-4">
-                        <select style="width : 100%;" class="form-control" id="parent_membership" name="parent_membership">
+                        <select  tabindex="10" style="width : 100%;" class="form-control" id="parent_membership" name="parent_membership">
                         </select>
                       </div>
                       <label class="col-sm-3 control-label lb-sm">Lid sinds</label>
                       <div class='col-sm-3'>
                         <div class='input-group' id='parentdatepicker'>
-                          <input type='text' class="form-control input-md" id="parent_date" name="parent_date" >
+                          <input type='text' tabindex="11" class="form-control input-md" id="parent_date" name="parent_date" >
                           <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                           </span>
@@ -600,56 +601,74 @@
 
                     <div class="form-group">
                       <label class="col-sm-2 control-label lb-sm">Notities</label>
-                      <div class="col-sm-10">
+                      <div class="col-sm-10" >
                           <div id="parent_notes">
                           </div>
                         </div>
                     </div>
 
-  						     <hr class="formhr">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label lb-sm">Kinderen  <button type="button" class="btn btn-default btn-sm" onclick="addNewKidRow()"><span class="fa fa-plus" aria-hidden="true"></span></button></label>
 
-  					       <div class="row">
-  							       <div class="col-sm-2">
-          								<div class="form-row">
-          									<div class="form-group">
-          										<label class="col-sm-2 control-label">Kinderen</label>
-          									</div>
-          								</div>
-          								<div class="form-row">
-          									<div class="form-group">
-          										<button type="button" class="btn btn-default" onclick="addNewKidRow()"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
-  									        </div>
-  								        </div>
-  							        </div>
 
-          							<div class="col-sm-10">
-          								<table class="table table-condensed" id="kids_table">
-          									<thead>
-          										<tr>
-          											<th>Achternaam</th>
-                                <th>Voornaam</th>
-          											<th>Geboortedatum</th>
-                                <th>Fiets <i class="fa fa-info-circle" title="Dit veld wordt later automatisch ingevuld via het tabblad ontleningen)."></i></th>
-                                <th>Lid tot <i class="fa fa-info-circle" title="Dit veld wordt later automatisch ingevuld via het tabblad ontleningen)."></i></th>
-          											<th></th>
-          										</tr>
-          									</thead>
-          									<tbody id="kids_table_tbody">
-          									</tbody>
-          								</table>
-          							</div>
-  						     </div>
+                         <div class="col-sm-10">
+                           <table class="table table-condensed" id="kids_table">
+                             <thead>
+                               <tr>
+                                 <th>Achternaam</th>
+                                 <th>Voornaam</th>
+                                 <th>Geboortedatum</th>
+                                 <th>Fiets <i class="fa fa-info-circle" title="Dit veld wordt later automatisch ingevuld via het tabblad ontleningen)."></i></th>
+                                 <th>Lid tot <i class="fa fa-info-circle" title="Dit veld wordt later automatisch ingevuld via het tabblad ontleningen)."></i></th>
+                                 <th>  </th>
+                               </tr>
+                             </thead>
+                             <tbody id="kids_table_tbody">
+                             </tbody>
+                           </table>
+                         </div>
+                    </div>
 
         						<div class="form-group">
         							<div class="col-sm-6">
         							</div>
         							<div class="input-group col-sm-6" id="actbtns">
         								<input type="hidden" id="parent_id" name="parent_id" value="0">
-                        <button type="button" onclick="deleteMember()" class="btn btn-danger actbtn">Verwijderen</button>
+                        <button type="button" onclick="deleteMember()" class="btn btn-danger actbtn">Archiveren</button>
         								<button type="button" onclick="cancelMember()" class="btn btn-default actbtn">Annuleren</button>
         								<button type="button" onclick="saveMember()" class="btn btn-primary actbtn">Opslaan</button>
         							</div>
         						</div>
+
+                    <hr class="formhr">
+
+   					       <div class="row" id="parenthistory">
+   							       <div class="col-sm-2">
+           								<div class="form-row">
+           									<div class="form-group">
+           										<label class="col-sm-2 control-label">Geschiedenis</label>
+           									</div>
+           								</div>
+   							        </div>
+
+           							<div class="col-sm-10">
+           								<table class="table table-condensed" id="parenthistory_table" width="100%">
+           									<thead>
+                              <tr>
+                                <th>Datum</th>
+                                <th>Kind</th>
+                                <th>Actie</th>
+                                <th>Fiets IN</th>
+                                <th>Fiets UIT</th>
+                              </tr>
+           									</thead>
+           									<tbody id="parenthistory_table_tbody">
+           									</tbody>
+           								</table>
+           							</div>
+   						     </div>
+
+
 
   					     </form>
   				    </div>
@@ -1454,9 +1473,250 @@
 
         <section id="content_settings_faq" class="content_section">
          <h4 class="inlineh4">FAQ</h4>
+         <p>Heb je een vraag? Blader even door de FAQ, mogelijk vind je het antwoord hier. Indien niet, stel je vraag aan beatrice@detransformisten.be en je krijgt binnen de week antwoord.<p>
+
+           <h4 class="inlineh4">De werking</h4>
+           <div class="panel-group" id="aaccordion">
+             <!-- FAQ 1 -->
+             <div class="panel panel-default">
+               <div class="panel-heading">
+                 <h4 class="panel-title">
+                   <a data-toggle="collapse" data-parent="#aaccordion" href="#afaq1">
+                     Is er een handleiding die uitlegt hoe dit platform te gebruiken?
+                   </a>
+                 </h4>
+               </div>
+               <div id="afaq1" class="panel-collapse collapse">   <!--add class 'in' to start with panel open -->
+                 <div class="panel-body">
+                   Er zijn twee filmpjes die tonen hoe je het platform gebruikt. De links worden hier weldra toegevoegd.
+                 </div>
+               </div>
+             </div>
+             <!-- FAQ 2 -->
+             <div class="panel panel-default">
+               <div class="panel-heading">
+                 <h4 class="panel-title">
+                   <a data-toggle="collapse" data-parent="#aaccordion" href="#afaq2">
+                     Help, mijn tabellen zijn leeg!
+                   </a>
+                 </h4>
+               </div>
+               <div id="afaq2" class="panel-collapse collapse">
+                 <div class="panel-body">
+                   Er wordt een backup van de gegevens bijgehouden dus de gegevens zijn zeker niet kwijt. Mogelijk ligt het probleem aan je browser. Probeer het volgende eens:
+                   <ul>
+                     <li>Kijk na of het adres de s bevat na http, dus http<b>s</b>://..</li>
+                     <li>Log uit en terug aan, of gebruik de F5 toets om te vernieuwen</li>
+                     <li>Test eens een andere browser (chrome, safari, firefox, ...)</li>
+                   </ul>
+                 </div>
+               </div>
+             </div>
+             <!-- FAQ 3 -->
+             <div class="panel panel-default">
+               <div class="panel-heading">
+                 <h4 class="panel-title">
+                   <a data-toggle="collapse" data-parent="#aaccordion" href="#afaq3">
+                     Waarom zie ik niet alle invulvakken bij fietsen?
+                   </a>
+                 </h4>
+               </div>
+               <div id="afaq3" class="panel-collapse collapse">
+                 <div class="panel-body">
+                   Omdat verschillende gebruikers verschillende info willen bijhouden, zijn er een heel aantal velden voorzien voor elk fietsje. Voor zij die een bepaalde veld niet gebruiken is het niet zinvol om deze velden te zien.
+                   Daarom kan je in het tabblad 'instellingen - fietsen' onderaan aangeven welke velden je wilt dat zichtbaar zijn in jouw tabblad fietsen. Vergeet niet op te slaan.
+                   Je kan nu ook foto's van fietsjes uploaden als je foto's op deze plek zichtbaar maakt.
+                 </div>
+               </div>
+             </div>
+             <!-- FAQ 4 -->
+             <div class="panel panel-default">
+               <div class="panel-heading">
+                 <h4 class="panel-title">
+                   <a data-toggle="collapse" data-parent="#aaccordion" href="#afaq4">
+                     Hoe pas ik de vervaldag aan van een abonnement?
+                   </a>
+                 </h4>
+               </div>
+               <div id="afaq4" class="panel-collapse collapse">
+                 <div class="panel-body">
+                   <ul>
+                    <li>Als je de automatische emails gebruikt, dan staat de betaling in het tabblad financien. Als je daar aangeeft dat het ontvangen is wordt de vervaldatum automatisch verlengd.</li>
+                    <li>Wil je het abonnement manueel aanpassen, ga dan naar het tabblad ontleningen, kies de naam van het kind en actie aanpassing, en pas de vervaldag aan. Vergeet niet op te slaan.</li>
+                  </ul>
+                 </div>
+               </div>
+             </div>
+             <!-- FAQ 5 -->
+             <div class="panel panel-default">
+               <div class="panel-heading">
+                 <h4 class="panel-title">
+                   <a data-toggle="collapse" data-parent="#aaccordion" href="#afaq5">
+                     Waarvoor dient het tabblad lidmaatschappen onder tab Instellingen? Wat is het verschil met tab Financien?
+                   </a>
+                 </h4>
+               </div>
+               <div id="afaq5" class="panel-collapse collapse">
+                 <div class="panel-body">
+                    Eén van de doelstellingen van het platform is om het gemakkelijk te maken om de lidmaatschappen op te volgen. In het tabblad 'leden' zie je alle leden, maar zonder vervaldatum want elk kind kan een ander vervaldatum hebben. De tabellidmaatschappen toont elk kind met zijn vervaldag.
+                    De kinderen die geen fietsje meer hebben zijn inactief. Aangezien je hun lidmaatschap niet meer moet opvolgen kan je deze lijnen eenvoudig wegfilteren rechtsbovenaan.
+                    Wanneer het kind actief is en voorbij de vervaldatum komt er in de kolom vernieuwen een 1 te staan. Zo kan je opvolgen we je moet contacteren.
+                    Als je de automatische mails gebruikt komt er ook bij te staan wie al een mail ontvangen heeft.
+                    Ook het kind nummer kan je zien in de tabel, om te weten welk bedrag aangerekend moet worden.
+
+                    Het tabblad financiën houdt bij welke transacties er gebeurd zijn (bv start, einde, ..). De bedoeling is dat je hier kan zien wie wat moet betalen en kan aanduiden wanneer iets betaald is. Je kan bovenaan selecteren om alle transacties te zien waarvan de betaling nog in afwachting is. Zo kan je opvolgen wie je nog toegoed heeft.
+                 </div>
+               </div>
+             </div>
+             <!-- FAQ 6 -->
+             <div class="panel panel-default">
+               <div class="panel-heading">
+                 <h4 class="panel-title">
+                   <a data-toggle="collapse" data-parent="#aaccordion" href="#afaq6">
+                     Wat te doen indien in 1 gezin verschillende tarieven van toepassing zijn ifv verhoogde tegemoedkoming?
+                   </a>
+                 </h4>
+               </div>
+               <div id="afaq6" class="panel-collapse collapse">
+                 <div class="panel-body">
+                    Pas dan best het bedrag manueel aan tijdens de actie start.
+                 </div>
+               </div>
+             </div>
+           </div>  <!-- close accordion -->
 
 
-        </section>
+           <h4 class="inlineh4">Zelf inschrijven en reglement</h4>
+           <div class="panel-group" id="baccordion">
+             <!-- FAQ 1 -->
+             <div class="panel panel-default">
+               <div class="panel-heading">
+                 <h4 class="panel-title">
+                   <a data-toggle="collapse" data-parent="#baccordion" href="#bfaq1">
+                     Zijn we in orde met de GDPR wetgeving?
+                   </a>
+                 </h4>
+               </div>
+               <div id="bfaq1" class="panel-collapse collapse">
+                 <div class="panel-body">
+                   Ja we zijn in orde met de GDPR wetgeving:
+                   <ul>
+                     <li>Enkel de persoonsgegevens noodzakelijk voor de werking worden opgevraagd, deze zijn enkel zichtbaar voor de beheerders van de depot en de webmaster, en ze worden voor geen andere doeleinden gebruikt.</li>
+                     <li>Een lid kan gearchiveerd worden uit de database, in dat geval worden de persoongegevens verwijderd. De uitleenhistoriek wordt wel bewaard voor de statistieken.</li>
+                     <li>Bij het zelf inschrijven moet het lid akkoord gaan met "Ik teken dat ik Op Wielekes toestemming geef me te contacteren. Meer info over ons privacybeleid in het intern reglement."</li>
+                     <li>Het intern reglement dient de volgende zin (of gelijkaardig) te bevatten: "Je geeft Op Wielekes toestemming om de persoonsgegevens die je in dit contract invult, te gebruiken om je lidgeld te berekenen en om je te contacteren over Op Wielekes. We bewaren je gegevens op een veilige manier en geven ze niet door aan derde partijen. Heb je een vraag over ons privacybeleid, wil je je persoonlijke gegevens wijzigen of verwijderen, dan kun je contact opnemen met [verantwoordelijke depot]."</li>
+                  </ul>
+                 </div>
+               </div>
+             </div>
+             <!-- FAQ 2 -->
+             <div class="panel panel-default">
+               <div class="panel-heading">
+                 <h4 class="panel-title">
+                   <a data-toggle="collapse" data-parent="#baccordion" href="#bfaq2">
+                     Kan een ouder op latere basis via zelf inschrijven een 2e kind toevoegen?
+                   </a>
+                 </h4>
+               </div>
+               <div id="bfaq2" class="panel-collapse collapse">
+                 <div class="panel-body">
+                   Neen dit is niet mogelijk. Enkel op het moment dat de ouder het formulier invult kan ie zelf kinderen toevoegen. Je kan vragen om bij inschrijving alle kinderen al op te geven, ook al hebben ze nog geen fietsje nodig.
+                   Als er later kinderen bij moeten ingeschreven worden, moet je dit zelf doen via het tabblad 'leden', bewerk, druk op het plus bij kinderen en vergeet niet op te slaan na het invullen van de gegevens.
+                 </div>
+               </div>
+             </div>
+             <!-- FAQ 3 -->
+             <div class="panel panel-default">
+               <div class="panel-heading">
+                 <h4 class="panel-title">
+                   <a data-toggle="collapse" data-parent="#baccordion" href="#bfaq3">
+                     Kan ik ons eigen intern reglement laten zien?
+                   </a>
+                 </h4>
+               </div>
+               <div id="bfaq3" class="panel-collapse collapse">
+                 <div class="panel-body">
+                   Deze functionaliteit wordt eerstdaags toegevoegd. In afwachting, kan je je eigen intern reglement opsturen en zorgen wij dat het getoond wordt.
+                 </div>
+               </div>
+             </div>
+           </div> <!-- close accordion -->
+
+           <h4 class="inlineh4">Emails</h4>
+           <!-- FAQ 1 -->
+           <div class="panel-group" id="caccordion">
+             <div class="panel panel-default">
+               <div class="panel-heading">
+                 <h4 class="panel-title">
+                   <a data-toggle="collapse" data-parent="#caccordion" href="#cfaq1">
+                     Hoe weet ik welke emails verzonden worden?
+                   </a>
+                 </h4>
+               </div>
+               <div id="cfaq1" class="panel-collapse collapse">
+                 <div class="panel-body">
+                   Als je een emailadres invult onder cc adres (tabblad 'instellingen - emails') krijgt dit adres een kopie van elke verzonden email. Er zijn drie types emails:
+                   <ol>
+                     <li>De emails die verzonden worden bij het uitvoeren van een transactie in de ontleningen tab. Dit is telkens 1 email die je kan uitvinken als je niet wil dat ie verzonden wordt.</li>
+                     <li>De bevestiginsemail bij zelf inschrijving. Als je wil dat het lid deze bevestiging krijgt, kan je deze email aanvinken bovenaan in het tabblad 'instellingen - automatische emails'.</li>
+                     <li>De automatische emails die verzonden worden zonder interactie, om mensen te verwittigen dat hun lidmaatschap vervalt. Deze staan standaard gedeactiveerd. Voor meer info, zie de vraag over automatische emails.</li>
+                  </ol>
+                 </div>
+               </div>
+             </div>
+             <!-- FAQ 2 -->
+             <div class="panel panel-default">
+               <div class="panel-heading">
+                 <h4 class="panel-title">
+                   <a data-toggle="collapse" data-parent="#caccordion" href="#cfaq2">
+                     Wat gebeurt er als een emailadres onjuist is?
+                   </a>
+                 </h4>
+               </div>
+               <div id="cfaq2" class="panel-collapse collapse">
+                 <div class="panel-body">
+                   De webmaster ontvangt dan een email dat het emailadres onjuist is. De webmaster zal je deze info bezorgen. Je zal dan wellicht manueel moeten opvolgen en het emailadres corrigeren.
+                 </div>
+               </div>
+             </div>
+             <!-- FAQ 3 -->
+             <div class="panel panel-default">
+               <div class="panel-heading">
+                 <h4 class="panel-title">
+                   <a data-toggle="collapse" data-parent="#caccordion" href="#cfaq3">
+                    Wat zijn de automatische emails en hoe werken deze?
+                   </a>
+                 </h4>
+               </div>
+               <div id="cfaq3" class="panel-collapse collapse">
+                 <div class="panel-body">
+                   Eén van de doelstellingen van het platform is om het gemakkelijk te maken om de lidmaatschappen op te volgen. Hiervoor kan het platform automatisch emails uitsturen op gepaste momenten om mensen te vragen om te betalen of langs te komen. Bvb een maand voor de vervaldag, op de vervaldag, en een week na de vervaldag.
+                   Elke dag kijkt het platform wie die dag een mail moet ontvangen en stuurt die uit. Tegelijk wordt een rij aangemaakt in financiën tabel waarbij aangegeven wordt dat het lid hetlidmaatschap nog moet betalen, zodat je duidelijk kan zien van wie je nog geld verwacht. Als je ingeeft dat dit bedrag ontvangen is, dan wordt de vervaldatum van het lidmaatschap van dat lid aangepast.
+                   <br>
+                   Om te vermijden dat deze automatische emails per ongeluk verzonden worden, staan deze uit, en moet je de webmaster contacteren om ze aan te zetten.
+                   De momenten om de mails te versturen en de mails zelf kan je aanpassen in het tabblad 'instellingen - automatische emails'.  Daar staat ook de info over welke gegevens je automatisch kan laten invullen in je mail, bv {{voornaam_kind}} of het te betalen bedrag {{bedrag_lidmaatschap}}.
+                   Als je een kopie van de verzonden emails wil ontvangen vul dan het cc adres in het tabblad 'instellingen - emails'.
+                 </div>
+               </div>
+             </div>
+             <!-- FAQ 4 -->
+             <div class="panel panel-default">
+               <div class="panel-heading">
+                 <h4 class="panel-title">
+                   <a data-toggle="collapse" data-parent="#caccordion" href="#cfaq4">
+                     Kan ik vanuit het systeem een éénmalige mail aan alle leden sturen, bv wegens wijziging openingsuren?
+                   </a>
+                 </h4>
+               </div>
+               <div id="cfaq4" class="panel-collapse collapse">
+                 <div class="panel-body">
+                   Dit ondersteunt het systeem niet. Je kan in het tabblad 'leden' wel alle leden exporteren en de emailadressen selecteren, om op de gewone manier een email te verzenden.
+                 </div>
+               </div>
+             </div>
+           </div><!-- close accordion -->
+
+         </section>
 
 
         <section id="content_transactionhistory" class="content_section">

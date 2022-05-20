@@ -177,6 +177,23 @@ $app->group('/bikes', function() use ($app) {
           }
           echo json_encode(null);
        });
+
+       $app->post('/archive', function() use ($app) {
+         global $DBH;
+         try {
+            $DBH->beginTransaction();
+            $arbi = BikesService::archiveBike($GLOBALS["data"]);
+            if ($arbi["status"] == -1) {
+              throw new Exception($arbi["error"]);
+            }
+             $DBH->commit();
+           } catch (Exception $e) {
+             $DBH->rollBack();
+             $GLOBALS["error"] = $e->getMessage();
+             $app->error();
+           }
+           echo json_encode(null);
+        });
 });
 
 $app->group('/parents', function() use ($app) {
@@ -265,8 +282,8 @@ $app->group('/members', function() use ($app) {
 					}
 				}
 			}
-      foreach ($GLOBALS["data"]->deleteKids as $kidnr) {
-        $delk = MembersService::deleteKid($kidnr);
+      foreach ($GLOBALS["data"]->deleteKids as $kidsdata) {
+        $delk = MembersService::archiveKid($kidsdata);
         if ($delk["status"] == -1) {
           throw new Exception($delk["error"]);
         }
@@ -344,13 +361,13 @@ $app->group('/members', function() use ($app) {
       global $DBH;
       try {
         $DBH->beginTransaction();
-        foreach ($GLOBALS["data"]->kidsid as $kid) {
-          $delk = MembersService::deleteKid($kid->ID);
+        foreach ($GLOBALS["data"]->kidsdata as $kid) {
+          $delk = MembersService::archiveKid($kid);
           if ($delk["status"] == -1) {
             throw new Exception($delk["error"]);
           }
         }
-        $delp = MembersService::deleteParent($GLOBALS["data"]->parentid);
+        $delp = MembersService::archiveParent($GLOBALS["data"]->parentdata);
         if ($delp["status"] == -1) {
           throw new Exception($delp["error"]);
         }
@@ -373,6 +390,10 @@ $app->group('/transactions', function() use ($app) {
 
     $app->get('/', function() use ($app) {
       echo json_encode(TransactionsService::getTransactions());
+    });
+
+    $app->get('/parent/:id', function($id) use ($app) {
+      echo json_encode(TransactionsService::getTransactionsByParentID($id));
     });
 
 	$app->post('/', function() use ($app) {

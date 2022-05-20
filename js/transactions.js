@@ -112,7 +112,8 @@ $(document).ready(function () {
 		saveTransaction();
 	})
 
-	transactionstable = $('#transactions_table').DataTable({
+	// not necessary to load when tab is hidden
+	/* transactionstable = $('#transactions_table').DataTable({
   	paging: true,
 		pageLength: 25,
 		//"order": [[ 6, "asc" ],[ 0, "desc" ]],
@@ -152,7 +153,7 @@ $(document).ready(function () {
 			"regex": true,
 			"smart":false
 		}
-  });
+  }); */
 
 	actionquill = new Quill('#actionemail', {
 		modules: {
@@ -162,7 +163,28 @@ $(document).ready(function () {
 		background: 'white'
 	});
 
-	loadTransactionHistory();
+	parenthistorytable = $('#parenthistory_table').DataTable({
+		paging: false,
+		//pageLength: 25,
+		//"order": [[ 6, "asc" ],[ 0, "desc" ]],
+		//"lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+		dom: '',
+		//rowId: 'transID',
+		autoWidth: true,
+		columns: [
+					{data: 'Date'},
+					{data: 'KidName'},
+					{data: 'ActionName'},
+					{data: 'BikeInNumber'},
+					{data: 'BikeOutNumber'}
+		],
+		"language": {
+			"emptyTable": "Nog geen transacties voor dit lid."
+		}
+	});
+
+	// not necessary to load when tab is hidden
+	//loadTransactionHistory();
 
 });
 
@@ -783,15 +805,38 @@ function saveTransaction() {
 
 
 function loadTransactionHistory() {
+	// Don't actually do anything as long as we don't display the tab with transactions_table
+	// $.ajax({
+	// 		url: 'api/transactions',
+	// 		success: function (transactionhistory) {
+	// 			transactionstable.clear();
+	// 			transactionstable.rows.add(transactionhistory);
+	// 			transactionstable.columns.adjust().draw();
+	// 		}
+	// });
+}
+
+function loadTransactionHistoryByParent(parentid) {
 	$.ajax({
-			url: 'api/transactions',
+			url: 'api/transactions/parent/' + parentid,
 			success: function (transactionhistory) {
-				transactionstable.clear();
-				transactionstable.rows.add(transactionhistory);
-				transactionstable.columns.adjust().draw();
+				// console.log(transactionhistory);
+				// console.log(transactionhistory.length);
+				// if (transactionhistory.length==0) {
+				// 	console.log('no history');
+				// }
+				parenthistorytable.clear();
+				parenthistorytable.rows.add(transactionhistory);
+				parenthistorytable.columns.adjust().draw();
 			}
 	});
 }
+
+function resetParentTransactionHistory() {
+	parenthistorytable.clear();
+	parenthistorytable.columns.adjust().draw();
+}
+
 
 function isParentActive(parentID, kidID, kidActive){
 	parentActive = 0;

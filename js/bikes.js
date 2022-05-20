@@ -63,7 +63,6 @@ $(document).ready(function () {
 									title: '',
 									exportOptions: { columns: [ 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]}
 							},
-							// TODO fix export to excel
 							{
 									extend: 'excel',
 									filename: 'Opwielekes fietsjes',
@@ -471,15 +470,21 @@ function deleteBike() {
 	} else {
 		var kids = db_kids.filter(x => x.BikeID === bikeid);
 		if (kids.length > 0) {
-			alert('Dit fietsje is momenteel in gebruik en kan niet verwijderd worden.');
+			alert('Dit fietsje is momenteel in gebruik en kan niet gearchiveerd worden.');
 		} else {
-			if (confirm('Ben je zeker dat je deze fiets wilt verwijderen?')) {
+			if (confirm('Ben je zeker dat je deze fiets wilt archiveren?')) {
 				$.ajax({
 					type: 'POST',
-					url: 'api/bikes/delete/' + bikeid,
+					//url: 'api/bikes/delete/' + bikeid,
+					url: 'api/bikes/archive',
+					data: JSON.stringify({
+						'ID': bikeid,
+						'Archived': true,
+						'ArchiveDate': convertDate(myGetDate())
+					}),
 					contentType: "application/json",
 					success: function () {
-						toastr.success('Fiets verwijderd');
+						toastr.success('Fiets gearchiveerd');
 						loadBikes();
 						viewTab('Bikes','all');
 					},

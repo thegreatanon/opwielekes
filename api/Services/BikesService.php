@@ -118,6 +118,23 @@ class BikesService
         }
     }
 
+		public static function archiveBike($data) {
+				global $DBH;
+		  	if (isset($data->ID) && isset($data->Archived) && isset($data->ArchiveDate)) {
+						try {
+		        		$STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::BIKES) . " SET Archived = :Archived, ArchiveDate = :ArchiveDate WHERE ID = :ID");
+								$STH->bindParam(':ID', $data->ID);
+								$STH->bindParam(':Archived', $data->Archived);
+								$STH->bindParam(':ArchiveDate', $data->ArchiveDate);
+		            $STH->execute();
+		        } catch (Exception $e) {
+		           	return ["status" => -1, "error" => "Er is iets fout gelopen in archiveer fiets..."];
+		        }
+	      } else {
+	         	return ["status" => -1, "error" => "Onvoldoende parameters in archiveer fiets..."];
+	      }
+	    }
+
 		public static function getBikes() {
 				$mysqldateformat = $GLOBALS['mysqldateformat'];
 				global $DBH;
@@ -134,7 +151,7 @@ class BikesService
 				ON b.Status = s.ID
 				LEFT JOIN " . TableService::getTable(TableEnum::KIDS) . " k
 				ON k.BikeID = b.ID
-				ORDER BY Number");
+				WHERE b.Archived = 0 ORDER BY Number");
 				$STH->execute();
 				return $STH->fetchAll();
 		}

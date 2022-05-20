@@ -95,6 +95,23 @@ class MembersService
         }
     }
 
+		public static function archiveParent($data) {
+				global $DBH;
+		  	if (isset($data->ID) && isset($data->Archived) && isset($data->ArchiveDate)) {
+						try {
+		        		$STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::PARENTS) . " SET Name = '', Surname = '', Street = '', StreetNumber = '', Postal = '', Town = '', Email = '', Phone = '', IBAN = '', Archived = :Archived, ArchiveDate = :ArchiveDate WHERE ID = :ID");
+								$STH->bindParam(':ID', $data->ID);
+								$STH->bindParam(':Archived', $data->Archived);
+								$STH->bindParam(':ArchiveDate', $data->ArchiveDate);
+		            $STH->execute();
+		        } catch (Exception $e) {
+		           	return ["status" => -1, "error" => "Er is iets fout gelopen in archiveer ouder..."];
+		        }
+	      } else {
+	         	return ["status" => -1, "error" => "Onvoldoende parameters in archiveer ouder..."];
+	      }
+	    }
+
 	public static function newKid($data,$parentID) {
 		global $DBH;
         if (isset($parentID) && isset($data->Name) && isset($data->Surname) &&  isset($data->BirthDate) && isset($data->Caution) && isset($data->ExpiryDate) && isset($data->Active) && isset($data->BikeID) && isset($data->KidNr)) {
@@ -207,13 +224,31 @@ class MembersService
         }
     }
 
+		public static function archiveKid($data) {
+				global $DBH;
+		  	if (isset($data->ID) && isset($data->Archived) && isset($data->ArchiveDate)) {
+						try {
+		        		$STH = $DBH->prepare("UPDATE " . TableService::getTable(TableEnum::KIDS) . " SET Name = '', Surname = '', BirthDate = '0000-00-00', Archived = :Archived, ArchiveDate = :ArchiveDate WHERE ID = :ID");
+								$STH->bindParam(':ID', $data->ID);
+								$STH->bindParam(':Archived', $data->Archived);
+								$STH->bindParam(':ArchiveDate', $data->ArchiveDate);
+		            $STH->execute();
+		        } catch (Exception $e) {
+		           	return ["status" => -1, "error" => "Er is iets fout gelopen in archiveer kind..."];
+		        }
+	      } else {
+	         	return ["status" => -1, "error" => "Onvoldoende parameters in archiveer kind..."];
+	      }
+	    }
+
 	public static function getKids() {
 		$mysqldateformat = $GLOBALS['mysqldateformat'];
     global $DBH;
 		$STH = $DBH->prepare("SELECT k.ID, k.ParentID, k.Name, k.Surname, DATE_FORMAT(k.BirthDate, '" . $mysqldateformat . "') BirthDate, k.Caution, DATE_FORMAT(k.ExpiryDate, '" . $mysqldateformat . "') ExpiryDate, k.Active, k.BikeID, k.KidNr, b.Number BikeNr
 			FROM " . TableService::getTable(TableEnum::KIDS) . " k
 			LEFT JOIN " . TableService::getTable(TableEnum::BIKES) . " b
-			ON k.BikeID = b.ID");
+			ON k.BikeID = b.ID
+			WHERE k.Archived=0");
 		$STH->execute();
 		return $STH->fetchAll();
   }
@@ -277,7 +312,7 @@ class MembersService
 			ON k.ParentID = p.ID
 			LEFT JOIN " . TableService::getTable(TableEnum::MEMBERSHIPS, $accountcode) . " m
 			ON p.MembershipID = m.ID
-			ORDER BY DATE(k.ExpiryDate) ASC, k.ID ASC");
+			WHERE k.Archived = 0 ORDER BY DATE(k.ExpiryDate) ASC, k.ID ASC");
 		$STH->execute();
 		return $STH->fetchAll();
   }
@@ -295,6 +330,7 @@ class MembersService
 			ON p.ID = k.ParentID
 			LEFT JOIN " . TableService::getTable(TableEnum::MEMBERSHIPS) . " m
 			ON p.MembershipID = m.ID
+			WHERE p.Archived=0
 			GROUP BY ID
 			ORDER BY Surname");
 		$STH->execute();
