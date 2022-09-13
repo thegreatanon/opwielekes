@@ -213,7 +213,9 @@ $preferences = SettingsService::getPreferences()
                                   $termsfile = "https://admin.opwielekes.be/pdf/ReglementHasselt.pdf";
                               } elseif ( $_SESSION["urlaccount"]["AccountCode"] == "flo" ) {
                                   $termsfile = "https://admin.opwielekes.be/pdf/ReglementFlora.pdf";
-                                } else {
+                              } elseif ( $_SESSION["urlaccount"]["AccountCode"] == "zem" ) {
+                                  $termsfile = "https://admin.opwielekes.be/pdf/ReglementZemst.pdf";
+                              } else {
                                   $termsfile = "https://admin.opwielekes.be/pdf/ReglementOpwielekes.pdf";
                               }
                               echo '<input type="checkbox" name="signrules" id="signrules">  <label class="control-label" for="signrules"> Ik teken het <a data-fancybox data-type="iframe" href="' . $termsfile . '" title="Je kan het intern reglement lezen door op deze link te klikken">intern reglement</a>.<span class="req"> * </span></label>';

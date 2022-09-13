@@ -456,6 +456,7 @@ function setMemberFormByID(parentID){
 	$('#parent_date').val(p.InitDate);
 	$('#parent_membership').val(p.MembershipID);
 	$('#parent_membership').trigger('change');
+	parentquill.root.innerHTML = p.Notes;
 	setKidForm(parentID);
 	setMemberHistory(parentID);
 	viewTab('Members','one');
